@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+npm-debug.log*
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# Environment
+.env
+.env.local
+
+# Local data and generated audio
+backend/storage/*
+!backend/storage/.gitkeep
+*.sqlite3
+*.db
+*.wav
+*.webm
+*.zip
+*.tar
+*.tgz
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
