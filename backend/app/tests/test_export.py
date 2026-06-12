@@ -1,6 +1,3 @@
-from pathlib import Path
-
-
 def test_export_creation(client):
     client.post(
         "/api/participants",
@@ -20,4 +17,6 @@ def test_export_creation(client):
     payload = response.json()
     assert payload["status"] == "created"
     assert payload["file_name"].startswith("vigil_dataset_export_")
-    assert Path(payload["download_path"]).exists()
+    download = client.get(payload["download_path"])
+    assert download.status_code == 200
+    assert download.headers["content-type"] == "application/zip"

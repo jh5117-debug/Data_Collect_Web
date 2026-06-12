@@ -25,14 +25,21 @@ html,
 body,
 #root {
   min-height: 100%;
+  width: 100%;
   margin: 0;
 }
 
 body {
+  overflow-x: hidden;
   background:
     linear-gradient(135deg, rgba(23, 107, 91, 0.08), transparent 34%),
     linear-gradient(225deg, rgba(200, 95, 56, 0.1), transparent 38%),
     #f6f8f5;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
 }
 
 button,
@@ -42,17 +49,29 @@ input {
 }
 
 .shell {
-  width: min(100%, 1120px);
-  min-height: 100vh;
+  width: min(calc(100% - 40px), 1280px);
+  min-height: 100svh;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 40px 0;
+}
+
+.shell > section {
+  width: 100%;
 }
 
 .shell.narrow {
-  width: min(100%, 720px);
+  width: min(calc(100% - 40px), 760px);
   display: grid;
   align-items: center;
   justify-items: center;
+}
+
+.recorder-shell {
+  width: min(calc(100% - 40px), 1360px);
+}
+
+.admin-shell {
+  width: min(calc(100% - 40px), 1480px);
 }
 
 .welcome-screen {
@@ -382,7 +401,7 @@ h1 {
 .summary-grid,
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
   margin: 28px 0;
 }
@@ -409,7 +428,7 @@ h1 {
   display: block;
   margin-top: 10px;
   color: var(--ink);
-  font-size: 1.8rem;
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
   line-height: 1.1;
   overflow-wrap: anywhere;
 }
@@ -496,7 +515,8 @@ td {
 
 @media (max-width: 720px) {
   .shell {
-    padding: 22px 14px;
+    width: min(calc(100% - 28px), 100%);
+    padding: 22px 0;
   }
 
   .recording-header,

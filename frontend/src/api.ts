@@ -170,3 +170,15 @@ export async function getAdminClientClips(email: string): Promise<AdminClip[]> {
 export async function deleteAdminClient(email: string): Promise<{ status: string; email: string; deleted_files: string[] }> {
   return request(`/api/admin/clients/${encodeURIComponent(email)}`, { method: "DELETE" });
 }
+
+export async function getAdminSessionClips(sessionId: string): Promise<AdminClip[]> {
+  return request(`/api/admin/sessions/${encodeURIComponent(sessionId)}/clips`);
+}
+
+export async function deleteAdminSession(sessionId: string): Promise<{ status: string; session_id: string; deleted_files: string[] }> {
+  return request(`/api/admin/sessions/${encodeURIComponent(sessionId)}`, { method: "DELETE" });
+}
+
+export async function deleteAdminClientSessions(email: string): Promise<{ status: string; email: string; deleted_sessions: number; deleted_files: string[] }> {
+  return request(`/api/admin/clients/${encodeURIComponent(email)}/sessions`, { method: "DELETE" });
+}

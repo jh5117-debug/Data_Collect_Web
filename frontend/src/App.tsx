@@ -128,6 +128,8 @@ export default function App() {
       <RecordingPage
         prompts={prompts}
         progress={recordingProgress}
+        userEmail={authSession?.email ?? ""}
+        authToken={authSession?.auth_token ?? ""}
         onProgressChange={setRecordingProgress}
         onBack={() => setPage("mic-test")}
         onFinished={(nextStats) => {

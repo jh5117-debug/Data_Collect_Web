@@ -7,7 +7,7 @@ from ..config import settings
 from ..database import get_db
 from ..models import Clip, EmailLoginCode, Participant, RecordingSession, Segment, UserAccount, UserSessionToken
 from ..schemas import AccountSessionOut, AdminClientOut, AdminClipOut, DeleteClipOut, ExportOut, FlaggedClipOut, SummaryOut
-from ..services.deletion import delete_clip_and_files, delete_session_clips_and_files
+from ..services.deletion import delete_clip_and_files, delete_generated_exports, delete_session_and_files
 from ..services.export import create_export_zip
 from ..services.email_auth import normalize_email
 from ..services.storage import get_storage_backend
@@ -18,26 +18,56 @@ router = APIRouter(prefix="/api/admin", tags=["admin"])
 @router.get("/summary", response_model=SummaryOut)
 def admin_summary(db: Session = Depends(get_db)) -> SummaryOut:
     accounts = db.execute(select(func.count()).select_from(UserAccount)).scalar_one()
-    participants = db.execute(select(func.count()).select_from(Participant)).scalar_one()
-    sessions = db.execute(select(func.count()).select_from(RecordingSession)).scalar_one()
-    submitted_sessions = db.execute(
-        select(func.count()).select_from(RecordingSession).where(RecordingSession.status == "submitted")
+    sessions = db.execute(
+        select(func.count())
+        .select_from(RecordingSession)
+        .join(Participant, RecordingSession.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
     ).scalar_one()
-    total_clips = db.execute(select(func.count()).select_from(Clip)).scalar_one()
-    total_segments = db.execute(select(func.count()).select_from(Segment)).scalar_one()
+    submitted_sessions = db.execute(
+        select(func.count())
+        .select_from(RecordingSession)
+        .join(Participant, RecordingSession.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
+        .where(RecordingSession.status == "submitted")
+    ).scalar_one()
+    total_clips = db.execute(
+        select(func.count())
+        .select_from(Clip)
+        .join(Participant, Clip.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
+    ).scalar_one()
+    total_segments = db.execute(
+        select(func.count())
+        .select_from(Segment)
+        .join(Participant, Segment.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
+    ).scalar_one()
     auto_accepted = db.execute(
-        select(func.count()).select_from(Clip).where(Clip.auto_qc_status == "auto_accepted")
+        select(func.count())
+        .select_from(Clip)
+        .join(Participant, Clip.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
+        .where(Clip.auto_qc_status == "auto_accepted")
     ).scalar_one()
     flagged = db.execute(
-        select(func.count()).select_from(Clip).where(Clip.auto_qc_status == "flagged_for_review")
+        select(func.count())
+        .select_from(Clip)
+        .join(Participant, Clip.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
+        .where(Clip.auto_qc_status == "flagged_for_review")
     ).scalar_one()
     rejected = db.execute(
-        select(func.count()).select_from(Clip).where(Clip.auto_qc_status == "auto_rejected")
+        select(func.count())
+        .select_from(Clip)
+        .join(Participant, Clip.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
+        .where(Clip.auto_qc_status == "auto_rejected")
     ).scalar_one()
 
     return SummaryOut(
         batch_id=settings.default_batch_id,
-        participants=accounts or participants,
+        participants=accounts,
         sessions=sessions,
         submitted_sessions=submitted_sessions,
         total_clips=total_clips,
@@ -65,17 +95,10 @@ def flagged_clips(db: Session = Depends(get_db)) -> list[Clip]:
 @router.get("/clients", response_model=list[AdminClientOut])
 def admin_clients(db: Session = Depends(get_db)) -> list[AdminClientOut]:
     accounts = db.execute(select(UserAccount).order_by(UserAccount.created_at_utc.desc())).scalars().all()
-    account_emails = {account.email for account in accounts}
-    participant_emails = {
-        email
-        for email in db.execute(select(Participant.user_email).where(Participant.user_email.is_not(None))).scalars().all()
-        if email
-    }
-    all_emails = sorted(account_emails | participant_emails)
 
     rows: list[AdminClientOut] = []
-    for email in all_emails:
-        account = db.get(UserAccount, email)
+    for account in accounts:
+        email = account.email
         participant_ids = db.execute(
             select(Participant.participant_id).where(Participant.user_email == email)
         ).scalars().all()
@@ -106,9 +129,9 @@ def admin_clients(db: Session = Depends(get_db)) -> list[AdminClientOut]:
         rows.append(
             AdminClientOut(
                 email=email,
-                verified=account.verified if account else False,
-                account_created_at_utc=account.created_at_utc if account else None,
-                last_login_at_utc=account.last_login_at_utc if account else None,
+                verified=account.verified,
+                account_created_at_utc=account.created_at_utc,
+                last_login_at_utc=account.last_login_at_utc,
                 participant_count=len(participant_ids),
                 session_count=len(session_ids),
                 submitted_session_count=submitted_session_count,
@@ -117,6 +140,27 @@ def admin_clients(db: Session = Depends(get_db)) -> list[AdminClientOut]:
             )
         )
     return rows
+
+
+def admin_clip_out(clip: Clip, user_email: str | None) -> AdminClipOut:
+    return AdminClipOut(
+        clip_id=clip.clip_id,
+        participant_id=clip.participant_id,
+        user_email=user_email,
+        session_id=clip.session_id,
+        prompt_id=clip.prompt_id,
+        clip_type=clip.clip_type,
+        raw_audio_path=clip.raw_audio_path,
+        processed_wav_path=clip.processed_wav_path,
+        duration_sec=clip.duration_sec,
+        file_size_bytes=clip.file_size_bytes,
+        auto_qc_status=clip.auto_qc_status,
+        auto_qc_flags=clip.auto_qc_flags,
+        segmentation_status=clip.segmentation_status,
+        detected_segment_count=clip.detected_segment_count,
+        expected_segment_count=clip.expected_segment_count,
+        created_at_utc=clip.created_at_utc,
+    )
 
 
 @router.get("/clips", response_model=list[AdminClipOut])
@@ -130,27 +174,7 @@ def admin_clips(db: Session = Depends(get_db)) -> list[AdminClipOut]:
         )
         .all()
     )
-    return [
-        AdminClipOut(
-            clip_id=clip.clip_id,
-            participant_id=clip.participant_id,
-            user_email=user_email,
-            session_id=clip.session_id,
-            prompt_id=clip.prompt_id,
-            clip_type=clip.clip_type,
-            raw_audio_path=clip.raw_audio_path,
-            processed_wav_path=clip.processed_wav_path,
-            duration_sec=clip.duration_sec,
-            file_size_bytes=clip.file_size_bytes,
-            auto_qc_status=clip.auto_qc_status,
-            auto_qc_flags=clip.auto_qc_flags,
-            segmentation_status=clip.segmentation_status,
-            detected_segment_count=clip.detected_segment_count,
-            expected_segment_count=clip.expected_segment_count,
-            created_at_utc=clip.created_at_utc,
-        )
-        for clip, user_email in rows
-    ]
+    return [admin_clip_out(clip, user_email) for clip, user_email in rows]
 
 
 @router.get("/clients/{email}/sessions", response_model=list[AccountSessionOut])
@@ -196,27 +220,24 @@ def admin_client_clips(email: str, db: Session = Depends(get_db)) -> list[AdminC
         )
         .all()
     )
-    return [
-        AdminClipOut(
-            clip_id=clip.clip_id,
-            participant_id=clip.participant_id,
-            user_email=user_email,
-            session_id=clip.session_id,
-            prompt_id=clip.prompt_id,
-            clip_type=clip.clip_type,
-            raw_audio_path=clip.raw_audio_path,
-            processed_wav_path=clip.processed_wav_path,
-            duration_sec=clip.duration_sec,
-            file_size_bytes=clip.file_size_bytes,
-            auto_qc_status=clip.auto_qc_status,
-            auto_qc_flags=clip.auto_qc_flags,
-            segmentation_status=clip.segmentation_status,
-            detected_segment_count=clip.detected_segment_count,
-            expected_segment_count=clip.expected_segment_count,
-            created_at_utc=clip.created_at_utc,
+    return [admin_clip_out(clip, user_email) for clip, user_email in rows]
+
+
+@router.get("/sessions/{session_id}/clips", response_model=list[AdminClipOut])
+def admin_session_clips(session_id: str, db: Session = Depends(get_db)) -> list[AdminClipOut]:
+    session = db.get(RecordingSession, session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="session not found")
+    rows = (
+        db.execute(
+            select(Clip, Participant.user_email)
+            .join(Participant, Clip.participant_id == Participant.participant_id)
+            .where(Clip.session_id == session_id)
+            .order_by(Clip.created_at_utc)
         )
-        for clip, user_email in rows
-    ]
+        .all()
+    )
+    return [admin_clip_out(clip, user_email) for clip, user_email in rows]
 
 
 @router.delete("/clients/{email}")
@@ -233,8 +254,7 @@ def delete_admin_client(email: str, db: Session = Depends(get_db)) -> dict[str, 
             select(RecordingSession).where(RecordingSession.participant_id == participant.participant_id)
         ).scalars().all()
         for session in sessions:
-            deleted_files.extend(delete_session_clips_and_files(db, session))
-            db.delete(session)
+            deleted_files.extend(delete_session_and_files(db, session, delete_empty_participant=False))
             deleted_sessions += 1
         db.delete(participant)
         deleted_participants += 1
@@ -253,12 +273,56 @@ def delete_admin_client(email: str, db: Session = Depends(get_db)) -> dict[str, 
     ).scalars().all():
         db.delete(session_token)
 
+    deleted_files.extend(delete_generated_exports())
     db.commit()
     return {
         "status": "deleted",
         "email": normalized,
         "deleted_participants": deleted_participants,
         "deleted_sessions": deleted_sessions,
+        "deleted_files": deleted_files,
+    }
+
+
+@router.delete("/clients/{email}/sessions")
+def delete_admin_client_sessions(email: str, db: Session = Depends(get_db)) -> dict[str, object]:
+    normalized = normalize_email(email)
+    account = db.get(UserAccount, normalized)
+    participants = db.execute(select(Participant).where(Participant.user_email == normalized)).scalars().all()
+    if not account and not participants:
+        raise HTTPException(status_code=404, detail="account not found")
+
+    deleted_files: list[str] = []
+    deleted_sessions = 0
+    for participant in participants:
+        sessions = db.execute(
+            select(RecordingSession).where(RecordingSession.participant_id == participant.participant_id)
+        ).scalars().all()
+        for session in sessions:
+            deleted_files.extend(delete_session_and_files(db, session))
+            deleted_sessions += 1
+    deleted_files.extend(delete_generated_exports())
+    db.commit()
+    return {
+        "status": "deleted",
+        "email": normalized,
+        "deleted_sessions": deleted_sessions,
+        "deleted_files": deleted_files,
+    }
+
+
+@router.delete("/sessions/{session_id}")
+def delete_admin_session(session_id: str, db: Session = Depends(get_db)) -> dict[str, object]:
+    session = db.get(RecordingSession, session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="session not found")
+
+    deleted_files = delete_session_and_files(db, session)
+    deleted_files.extend(delete_generated_exports())
+    db.commit()
+    return {
+        "status": "deleted",
+        "session_id": session_id,
         "deleted_files": deleted_files,
     }
 
@@ -270,6 +334,7 @@ def delete_clip(clip_id: str, db: Session = Depends(get_db)) -> DeleteClipOut:
         raise HTTPException(status_code=404, detail="clip_id not found")
 
     deleted_files = delete_clip_and_files(db, clip)
+    deleted_files.extend(delete_generated_exports())
     db.commit()
     return DeleteClipOut(status="deleted", clip_id=clip_id, deleted_files=deleted_files)
 

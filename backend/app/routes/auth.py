@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Clip, Participant, RecordingSession
 from ..schemas import AccountClipOut, AccountSessionOut, AuthCodeRequest, AuthCodeRequestOut, AuthCodeVerify, AuthVerifyOut, DeleteClipOut
-from ..services.deletion import delete_clip_and_files
+from ..services.deletion import delete_clip_and_files, delete_generated_exports
 from ..services.email_auth import create_login_code, create_session_token, normalize_email, send_login_code, smtp_configured, verify_login_code, verify_session_token
 from ..services.storage import get_storage_backend
 
@@ -145,6 +145,7 @@ def delete_account_clip(
     if not clip:
         raise HTTPException(status_code=404, detail="clip not found")
     deleted_files = delete_clip_and_files(db, clip)
+    deleted_files.extend(delete_generated_exports())
     db.commit()
     return DeleteClipOut(status="deleted", clip_id=clip_id, deleted_files=deleted_files)
 

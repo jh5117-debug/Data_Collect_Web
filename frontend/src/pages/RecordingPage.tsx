@@ -1,5 +1,6 @@
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { deleteAccountClip } from "../api";
 import { AudioRecorder } from "../components/AudioRecorder";
 import { BackButton } from "../components/BackButton";
 import { ProgressBar } from "../components/ProgressBar";
@@ -9,6 +10,8 @@ import type { Prompt, RecordingProgressState, RecordingStats, UploadedRecordingR
 interface RecordingPageProps {
   prompts: Prompt[];
   progress: RecordingProgressState;
+  userEmail: string;
+  authToken: string;
   onProgressChange: (progress: RecordingProgressState) => void;
   onBack: () => void;
   onFinished: (stats: RecordingStats) => void;
@@ -19,12 +22,15 @@ const MIN_RECORDINGS_PER_PROMPT = 2;
 export function RecordingPage({
   prompts,
   progress,
+  userEmail,
+  authToken,
   onProgressChange,
   onBack,
   onFinished
 }: RecordingPageProps) {
   const [blob, setBlob] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [deletingRowId, setDeletingRowId] = useState<string | null>(null);
   const [recorderKey, setRecorderKey] = useState(0);
 
   const currentIndex = Math.min(progress.currentPromptIndex, Math.max(prompts.length - 1, 0));
@@ -82,6 +88,32 @@ export function RecordingPage({
     });
     setBlob(null);
     setRecorderKey((value) => value + 1);
+  }
+
+  async function deleteRecording(row: UploadedRecordingRow) {
+    const confirmed = window.confirm(
+      row.clip_id
+        ? `Delete clip ${row.clip_id} from this draft and from the server? This cannot be undone.`
+        : "Delete this accepted recording from the current draft?"
+    );
+    if (!confirmed) return;
+
+    setDeletingRowId(row.row_id);
+    setError(null);
+    try {
+      if (row.clip_id) {
+        await deleteAccountClip(userEmail, row.clip_id, authToken);
+      }
+      URL.revokeObjectURL(row.playback_url);
+      onProgressChange({
+        ...progress,
+        uploadedRows: renumberTakeNumbers(rows.filter((item) => item.row_id !== row.row_id))
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not delete recording.");
+    } finally {
+      setDeletingRowId(null);
+    }
   }
 
   function handleBack() {
@@ -151,18 +183,35 @@ export function RecordingPage({
           <p className="recording-count">
             Current phrase recordings: {rowsForCurrentPrompt.length} / {MIN_RECORDINGS_PER_PROMPT} minimum
           </p>
-          <RecordingRowsTable rows={rows} />
+          <RecordingRowsTable rows={rows} deletingRowId={deletingRowId} onDelete={deleteRecording} />
         </section>
       </section>
     </main>
   );
 }
 
-function RecordingRowsTable({ rows }: { rows: UploadedRecordingRow[] }) {
+function renumberTakeNumbers(rows: UploadedRecordingRow[]): UploadedRecordingRow[] {
+  const counts = new Map<string, number>();
+  return rows.map((row) => {
+    const nextTakeNumber = (counts.get(row.prompt_id) ?? 0) + 1;
+    counts.set(row.prompt_id, nextTakeNumber);
+    return { ...row, take_number: nextTakeNumber };
+  });
+}
+
+function RecordingRowsTable({
+  rows,
+  deletingRowId,
+  onDelete
+}: {
+  rows: UploadedRecordingRow[];
+  deletingRowId: string | null;
+  onDelete: (row: UploadedRecordingRow) => void;
+}) {
   return (
     <section className="embedded-table">
       <div className="section-title">
-        <h2>Uploaded Recordings</h2>
+        <h2>Accepted Recordings</h2>
         <span>{rows.length} clips</span>
       </div>
       <div className="table-scroll">
@@ -176,12 +225,13 @@ function RecordingRowsTable({ rows }: { rows: UploadedRecordingRow[] }) {
               <th>QC</th>
               <th>Flags</th>
               <th>Segments</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={7}>No accepted recordings yet.</td>
+                <td colSpan={8}>No accepted recordings yet.</td>
               </tr>
             )}
             {rows.map((row) => (
@@ -193,6 +243,17 @@ function RecordingRowsTable({ rows }: { rows: UploadedRecordingRow[] }) {
                 <td>{row.auto_qc_status ?? row.upload_status}</td>
                 <td>{row.auto_qc_flags.length > 0 ? row.auto_qc_flags.join(", ") : "None"}</td>
                 <td>{row.detected_segment_count}</td>
+                <td>
+                  <button
+                    className="button danger icon-button"
+                    type="button"
+                    onClick={() => onDelete(row)}
+                    disabled={deletingRowId === row.row_id || row.upload_status === "uploading"}
+                  >
+                    <Trash2 size={16} aria-hidden="true" />
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
