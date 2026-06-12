@@ -25,11 +25,17 @@ html,
 body,
 #root {
   min-height: 100%;
-  width: 100%;
   margin: 0;
 }
 
+html {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
+  width: 100vw;
+  max-width: 100vw;
   overflow-x: hidden;
   background:
     linear-gradient(135deg, rgba(23, 107, 91, 0.08), transparent 34%),
@@ -38,8 +44,11 @@ body {
 }
 
 #root {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  width: 100vw;
+  max-width: 100vw;
+  justify-items: center;
+  overflow-x: clip;
 }
 
 button,
@@ -50,6 +59,8 @@ input {
 
 .shell {
   width: min(calc(100% - 40px), 1280px);
+  max-width: calc(100vw - 40px);
+  min-width: 0;
   min-height: 100svh;
   margin: 0 auto;
   padding: 40px 0;
@@ -57,10 +68,13 @@ input {
 
 .shell > section {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .shell.narrow {
   width: min(calc(100% - 40px), 760px);
+  max-width: min(calc(100vw - 40px), 760px);
   display: grid;
   align-items: center;
   justify-items: center;
@@ -68,10 +82,12 @@ input {
 
 .recorder-shell {
   width: min(calc(100% - 40px), 1360px);
+  max-width: min(calc(100vw - 40px), 1360px);
 }
 
 .admin-shell {
   width: min(calc(100% - 40px), 1480px);
+  max-width: min(calc(100vw - 40px), 1480px);
 }
 
 .welcome-screen {
@@ -83,6 +99,8 @@ input {
 .form-panel,
 .prompt-panel,
 .table-panel {
+  min-width: 0;
+  max-width: 100%;
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -393,6 +411,8 @@ h1 {
 }
 
 .embedded-table {
+  min-width: 0;
+  max-width: 100%;
   margin-top: 24px;
   border-top: 1px solid var(--line);
   padding-top: 18px;
@@ -462,12 +482,15 @@ h1 {
 }
 
 .table-scroll {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
 }
 
 table {
   width: 100%;
-  min-width: 900px;
+  min-width: min(900px, calc(100vw - 88px));
   border-collapse: collapse;
 }
 
