@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, RefreshCw, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { deleteAccountClip, getAccountClipAudioUrl, getAccountSessionClips, getAccountSessions } from "../api";
 import { BackButton } from "../components/BackButton";
 import type { AccountClip, AccountSession } from "../types";
@@ -17,6 +17,7 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
   const [clips, setClips] = useState<AccountClip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const sessionDisplayIds = useMemo(() => buildAccountSessionDisplayIds(sessions), [sessions]);
 
   async function loadSessions() {
     setLoading(true);
@@ -61,6 +62,7 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
   }, [email, authToken]);
 
   if (selectedSession) {
+    const selectedSessionDisplayId = sessionDisplayIds.get(selectedSession.session_id) ?? selectedSession.session_id;
     return (
       <main className="shell">
         <section className="form-panel">
@@ -69,7 +71,7 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
             Back to Sessions
           </button>
           <p className="eyebrow">Participant Workspace</p>
-          <h1>Session {selectedSession.session_id}</h1>
+          <h1>Session {selectedSessionDisplayId}</h1>
           <p className="instruction">{email}</p>
           {error && <p className="error-text">{error}</p>}
           <div className="embedded-table">
@@ -164,7 +166,7 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
                 {sessions.map((session) => (
                   <tr key={session.session_id} className="clickable-row" onClick={() => openSession(session)}>
                     <td>{session.batch_id}</td>
-                    <td>{session.session_id}</td>
+                    <td>{sessionDisplayIds.get(session.session_id) ?? session.session_id}</td>
                     <td>{session.status}</td>
                     <td>{session.clip_count}</td>
                     <td>{session.submitted_at_utc ? new Date(session.submitted_at_utc).toLocaleString() : "Not submitted"}</td>
@@ -176,5 +178,17 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
         </div>
       </section>
     </main>
+  );
+}
+
+function buildAccountSessionDisplayIds(sessions: AccountSession[]): Map<string, string> {
+  const sortedSessions = [...sessions].sort(
+    (left, right) => new Date(left.created_at_utc).getTime() - new Date(right.created_at_utc).getTime()
+  );
+  return new Map(
+    sortedSessions.map((session, index) => [
+      session.session_id,
+      `S${String(index + 1).padStart(4, "0")}`
+    ])
   );
 }
