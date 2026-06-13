@@ -1,21 +1,20 @@
 # Vigil Recorder
 
-Vigil Recorder is a full-stack MVP for collecting clean voice trigger samples for the Vigil wake-word system. It stores raw browser recordings, converts accepted uploads to 16 kHz mono WAV, attempts energy-based segmentation for repeated prompts, writes SQLite metadata, and provides a simple `/admin` view for exception-based review and export.
+Vigil Recorder is a full-stack MVP for collecting clean voice trigger samples for the Vigil wake-word system. It stores raw browser recordings, writes metadata, and provides a simple `/admin` view for exception-based review and export. Online collection is intentionally lightweight: WAV conversion, Qwen ASR review, semantic validation, and final dataset generation are done offline after export.
 
 The product name and wake word is Vigil. The word `visual` appears only as a hard negative prompt.
 
 ## Stack
 
 - Frontend: Vite, React, TypeScript, MediaRecorder
-- Backend: FastAPI, SQLAlchemy, SQLite
-- Audio: FFmpeg conversion to 16 kHz mono WAV, NumPy-based QC and segmentation
-- Storage: local filesystem under `backend/storage/`
+- Backend: FastAPI, SQLAlchemy, SQLite locally or Supabase Postgres in production
+- Audio: raw browser upload collection online; offline WAV conversion and ASR review
+- Storage: local filesystem under `backend/storage/` locally or Supabase Storage in production
 
 ## Requirements
 
 - Python 3.11+
 - Node.js 20+
-- FFmpeg available on `PATH`
 
 Production deployments should use HTTPS so browser microphone permission and uploads are secure.
 
@@ -40,7 +39,18 @@ DATABASE_URL=sqlite:///./storage/vigil_recorder.sqlite3
 CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
-S3 or MinIO variables are present as placeholders in `backend/.env.example`; the MVP implements local storage only.
+S3 or MinIO variables are placeholders. Production raw collection uses the Supabase Storage backend.
+
+For production raw collection with Supabase:
+
+```bash
+STORAGE_BACKEND=supabase
+DATABASE_URL=postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-0-REGION.pooler.supabase.com:6543/postgres
+SUPABASE_URL=https://PROJECT_REF.supabase.co
+SUPABASE_SECRET_KEY=your-server-side-secret-or-service-role-key
+SUPABASE_STORAGE_BUCKET=vigil-audio
+CORS_ORIGINS=https://your-frontend-domain.example
+```
 
 ## Frontend
 
@@ -67,22 +77,22 @@ cd backend
 pytest
 ```
 
-The clip conversion success test is skipped automatically if FFmpeg is not installed. Conversion failure handling is still tested.
+Tests cover prompt group validation, raw upload metadata, export packaging, and deletion behavior.
 
 ## Data Flow
 
 1. Participant logs in with an email verification code.
 2. Participant completes consent and simple metadata.
 3. Participant records a local microphone test. This calibration check is not uploaded.
-4. Participant records each prompt at least twice, plays clips back locally, and accepts or redoes them.
+4. Participant records examples in four prompt groups, plays clips back locally, and accepts or redoes them.
 5. Accepted recordings remain in the browser until the final session submission.
 6. On final submit, the backend creates `participant_id` and `session_id`, then uploads all accepted recordings.
 7. Backend saves each raw upload exactly as received.
-8. Backend converts each upload to 16 kHz mono WAV with FFmpeg.
-9. Backend runs technical automatic QC.
-10. For repeated prompts, backend attempts silence-based segmentation and stores derived segment WAVs.
-11. Admin summary shows account count, sessions, accepted clips, flagged clips, rejected clips, and generated segments.
-12. Export creates a downloadable ZIP with prompts, metadata, raw audio, processed WAVs, segment WAVs, and by-prompt copies.
+8. Backend stores prompt group, transcript, positive/negative labels, session, and account metadata.
+9. Backend only performs lightweight collection checks such as empty upload and transcript rules.
+10. Admin summary shows account count, sessions, accepted clips, flagged clips, and rejected clips.
+11. Export creates a downloadable ZIP with prompts, metadata, raw audio, by-prompt raw copies, and raw manifests.
+12. Offline processing converts raw audio to WAV, runs Qwen ASR review, performs manual review, and creates final train/eval manifests.
 
 ## API Overview
 
@@ -103,8 +113,6 @@ The clip conversion success test is skipped automatically if FFmpeg is not insta
 ```text
 backend/storage/
   raw_audio/{participant_id}/{session_id}/{clip_id}.webm
-  processed_wav/{participant_id}/{session_id}/{clip_id}.wav
-  segments/{participant_id}/{session_id}/{parent_clip_id}_seg001.wav
   calibration/{participant_id}/{session_id}/{clip_id}.webm
   exports/vigil_dataset_export_{timestamp}.zip
 ```
@@ -117,4 +125,4 @@ Set SMTP variables in `backend/.env.example` style to send real login codes. For
 
 ## Current QC Scope
 
-The current automatic QC is technical, not semantic. It checks empty audio, duration, FFmpeg conversion, low volume, clipping, and segmentation count mismatch. It does not currently transcribe speech or verify that the participant said the expected phrase.
+The online QC is collection-level, not semantic. It validates transcript rules and empty uploads. It does not transcribe speech, verify pronunciation, convert WAV, or run a trained wake-word model. Do those steps offline after export.

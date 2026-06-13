@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi.responses import Response
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -194,8 +194,15 @@ def account_clip_audio(
         raise HTTPException(status_code=404, detail="clip not found")
     storage = get_storage_backend()
     relative_path = clip.processed_wav_path or clip.raw_audio_path
-    path = storage.absolute_path(relative_path)
-    if not path.exists():
+    if not relative_path:
         raise HTTPException(status_code=404, detail="audio file not found")
+    try:
+        content = storage.download_bytes(relative_path)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="audio file not found") from None
     media_type = "audio/wav" if relative_path.endswith(".wav") else "audio/webm"
-    return FileResponse(path, media_type=media_type, filename=path.name)
+    return Response(
+        content=content,
+        media_type=media_type,
+        headers={"content-disposition": f'inline; filename="{relative_path.split("/")[-1]}"'},
+    )

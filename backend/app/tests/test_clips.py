@@ -1,9 +1,6 @@
 import io
 import math
-import shutil
 import wave
-
-import pytest
 
 
 def _create_participant_and_session(client):
@@ -36,8 +33,7 @@ def _wav_bytes(duration_sec: float = 0.8, sample_rate: int = 16000) -> bytes:
     return buffer.getvalue()
 
 
-@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="FFmpeg is required for conversion success")
-def test_clip_upload_with_valid_audio(client):
+def test_clip_upload_collects_raw_audio(client):
     participant_id, session_id = _create_participant_and_session(client)
 
     response = client.post(
@@ -59,7 +55,7 @@ def test_clip_upload_with_valid_audio(client):
     assert payload["segmentation_status"] == "not_required"
 
 
-def test_ffmpeg_conversion_failure_is_recorded(client):
+def test_raw_collection_does_not_reject_unparseable_audio(client):
     participant_id, session_id = _create_participant_and_session(client)
 
     response = client.post(
@@ -75,5 +71,5 @@ def test_ffmpeg_conversion_failure_is_recorded(client):
 
     assert response.status_code == 200
     payload = response.json()
-    assert payload["auto_qc_status"] == "auto_rejected"
-    assert "ffmpeg_conversion_failed" in payload["auto_qc_flags"]
+    assert payload["auto_qc_status"] == "auto_accepted"
+    assert payload["auto_qc_flags"] == []

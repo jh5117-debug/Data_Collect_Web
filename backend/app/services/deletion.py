@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -18,15 +16,8 @@ def delete_clip_and_files(db: Session, clip: Clip) -> list[str]:
     for relative_path in relative_paths:
         if not relative_path:
             continue
-        path = storage.absolute_path(relative_path)
-        try:
-            path.relative_to(storage.root)
-        except ValueError:
-            continue
-        if path.exists() and path.is_file():
-            path.unlink()
+        if storage.delete(relative_path):
             deleted_files.append(relative_path)
-            remove_empty_parents(path.parent, storage.root)
 
     for segment in segments:
         db.delete(segment)
@@ -34,7 +25,7 @@ def delete_clip_and_files(db: Session, clip: Clip) -> list[str]:
     return deleted_files
 
 
-def remove_empty_parents(path: Path, root: Path) -> None:
+def remove_empty_parents(path, root) -> None:
     while path != root and path.exists():
         try:
             path.rmdir()

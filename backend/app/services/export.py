@@ -104,21 +104,20 @@ Prompt groups:
 
 Audio format:
 - Raw browser uploads are preserved exactly as received.
-- Processed files are normalized to 16 kHz mono WAV with signed 16-bit samples.
-- Temporal segmentation is not used for current data collection.
+- Online collection does not convert audio or run temporal segmentation.
+- Convert raw audio to 16 kHz mono WAV offline before ASR training or Qwen review.
 
 QC logic:
-- Hard failures include empty audio, duration under 0.3 seconds, and FFmpeg failures.
-- Soft flags include suspicious duration, very low volume, clipping, and segment
-  count mismatches.
-- The coordinator should review flagged or rejected clips, not every clip.
+- Online QC only checks upload-level issues such as empty audio and transcript rules.
+- Semantic review, audio quality checks, WAV conversion, Qwen ASR, and final train/eval
+  manifest generation should run offline after export.
 
 Known limitations:
-- This MVP does not use ASR or a trained wake-word model for automatic semantic review.
+- This collection deployment does not use ASR or a trained wake-word model online.
 - The admin page has no login. Add authentication before production use.
 - Production deployment should use HTTPS for microphone permission and upload safety.
-- Train/eval manifests use a simple deterministic account-independent split when account
-  identity is available.
+- Raw manifests use a simple deterministic account-independent split when account identity
+  is available.
 """
 
 
@@ -138,7 +137,8 @@ def _split_for_clip(clip: Clip, participant_email_by_id: dict[str, str | None]) 
 
 
 def _manifest_audio_path(clip: Clip) -> str:
-    return f"audio_wav/{clip.clip_id}.wav"
+    suffix = Path(clip.raw_audio_path).suffix or ".webm"
+    return f"audio_raw/{clip.clip_id}{suffix}"
 
 
 def _qwen_asr_row(clip: Clip) -> dict[str, str]:
@@ -203,32 +203,33 @@ def create_export_zip(db: Session) -> tuple[Path, str]:
         archive.writestr(f"{base}/metadata/qc_report.csv", rows_to_csv(qc_rows, QC_FIELDS))
 
         for clip in clips:
-            for relative_path in (clip.raw_audio_path, clip.processed_wav_path):
-                if not relative_path:
-                    continue
-                source = storage.absolute_path(relative_path)
-                if source.exists():
-                    archive.write(source, f"{base}/{relative_path}")
-                    if relative_path == clip.raw_audio_path:
-                        archive.write(source, f"{base}/by_prompt_group/{clip.prompt_group}/raw_audio/{Path(relative_path).name}")
-                    if relative_path == clip.processed_wav_path:
-                        archive.write(source, f"{base}/by_prompt_group/{clip.prompt_group}/processed_wav/{clip.clip_id}.wav")
-                        archive.write(source, f"{base}/audio_wav/{clip.clip_id}.wav")
-                        split = _split_for_clip(clip, participant_email_by_id)
-                        if split == "eval":
-                            qwen_eval_rows.append(_qwen_asr_row(clip))
-                            kws_eval_rows.append(_kws_row(clip))
-                        else:
-                            qwen_train_rows.append(_qwen_asr_row(clip))
-                            kws_train_rows.append(_kws_row(clip))
+            if clip.raw_audio_path and storage.exists(clip.raw_audio_path):
+                raw_bytes = storage.download_bytes(clip.raw_audio_path)
+                raw_name = f"{clip.clip_id}{Path(clip.raw_audio_path).suffix or '.webm'}"
+                archive.writestr(f"{base}/{clip.raw_audio_path}", raw_bytes)
+                archive.writestr(f"{base}/raw_audio/{raw_name}", raw_bytes)
+                archive.writestr(f"{base}/audio_raw/{raw_name}", raw_bytes)
+                archive.writestr(f"{base}/by_prompt_group/{clip.prompt_group}/raw_audio/{raw_name}", raw_bytes)
+                split = _split_for_clip(clip, participant_email_by_id)
+                if split == "eval":
+                    qwen_eval_rows.append(_qwen_asr_row(clip))
+                    kws_eval_rows.append(_kws_row(clip))
+                else:
+                    qwen_train_rows.append(_qwen_asr_row(clip))
+                    kws_train_rows.append(_kws_row(clip))
+
+            if clip.processed_wav_path and storage.exists(clip.processed_wav_path):
+                wav_bytes = storage.download_bytes(clip.processed_wav_path)
+                archive.writestr(f"{base}/{clip.processed_wav_path}", wav_bytes)
+                archive.writestr(f"{base}/by_prompt_group/{clip.prompt_group}/processed_wav/{clip.clip_id}.wav", wav_bytes)
 
         for segment in segments:
-            source = storage.absolute_path(segment.segment_audio_path)
-            if source.exists():
-                archive.write(source, f"{base}/{segment.segment_audio_path}")
-                archive.write(
-                    source,
+            if storage.exists(segment.segment_audio_path):
+                segment_bytes = storage.download_bytes(segment.segment_audio_path)
+                archive.writestr(f"{base}/{segment.segment_audio_path}", segment_bytes)
+                archive.writestr(
                     f"{base}/legacy_segments/{segment.prompt_id}/{segment.parent_clip_id}_seg{segment.segment_index:03d}.wav",
+                    segment_bytes,
                 )
 
         archive.writestr(f"{base}/qwen_asr/train.jsonl", rows_to_jsonl(qwen_train_rows))

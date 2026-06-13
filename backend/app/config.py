@@ -47,6 +47,12 @@ class Settings:
     s3_access_key_id: str | None = os.getenv("S3_ACCESS_KEY_ID")
     s3_secret_access_key: str | None = os.getenv("S3_SECRET_ACCESS_KEY")
 
+    supabase_url: str | None = os.getenv("SUPABASE_URL")
+    supabase_secret_key: str | None = os.getenv(
+        "SUPABASE_SECRET_KEY", os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    )
+    supabase_storage_bucket: str = os.getenv("SUPABASE_STORAGE_BUCKET", "vigil-audio")
+
 
 settings = Settings()
 settings.local_storage_root.mkdir(parents=True, exist_ok=True)

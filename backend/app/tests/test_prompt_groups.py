@@ -1,11 +1,7 @@
 import io
 import math
-import shutil
 import wave
-from pathlib import Path
 from zipfile import ZipFile
-
-import pytest
 
 from app.services.storage import get_storage_backend
 
@@ -65,7 +61,6 @@ def _upload(client, participant_id: str, session_id: str, prompt_group: str, tra
     )
 
 
-@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="FFmpeg is required for conversion success")
 def test_prompt_group_upload_validation_and_labels(client):
     participant_id, session_id, _token = _participant_and_session(client)
 
@@ -105,7 +100,6 @@ def test_prompt_group_upload_validation_and_labels(client):
         assert response.json()["contains_vigil"] is False
 
 
-@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="FFmpeg is required for conversion success")
 def test_summary_detail_export_and_deletion_for_prompt_groups(client):
     email = "owner@example.com"
     participant_id, session_id, token = _participant_and_session(client, email)
@@ -137,7 +131,8 @@ def test_summary_detail_export_and_deletion_for_prompt_groups(client):
     export_path = get_storage_backend().absolute_path(f"exports/{export_response['file_name']}")
     with ZipFile(export_path) as archive:
         names = archive.namelist()
-        assert any("/by_prompt_group/P4_negative/processed_wav/" in name for name in names)
+        assert any("/by_prompt_group/P4_negative/raw_audio/" in name for name in names)
+        assert any("/audio_raw/" in name for name in names)
         assert any(name.endswith("/metadata/clips.csv") for name in names)
         qwen_train = "\n".join(
             archive.read(name).decode("utf-8")
@@ -155,13 +150,11 @@ def test_summary_detail_export_and_deletion_for_prompt_groups(client):
 
     first_clip = admin_clips[0]
     raw_path = get_storage_backend().absolute_path(first_clip["raw_audio_path"])
-    wav_path = get_storage_backend().absolute_path(first_clip["processed_wav_path"])
     assert raw_path.exists()
-    assert wav_path.exists()
+    assert first_clip["processed_wav_path"] is None
     delete_clip = client.delete(f"/api/admin/clips/{first_clip['clip_id']}")
     assert delete_clip.status_code == 200
     assert not raw_path.exists()
-    assert not wav_path.exists()
 
     remaining_before_session_delete = client.get(f"/api/admin/sessions/{session_id}/clips").json()
     assert remaining_before_session_delete
