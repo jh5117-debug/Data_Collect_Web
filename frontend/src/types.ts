@@ -35,6 +35,12 @@ export interface Prompt {
 export interface UploadResponse {
   status: string;
   clip_id: string;
+  prompt_group: string;
+  transcript: string;
+  normalized_transcript: string;
+  contains_vigil: boolean;
+  wake_intent: boolean;
+  is_negative: boolean;
   auto_qc_status: "auto_accepted" | "auto_rejected" | "flagged_for_review";
   auto_qc_flags: string[];
   segmentation_status: string;
@@ -46,13 +52,20 @@ export interface RecordingStats {
   uploadedClips: number;
   failedUploads: number;
   qcWarnings: number;
-  generatedSegments: number;
+  positiveRecordings: number;
+  negativeRecordings: number;
 }
 
 export interface UploadedRecordingRow {
   row_id: string;
-  prompt_id: string;
-  target_phrase: string;
+  prompt_id?: string;
+  prompt_group: PromptGroupId;
+  prompt_title: string;
+  transcript: string;
+  normalized_transcript: string;
+  contains_vigil: boolean;
+  wake_intent: boolean;
+  is_negative: boolean;
   take_number: number;
   blob: Blob;
   playback_url: string;
@@ -77,9 +90,12 @@ export interface AdminSummary {
   submitted_sessions: number;
   total_clips: number;
   total_segments: number;
+  positive_clips: number;
+  negative_clips: number;
   auto_accepted: number;
   flagged: number;
   rejected: number;
+  prompt_group_counts: Record<string, number>;
 }
 
 export interface FlaggedClip {
@@ -87,6 +103,13 @@ export interface FlaggedClip {
   participant_id: string;
   session_id: string;
   prompt_id: string;
+  prompt_group: string;
+  prompt_title: string;
+  transcript: string;
+  normalized_transcript: string;
+  contains_vigil: boolean;
+  wake_intent: boolean;
+  is_negative: boolean;
   clip_type: string;
   duration_sec: number | null;
   auto_qc_status: string;
@@ -106,6 +129,8 @@ export interface AdminClient {
   session_count: number;
   submitted_session_count: number;
   clip_count: number;
+  positive_clip_count: number;
+  negative_clip_count: number;
   segment_count: number;
 }
 
@@ -115,6 +140,13 @@ export interface AdminClip {
   user_email: string | null;
   session_id: string;
   prompt_id: string;
+  prompt_group: string;
+  prompt_title: string;
+  transcript: string;
+  normalized_transcript: string;
+  contains_vigil: boolean;
+  wake_intent: boolean;
+  is_negative: boolean;
   clip_type: string;
   raw_audio_path: string;
   processed_wav_path: string | null;
@@ -141,12 +173,21 @@ export interface AccountSession {
   created_at_utc: string;
   submitted_at_utc: string | null;
   clip_count: number;
+  positive_clip_count: number;
+  negative_clip_count: number;
 }
 
 export interface AccountClip {
   clip_id: string;
   session_id: string;
   prompt_id: string;
+  prompt_group: string;
+  prompt_title: string;
+  transcript: string;
+  normalized_transcript: string;
+  contains_vigil: boolean;
+  wake_intent: boolean;
+  is_negative: boolean;
   clip_type: string;
   duration_sec: number | null;
   file_size_bytes: number;
@@ -163,3 +204,9 @@ export interface AuthSession {
   auth_token: string;
   expires_at_utc: string;
 }
+
+export type PromptGroupId =
+  | "P1_vigil_only"
+  | "P2_phrase_plus_vigil"
+  | "P3_vigil_plus_phrase"
+  | "P4_negative";

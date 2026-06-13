@@ -72,6 +72,19 @@ def account_sessions(
         clip_count = db.execute(
             select(func.count()).select_from(Clip).where(Clip.session_id == session.session_id)
         ).scalar_one()
+        positive_clip_count = db.execute(
+            select(func.count())
+            .select_from(Clip)
+            .where(
+                Clip.session_id == session.session_id,
+                Clip.contains_vigil.is_(True),
+                Clip.wake_intent.is_(True),
+                Clip.is_negative.is_(False),
+            )
+        ).scalar_one()
+        negative_clip_count = db.execute(
+            select(func.count()).select_from(Clip).where(Clip.session_id == session.session_id, Clip.is_negative.is_(True))
+        ).scalar_one()
         output.append(
             AccountSessionOut(
                 session_id=session.session_id,
@@ -80,6 +93,8 @@ def account_sessions(
                 created_at_utc=session.created_at_utc,
                 submitted_at_utc=session.submitted_at_utc,
                 clip_count=clip_count,
+                positive_clip_count=positive_clip_count,
+                negative_clip_count=negative_clip_count,
             )
         )
     return output
@@ -111,6 +126,13 @@ def account_session_clips(
             clip_id=clip.clip_id,
             session_id=clip.session_id,
             prompt_id=clip.prompt_id,
+            prompt_group=clip.prompt_group,
+            prompt_title=clip.prompt_title,
+            transcript=clip.transcript,
+            normalized_transcript=clip.normalized_transcript,
+            contains_vigil=clip.contains_vigil,
+            wake_intent=clip.wake_intent,
+            is_negative=clip.is_negative,
             clip_type=clip.clip_type,
             duration_sec=clip.duration_sec,
             file_size_bytes=clip.file_size_bytes,

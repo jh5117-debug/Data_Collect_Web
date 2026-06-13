@@ -8,6 +8,8 @@ from fastapi.testclient import TestClient
 TEST_ROOT = Path(tempfile.mkdtemp(prefix="vigil-recorder-tests-"))
 os.environ["LOCAL_STORAGE_ROOT"] = str(TEST_ROOT / "storage")
 os.environ["DATABASE_URL"] = f"sqlite:///{TEST_ROOT / 'test.sqlite3'}"
+for smtp_name in ["SMTP_HOST", "SMTP_PORT", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM_EMAIL"]:
+    os.environ[smtp_name] = ""
 
 from app.database import Base, SessionLocal, engine  # noqa: E402
 from app.main import app  # noqa: E402

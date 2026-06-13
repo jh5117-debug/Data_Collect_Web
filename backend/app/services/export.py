@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+import hashlib
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -20,6 +21,13 @@ CLIP_FIELDS = [
     "participant_id",
     "session_id",
     "prompt_id",
+    "prompt_group",
+    "prompt_title",
+    "transcript",
+    "normalized_transcript",
+    "contains_vigil",
+    "wake_intent",
+    "is_negative",
     "clip_type",
     "raw_audio_path",
     "processed_wav_path",
@@ -60,6 +68,13 @@ QC_FIELDS = [
     "participant_id",
     "session_id",
     "prompt_id",
+    "prompt_group",
+    "prompt_title",
+    "transcript",
+    "normalized_transcript",
+    "contains_vigil",
+    "wake_intent",
+    "is_negative",
     "clip_type",
     "auto_qc_status",
     "auto_qc_flags",
@@ -81,15 +96,16 @@ addresses, or other patient-identifiable information. This MVP collects clean in
 audio for internal research and model development; later research may augment the
 clean clips with noise, volume changes, or speed changes.
 
+Prompt groups:
+- P1_vigil_only: fixed transcript "Vigil".
+- P2_phrase_plus_vigil: participant phrase or sentence containing the exact word "Vigil".
+- P3_vigil_plus_phrase: participant phrase or sentence containing the exact word "Vigil".
+- P4_negative: confusing words or sentences that must not contain the exact word "Vigil".
+
 Audio format:
 - Raw browser uploads are preserved exactly as received.
 - Processed files are normalized to 16 kHz mono WAV with signed 16-bit samples.
-- Repeated prompts keep the full recording and may include derived segment WAVs.
-
-Segmentation logic:
-- Repeated prompts use simple energy-based silence segmentation.
-- The original full recording is always kept, even when segmentation fails.
-- Segment count mismatches are flagged for exception-based review.
+- Temporal segmentation is not used for current data collection.
 
 QC logic:
 - Hard failures include empty audio, duration under 0.3 seconds, and FFmpeg failures.
@@ -98,10 +114,49 @@ QC logic:
 - The coordinator should review flagged or rejected clips, not every clip.
 
 Known limitations:
-- This MVP does not use ASR or a trained wake-word model for segmentation.
+- This MVP does not use ASR or a trained wake-word model for automatic semantic review.
 - The admin page has no login. Add authentication before production use.
 - Production deployment should use HTTPS for microphone permission and upload safety.
+- Train/eval manifests use a simple deterministic account-independent split when account
+  identity is available.
 """
+
+
+PROMPT_GROUP_EXPORTS = [
+    "P1_vigil_only",
+    "P2_phrase_plus_vigil",
+    "P3_vigil_plus_phrase",
+    "P4_negative",
+    "legacy",
+]
+
+
+def _split_for_clip(clip: Clip, participant_email_by_id: dict[str, str | None]) -> str:
+    identity = participant_email_by_id.get(clip.participant_id) or clip.participant_id
+    digest = hashlib.sha1(identity.encode("utf-8")).hexdigest()
+    return "eval" if int(digest[:8], 16) % 5 == 0 else "train"
+
+
+def _manifest_audio_path(clip: Clip) -> str:
+    return f"audio_wav/{clip.clip_id}.wav"
+
+
+def _qwen_asr_row(clip: Clip) -> dict[str, str]:
+    return {
+        "audio": _manifest_audio_path(clip),
+        "text": f"language English<asr_text>{clip.normalized_transcript or clip.transcript}",
+    }
+
+
+def _kws_row(clip: Clip) -> dict[str, object]:
+    return {
+        "audio": _manifest_audio_path(clip),
+        "transcript": clip.normalized_transcript or clip.transcript,
+        "prompt_group": clip.prompt_group,
+        "contains_vigil": clip.contains_vigil,
+        "wake_intent": clip.wake_intent,
+        "is_negative": clip.is_negative,
+    }
 
 
 def create_export_zip(db: Session) -> tuple[Path, str]:
@@ -124,17 +179,25 @@ def create_export_zip(db: Session) -> tuple[Path, str]:
     clip_rows = [model_to_dict(row, CLIP_FIELDS) for row in clips]
     segment_rows = [model_to_dict(row, SEGMENT_FIELDS) for row in segments]
     qc_rows = [model_to_dict(row, QC_FIELDS) for row in clips]
+    participant_email_by_id = {participant.participant_id: participant.user_email for participant in participants}
+    qwen_train_rows: list[dict[str, object]] = []
+    qwen_eval_rows: list[dict[str, object]] = []
+    kws_train_rows: list[dict[str, object]] = []
+    kws_eval_rows: list[dict[str, object]] = []
 
     with ZipFile(zip_path, "w", compression=ZIP_DEFLATED) as archive:
         base = export_dir_name
         archive.writestr(f"{base}/README.md", DATASET_README)
         archive.write(PROMPT_CSV_PATH, f"{base}/prompts/prompts_v0_1.csv")
+        for group in PROMPT_GROUP_EXPORTS:
+            archive.writestr(f"{base}/by_prompt_group/{group}/.gitkeep", "")
         archive.writestr(f"{base}/metadata/accounts.csv", rows_to_csv(account_rows, ACCOUNT_FIELDS))
         archive.writestr(
             f"{base}/metadata/participants.csv",
             rows_to_csv(participant_rows, PARTICIPANT_FIELDS),
         )
         archive.writestr(f"{base}/metadata/sessions.jsonl", rows_to_jsonl(session_rows))
+        archive.writestr(f"{base}/metadata/clips.csv", rows_to_csv(clip_rows, CLIP_FIELDS))
         archive.writestr(f"{base}/metadata/clips.jsonl", rows_to_jsonl(clip_rows))
         archive.writestr(f"{base}/metadata/segments.jsonl", rows_to_jsonl(segment_rows))
         archive.writestr(f"{base}/metadata/qc_report.csv", rows_to_csv(qc_rows, QC_FIELDS))
@@ -147,9 +210,17 @@ def create_export_zip(db: Session) -> tuple[Path, str]:
                 if source.exists():
                     archive.write(source, f"{base}/{relative_path}")
                     if relative_path == clip.raw_audio_path:
-                        archive.write(source, f"{base}/by_prompt/{clip.prompt_id}/raw_audio/{Path(relative_path).name}")
+                        archive.write(source, f"{base}/by_prompt_group/{clip.prompt_group}/raw_audio/{Path(relative_path).name}")
                     if relative_path == clip.processed_wav_path:
-                        archive.write(source, f"{base}/by_prompt/{clip.prompt_id}/processed_wav/{clip.clip_id}.wav")
+                        archive.write(source, f"{base}/by_prompt_group/{clip.prompt_group}/processed_wav/{clip.clip_id}.wav")
+                        archive.write(source, f"{base}/audio_wav/{clip.clip_id}.wav")
+                        split = _split_for_clip(clip, participant_email_by_id)
+                        if split == "eval":
+                            qwen_eval_rows.append(_qwen_asr_row(clip))
+                            kws_eval_rows.append(_kws_row(clip))
+                        else:
+                            qwen_train_rows.append(_qwen_asr_row(clip))
+                            kws_train_rows.append(_kws_row(clip))
 
         for segment in segments:
             source = storage.absolute_path(segment.segment_audio_path)
@@ -157,7 +228,12 @@ def create_export_zip(db: Session) -> tuple[Path, str]:
                 archive.write(source, f"{base}/{segment.segment_audio_path}")
                 archive.write(
                     source,
-                    f"{base}/by_prompt/{segment.prompt_id}/segments/{segment.parent_clip_id}_seg{segment.segment_index:03d}.wav",
+                    f"{base}/legacy_segments/{segment.prompt_id}/{segment.parent_clip_id}_seg{segment.segment_index:03d}.wav",
                 )
+
+        archive.writestr(f"{base}/qwen_asr/train.jsonl", rows_to_jsonl(qwen_train_rows))
+        archive.writestr(f"{base}/qwen_asr/eval.jsonl", rows_to_jsonl(qwen_eval_rows))
+        archive.writestr(f"{base}/keyword_spotting/kws_train.jsonl", rows_to_jsonl(kws_train_rows))
+        archive.writestr(f"{base}/keyword_spotting/kws_eval.jsonl", rows_to_jsonl(kws_eval_rows))
 
     return zip_path, file_name

@@ -17,7 +17,8 @@ const EMPTY_STATS: RecordingStats = {
   uploadedClips: 0,
   failedUploads: 0,
   qcWarnings: 0,
-  generatedSegments: 0
+  positiveRecordings: 0,
+  negativeRecordings: 0
 };
 
 const EMPTY_RECORDING_PROGRESS: RecordingProgressState = {

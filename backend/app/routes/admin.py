@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..config import settings
@@ -10,9 +10,46 @@ from ..schemas import AccountSessionOut, AdminClientOut, AdminClipOut, DeleteCli
 from ..services.deletion import delete_clip_and_files, delete_generated_exports, delete_session_and_files
 from ..services.export import create_export_zip
 from ..services.email_auth import normalize_email
+from ..services.prompt_groups import contains_exact_vigil
+from ..services.qc import flags_from_json, flags_to_json
 from ..services.storage import get_storage_backend
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
+
+
+def _is_positive_clip(clip: Clip) -> bool:
+    return bool(clip.contains_vigil and clip.wake_intent and not clip.is_negative)
+
+
+def _clip_effective_flags(clip: Clip) -> list[str]:
+    flags = set(flags_from_json(clip.auto_qc_flags))
+    if not clip.normalized_transcript:
+        flags.add("missing_transcript")
+    if clip.prompt_group in {"P2_phrase_plus_vigil", "P3_vigil_plus_phrase"} and not contains_exact_vigil(
+        clip.normalized_transcript
+    ):
+        flags.add("transcript_missing_vigil")
+    if clip.prompt_group == "P4_negative" and contains_exact_vigil(clip.normalized_transcript):
+        flags.add("negative_transcript_contains_vigil")
+
+    storage = get_storage_backend()
+    relative_path = clip.processed_wav_path or clip.raw_audio_path
+    if not relative_path or not storage.absolute_path(relative_path).exists():
+        flags.add("missing_audio_file")
+    return sorted(flags)
+
+
+def _clip_effective_status(clip: Clip) -> str:
+    flags = _clip_effective_flags(clip)
+    if clip.auto_qc_status == "auto_rejected":
+        return "auto_rejected"
+    if flags or clip.auto_qc_status == "flagged_for_review":
+        return "flagged_for_review"
+    return "auto_accepted"
+
+
+def _clip_flag_string(clip: Clip) -> str:
+    return flags_to_json(_clip_effective_flags(clip))
 
 
 @router.get("/summary", response_model=SummaryOut)
@@ -64,6 +101,24 @@ def admin_summary(db: Session = Depends(get_db)) -> SummaryOut:
         .join(UserAccount, Participant.user_email == UserAccount.email)
         .where(Clip.auto_qc_status == "auto_rejected")
     ).scalar_one()
+    clips = (
+        db.execute(
+            select(Clip)
+            .join(Participant, Clip.participant_id == Participant.participant_id)
+            .join(UserAccount, Participant.user_email == UserAccount.email)
+        )
+        .scalars()
+        .all()
+    )
+    prompt_group_counts: dict[str, int] = {
+        "P1_vigil_only": 0,
+        "P2_phrase_plus_vigil": 0,
+        "P3_vigil_plus_phrase": 0,
+        "P4_negative": 0,
+        "legacy": 0,
+    }
+    for clip in clips:
+        prompt_group_counts[clip.prompt_group or "legacy"] = prompt_group_counts.get(clip.prompt_group or "legacy", 0) + 1
 
     return SummaryOut(
         batch_id=settings.default_batch_id,
@@ -72,24 +127,23 @@ def admin_summary(db: Session = Depends(get_db)) -> SummaryOut:
         submitted_sessions=submitted_sessions,
         total_clips=total_clips,
         total_segments=total_segments,
+        positive_clips=sum(1 for clip in clips if _is_positive_clip(clip)),
+        negative_clips=sum(1 for clip in clips if clip.is_negative),
         auto_accepted=auto_accepted,
         flagged=flagged,
         rejected=rejected,
+        prompt_group_counts=prompt_group_counts,
     )
 
 
 @router.get("/flagged", response_model=list[FlaggedClipOut])
-def flagged_clips(db: Session = Depends(get_db)) -> list[Clip]:
-    return (
-        db.execute(
-            select(Clip)
-            .where(or_(Clip.auto_qc_status == "flagged_for_review", Clip.auto_qc_status == "auto_rejected"))
-            .order_by(Clip.created_at_utc.desc())
-            .limit(100)
-        )
-        .scalars()
-        .all()
-    )
+def flagged_clips(db: Session = Depends(get_db)) -> list[FlaggedClipOut]:
+    clips = db.execute(select(Clip).order_by(Clip.created_at_utc.desc()).limit(500)).scalars().all()
+    return [
+        flagged_clip_out(clip)
+        for clip in clips
+        if _clip_effective_status(clip) in {"flagged_for_review", "auto_rejected"}
+    ][:100]
 
 
 @router.get("/clients", response_model=list[AdminClientOut])
@@ -117,6 +171,29 @@ def admin_clients(db: Session = Depends(get_db)) -> list[AdminClientOut]:
             if session_ids
             else 0
         )
+        positive_clip_count = (
+            db.execute(
+                select(func.count())
+                .select_from(Clip)
+                .where(
+                    Clip.session_id.in_(session_ids),
+                    Clip.contains_vigil.is_(True),
+                    Clip.wake_intent.is_(True),
+                    Clip.is_negative.is_(False),
+                )
+            ).scalar_one()
+            if session_ids
+            else 0
+        )
+        negative_clip_count = (
+            db.execute(
+                select(func.count())
+                .select_from(Clip)
+                .where(Clip.session_id.in_(session_ids), Clip.is_negative.is_(True))
+            ).scalar_one()
+            if session_ids
+            else 0
+        )
         submitted_session_count = (
             db.execute(
                 select(func.count())
@@ -136,10 +213,36 @@ def admin_clients(db: Session = Depends(get_db)) -> list[AdminClientOut]:
                 session_count=len(session_ids),
                 submitted_session_count=submitted_session_count,
                 clip_count=clip_count,
+                positive_clip_count=positive_clip_count,
+                negative_clip_count=negative_clip_count,
                 segment_count=segment_count,
             )
         )
     return rows
+
+
+def flagged_clip_out(clip: Clip) -> FlaggedClipOut:
+    return FlaggedClipOut(
+        clip_id=clip.clip_id,
+        participant_id=clip.participant_id,
+        session_id=clip.session_id,
+        prompt_id=clip.prompt_id,
+        prompt_group=clip.prompt_group,
+        prompt_title=clip.prompt_title,
+        transcript=clip.transcript,
+        normalized_transcript=clip.normalized_transcript,
+        contains_vigil=clip.contains_vigil,
+        wake_intent=clip.wake_intent,
+        is_negative=clip.is_negative,
+        clip_type=clip.clip_type,
+        duration_sec=clip.duration_sec,
+        auto_qc_status=_clip_effective_status(clip),
+        auto_qc_flags=_clip_flag_string(clip),
+        segmentation_status=clip.segmentation_status,
+        detected_segment_count=clip.detected_segment_count,
+        expected_segment_count=clip.expected_segment_count,
+        created_at_utc=clip.created_at_utc,
+    )
 
 
 def admin_clip_out(clip: Clip, user_email: str | None) -> AdminClipOut:
@@ -149,13 +252,20 @@ def admin_clip_out(clip: Clip, user_email: str | None) -> AdminClipOut:
         user_email=user_email,
         session_id=clip.session_id,
         prompt_id=clip.prompt_id,
+        prompt_group=clip.prompt_group,
+        prompt_title=clip.prompt_title,
+        transcript=clip.transcript,
+        normalized_transcript=clip.normalized_transcript,
+        contains_vigil=clip.contains_vigil,
+        wake_intent=clip.wake_intent,
+        is_negative=clip.is_negative,
         clip_type=clip.clip_type,
         raw_audio_path=clip.raw_audio_path,
         processed_wav_path=clip.processed_wav_path,
         duration_sec=clip.duration_sec,
         file_size_bytes=clip.file_size_bytes,
-        auto_qc_status=clip.auto_qc_status,
-        auto_qc_flags=clip.auto_qc_flags,
+        auto_qc_status=_clip_effective_status(clip),
+        auto_qc_flags=_clip_flag_string(clip),
         segmentation_status=clip.segmentation_status,
         detected_segment_count=clip.detected_segment_count,
         expected_segment_count=clip.expected_segment_count,
@@ -195,6 +305,19 @@ def admin_client_sessions(email: str, db: Session = Depends(get_db)) -> list[Acc
         clip_count = db.execute(
             select(func.count()).select_from(Clip).where(Clip.session_id == session.session_id)
         ).scalar_one()
+        positive_clip_count = db.execute(
+            select(func.count())
+            .select_from(Clip)
+            .where(
+                Clip.session_id == session.session_id,
+                Clip.contains_vigil.is_(True),
+                Clip.wake_intent.is_(True),
+                Clip.is_negative.is_(False),
+            )
+        ).scalar_one()
+        negative_clip_count = db.execute(
+            select(func.count()).select_from(Clip).where(Clip.session_id == session.session_id, Clip.is_negative.is_(True))
+        ).scalar_one()
         output.append(
             AccountSessionOut(
                 session_id=session.session_id,
@@ -203,6 +326,8 @@ def admin_client_sessions(email: str, db: Session = Depends(get_db)) -> list[Acc
                 created_at_utc=session.created_at_utc,
                 submitted_at_utc=session.submitted_at_utc,
                 clip_count=clip_count,
+                positive_clip_count=positive_clip_count,
+                negative_clip_count=negative_clip_count,
             )
         )
     return output

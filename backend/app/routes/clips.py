@@ -6,6 +6,7 @@ from ..models import Clip, Participant, Prompt, RecordingSession, Segment
 from ..schemas import ClipUploadOut
 from ..services.audio_processing import convert_to_wav, get_wav_info, load_wav_float
 from ..services.ids import next_prefixed_id
+from ..services.prompt_groups import derive_prompt_group_info, legacy_prompt_group_info
 from ..services.qc import flags_from_json, flags_to_json, run_audio_qc
 from ..services.segmentation import segment_repeated_prompt
 from ..services.storage import get_storage_backend, infer_extension
@@ -14,14 +15,12 @@ router = APIRouter(prefix="/api/clips", tags=["clips"])
 
 
 def _validate_upload_context(
-    db: Session, participant_id: str, session_id: str, prompt_id: str, clip_type: str
-) -> Prompt:
+    db: Session, participant_id: str, session_id: str, clip_type: str
+) -> tuple[Participant, RecordingSession]:
     if not participant_id:
         raise HTTPException(status_code=400, detail="missing participant_id")
     if not session_id:
         raise HTTPException(status_code=400, detail="missing session_id")
-    if not prompt_id:
-        raise HTTPException(status_code=400, detail="missing prompt_id")
     if clip_type not in {"normal", "calibration"}:
         raise HTTPException(status_code=400, detail="clip_type must be normal or calibration")
 
@@ -33,10 +32,24 @@ def _validate_upload_context(
     if not session or session.participant_id != participant_id:
         raise HTTPException(status_code=404, detail="session_id not found for participant")
 
-    prompt = db.get(Prompt, "CALIBRATION" if clip_type == "calibration" else prompt_id)
-    if not prompt:
-        raise HTTPException(status_code=404, detail="prompt_id not found")
-    return prompt
+    return participant, session
+
+
+def _prompt_for_new_group(group_info) -> Prompt:
+    return Prompt(
+        prompt_id=group_info.prompt_group,
+        instruction_text="Prompt group recording",
+        target_phrase=group_info.transcript,
+        display_text=group_info.prompt_title,
+        label_type="negative" if group_info.is_negative else "positive",
+        recording_mode="single",
+        target_repetition_count=1,
+        contains_vigil=group_info.contains_vigil,
+        wake_intent=group_info.wake_intent,
+        segmentation_required=False,
+        expected_transcript=group_info.normalized_transcript,
+        prompt_version="prompt_groups_v1",
+    )
 
 
 @router.post("", response_model=ClipUploadOut)
@@ -44,11 +57,32 @@ async def upload_clip(
     audio: UploadFile = File(...),
     participant_id: str = Form(...),
     session_id: str = Form(...),
-    prompt_id: str = Form(...),
+    prompt_id: str | None = Form(None),
+    prompt_group: str | None = Form(None),
+    transcript: str | None = Form(None),
     clip_type: str = Form("normal"),
     db: Session = Depends(get_db),
 ) -> ClipUploadOut:
-    prompt = _validate_upload_context(db, participant_id, session_id, prompt_id, clip_type)
+    _validate_upload_context(db, participant_id, session_id, clip_type)
+    active_prompt_id = (prompt_id or "").strip()
+
+    if clip_type == "calibration":
+        prompt = db.get(Prompt, "CALIBRATION")
+        if not prompt:
+            raise HTTPException(status_code=404, detail="prompt_id not found")
+        group_info = legacy_prompt_group_info(prompt.prompt_id, prompt.expected_transcript)
+    elif prompt_group:
+        group_info = derive_prompt_group_info(prompt_group, transcript)
+        active_prompt_id = group_info.prompt_group
+        prompt = _prompt_for_new_group(group_info)
+    else:
+        if not active_prompt_id:
+            raise HTTPException(status_code=400, detail="missing prompt_group")
+        prompt = db.get(Prompt, active_prompt_id)
+        if not prompt:
+            raise HTTPException(status_code=404, detail="prompt_id not found")
+        group_info = legacy_prompt_group_info(prompt.prompt_id, prompt.expected_transcript)
+
     storage = get_storage_backend()
     clip_id = next_prefixed_id(db, Clip, "clip_id", "C", 6)
 
@@ -69,7 +103,14 @@ async def upload_clip(
             clip_id=clip_id,
             participant_id=participant_id,
             session_id=session_id,
-            prompt_id=prompt.prompt_id,
+            prompt_id=active_prompt_id or prompt.prompt_id,
+            prompt_group=group_info.prompt_group,
+            prompt_title=group_info.prompt_title,
+            transcript=group_info.transcript,
+            normalized_transcript=group_info.normalized_transcript,
+            contains_vigil=group_info.contains_vigil,
+            wake_intent=group_info.wake_intent,
+            is_negative=group_info.is_negative,
             clip_type=clip_type,
             raw_audio_path=relative_raw_path,
             processed_wav_path=None,
@@ -90,6 +131,12 @@ async def upload_clip(
         return ClipUploadOut(
             status="uploaded",
             clip_id=clip_id,
+            prompt_group=clip.prompt_group,
+            transcript=clip.transcript,
+            normalized_transcript=clip.normalized_transcript,
+            contains_vigil=clip.contains_vigil,
+            wake_intent=clip.wake_intent,
+            is_negative=clip.is_negative,
             auto_qc_status=clip.auto_qc_status,
             auto_qc_flags=flags_from_json(clip.auto_qc_flags),
             segmentation_status=clip.segmentation_status,
@@ -137,7 +184,14 @@ async def upload_clip(
         clip_id=clip_id,
         participant_id=participant_id,
         session_id=session_id,
-        prompt_id=prompt.prompt_id,
+        prompt_id=active_prompt_id or prompt.prompt_id,
+        prompt_group=group_info.prompt_group,
+        prompt_title=group_info.prompt_title,
+        transcript=group_info.transcript,
+        normalized_transcript=group_info.normalized_transcript,
+        contains_vigil=group_info.contains_vigil,
+        wake_intent=group_info.wake_intent,
+        is_negative=group_info.is_negative,
         clip_type=clip_type,
         raw_audio_path=relative_raw_path,
         processed_wav_path=storage.relative(processed_path),
@@ -164,7 +218,7 @@ async def upload_clip(
             parent_clip_id=clip_id,
             participant_id=participant_id,
             session_id=session_id,
-            prompt_id=prompt.prompt_id,
+            prompt_id=active_prompt_id or prompt.prompt_id,
             segment_index=segment_data["segment_index"],
             segment_audio_path=storage.relative(segment_data["path"]),
             start_time_sec=segment_data["start_time_sec"],
@@ -173,9 +227,9 @@ async def upload_clip(
             auto_qc_status="flagged_for_review" if segment_flags_for_row else "auto_accepted",
             auto_qc_flags=flags_to_json(segment_flags_for_row),
             label_type=prompt.label_type,
-            contains_vigil=prompt.contains_vigil,
-            wake_intent=prompt.wake_intent,
-            expected_transcript=prompt.expected_transcript,
+            contains_vigil=group_info.contains_vigil,
+            wake_intent=group_info.wake_intent,
+            expected_transcript=group_info.normalized_transcript,
         )
         db.add(segment)
 
@@ -183,6 +237,12 @@ async def upload_clip(
     return ClipUploadOut(
         status="uploaded",
         clip_id=clip_id,
+        prompt_group=clip.prompt_group,
+        transcript=clip.transcript,
+        normalized_transcript=clip.normalized_transcript,
+        contains_vigil=clip.contains_vigil,
+        wake_intent=clip.wake_intent,
+        is_negative=clip.is_negative,
         auto_qc_status=auto_qc_status,
         auto_qc_flags=combined_flags,
         segmentation_status=segmentation_status,

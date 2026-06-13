@@ -33,13 +33,15 @@ export function SummaryPage({
     const qcWarnings = progress.uploadedRows.filter(
       (row) => row.auto_qc_status && row.auto_qc_status !== "auto_accepted"
     ).length;
-    const generatedSegments = progress.uploadedRows.reduce((sum, row) => sum + row.detected_segment_count, 0);
+    const positiveRecordings = progress.uploadedRows.filter((row) => !row.is_negative).length;
+    const negativeRecordings = progress.uploadedRows.filter((row) => row.is_negative).length;
     return {
       ...stats,
       uploadedClips: progress.uploadedRows.length,
       failedUploads: progress.failedUploads,
       qcWarnings,
-      generatedSegments
+      positiveRecordings,
+      negativeRecordings
     };
   }, [progress.failedUploads, progress.uploadedRows, stats]);
 
@@ -73,7 +75,7 @@ export function SummaryPage({
       let nextRows = [...progress.uploadedRows];
       for (const row of progress.uploadedRows) {
         if (row.upload_status === "uploaded") continue;
-        setStatusText(`Uploading ${row.target_phrase}, take ${row.take_number}...`);
+        setStatusText(`Uploading ${row.transcript}, take ${row.take_number}...`);
         nextRows = nextRows.map((item) =>
           item.row_id === row.row_id ? { ...item, upload_status: "uploading" } : item
         );
@@ -84,6 +86,8 @@ export function SummaryPage({
           participant_id: activeParticipantId,
           session_id: activeSessionId,
           prompt_id: row.prompt_id,
+          prompt_group: row.prompt_group,
+          transcript: row.transcript,
           clip_type: "normal"
         });
 
@@ -92,6 +96,12 @@ export function SummaryPage({
             ? {
                 ...item,
                 clip_id: result.clip_id,
+                prompt_group: result.prompt_group as typeof item.prompt_group,
+                transcript: result.transcript,
+                normalized_transcript: result.normalized_transcript,
+                contains_vigil: result.contains_vigil,
+                wake_intent: result.wake_intent,
+                is_negative: result.is_negative,
                 upload_status: "uploaded",
                 auto_qc_status: result.auto_qc_status,
                 auto_qc_flags: result.auto_qc_flags,
@@ -129,11 +139,11 @@ export function SummaryPage({
         <p className="eyebrow">Session Summary</p>
         <h1>{submitted ? "Thank you. Your session has been submitted." : "Review Session"}</h1>
         <div className="summary-grid">
-          <div><span>Completed prompts</span><strong>{liveStats.completedPrompts}</strong></div>
-          <div><span>Accepted clips</span><strong>{liveStats.uploadedClips}</strong></div>
+          <div><span>Total recordings</span><strong>{liveStats.uploadedClips}</strong></div>
+          <div><span>Positive recordings</span><strong>{liveStats.positiveRecordings}</strong></div>
+          <div><span>Negative recordings</span><strong>{liveStats.negativeRecordings}</strong></div>
           <div><span>Failed uploads</span><strong>{liveStats.failedUploads}</strong></div>
           <div><span>Auto QC warnings</span><strong>{liveStats.qcWarnings}</strong></div>
-          <div><span>Generated segments</span><strong>{liveStats.generatedSegments}</strong></div>
         </div>
         <RecordingRows rows={progress.uploadedRows} />
         {statusText && <p className="success-text">{statusText}</p>}
@@ -165,25 +175,25 @@ function RecordingRows({ rows }: { rows: UploadedRecordingRow[] }) {
         <table>
           <thead>
             <tr>
-              <th>Phrase</th>
+              <th>Transcript</th>
+              <th>Prompt Group</th>
               <th>Take</th>
               <th>Playback</th>
               <th>Upload</th>
               <th>QC</th>
               <th>Flags</th>
-              <th>Segments</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.row_id}>
-                <td>{row.target_phrase}</td>
+                <td>{row.transcript}</td>
+                <td>{row.prompt_group}</td>
                 <td>{row.take_number}</td>
                 <td><audio className="table-audio" controls src={row.playback_url} /></td>
                 <td>{row.clip_id ?? row.upload_status}</td>
                 <td>{row.auto_qc_status ?? "Pending final upload"}</td>
                 <td>{row.auto_qc_flags.length > 0 ? row.auto_qc_flags.join(", ") : "None"}</td>
-                <td>{row.detected_segment_count}</td>
               </tr>
             ))}
           </tbody>

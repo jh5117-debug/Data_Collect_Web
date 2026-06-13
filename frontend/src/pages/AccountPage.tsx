@@ -84,13 +84,13 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
                 <thead>
                   <tr>
                     <th>Clip</th>
-                    <th>Prompt</th>
-                    <th>Playback</th>
+                    <th>Prompt Group</th>
+                    <th>Transcript</th>
                     <th>Status</th>
-                    <th>Flags</th>
                     <th>Duration</th>
                     <th>Size</th>
                     <th>Created</th>
+                    <th>Playback</th>
                     <th>Delete</th>
                   </tr>
                 </thead>
@@ -103,13 +103,13 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
                   {clips.map((clip) => (
                     <tr key={clip.clip_id}>
                       <td>{clip.clip_id}</td>
-                      <td>{clip.prompt_id}</td>
-                      <td><audio className="table-audio" controls src={getAccountClipAudioUrl(email, clip.clip_id, authToken)} /></td>
+                      <td>{clip.prompt_group}</td>
+                      <td>{clip.transcript}</td>
                       <td>{clip.auto_qc_status}</td>
-                      <td>{clip.auto_qc_flags}</td>
                       <td>{clip.duration_sec?.toFixed(2) ?? "n/a"}s</td>
                       <td>{Math.round(clip.file_size_bytes / 1024)} KB</td>
                       <td>{new Date(clip.created_at_utc).toLocaleString()}</td>
+                      <td><audio className="table-audio" controls src={getAccountClipAudioUrl(email, clip.clip_id, authToken)} /></td>
                       <td>
                         <button className="button danger icon-button" type="button" onClick={() => handleDeleteClip(clip.clip_id)}>
                           <Trash2 size={16} aria-hidden="true" />
@@ -154,13 +154,15 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
                   <th>Session</th>
                   <th>Status</th>
                   <th>Clips</th>
+                  <th>Positive</th>
+                  <th>Negative</th>
                   <th>Submitted</th>
                 </tr>
               </thead>
               <tbody>
                 {sessions.length === 0 && (
                   <tr>
-                    <td colSpan={5}>No submitted sessions yet.</td>
+                    <td colSpan={7}>No submitted sessions yet.</td>
                   </tr>
                 )}
                 {sessions.map((session) => (
@@ -169,6 +171,8 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
                     <td>{sessionDisplayIds.get(session.session_id) ?? session.session_id}</td>
                     <td>{session.status}</td>
                     <td>{session.clip_count}</td>
+                    <td>{session.positive_clip_count}</td>
+                    <td>{session.negative_clip_count}</td>
                     <td>{session.submitted_at_utc ? new Date(session.submitted_at_utc).toLocaleString() : "Not submitted"}</td>
                   </tr>
                 ))}

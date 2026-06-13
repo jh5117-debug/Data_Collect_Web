@@ -67,14 +67,18 @@ export async function uploadClip(payload: {
   blob: Blob;
   participant_id: string;
   session_id: string;
-  prompt_id: string;
+  prompt_id?: string;
+  prompt_group?: string;
+  transcript?: string;
   clip_type: "normal" | "calibration";
 }): Promise<UploadResponse> {
   const formData = new FormData();
   formData.append("audio", payload.blob, filenameForBlob(payload.blob));
   formData.append("participant_id", payload.participant_id);
   formData.append("session_id", payload.session_id);
-  formData.append("prompt_id", payload.prompt_id);
+  if (payload.prompt_id) formData.append("prompt_id", payload.prompt_id);
+  if (payload.prompt_group) formData.append("prompt_group", payload.prompt_group);
+  if (payload.transcript) formData.append("transcript", payload.transcript);
   formData.append("clip_type", payload.clip_type);
 
   return request("/api/clips", {

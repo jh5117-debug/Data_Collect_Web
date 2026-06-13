@@ -16,6 +16,8 @@ import {
 import { BackButton } from "../components/BackButton";
 import type { AccountSession, AdminClient, AdminClip, AdminSummary, ExportResponse, FlaggedClip } from "../types";
 
+type ClipFilter = "all" | "positive" | "negative" | "P1" | "P2" | "P3" | "P4" | "flagged";
+
 export function AdminPage() {
   const [summary, setSummary] = useState<AdminSummary | null>(null);
   const [flagged, setFlagged] = useState<FlaggedClip[]>([]);
@@ -24,6 +26,7 @@ export function AdminPage() {
   const [clientSessions, setClientSessions] = useState<AccountSession[]>([]);
   const [selectedSession, setSelectedSession] = useState<AccountSession | null>(null);
   const [sessionClips, setSessionClips] = useState<AdminClip[]>([]);
+  const [clipFilter, setClipFilter] = useState<ClipFilter>("all");
   const [exportResult, setExportResult] = useState<ExportResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +91,7 @@ export function AdminPage() {
 
   async function openSession(session: AccountSession) {
     setSelectedSession(session);
+    setClipFilter("all");
     setLoading(true);
     setError(null);
     try {
@@ -186,6 +190,7 @@ export function AdminPage() {
   }, []);
 
   if (selectedClient && selectedSession) {
+    const filteredClips = filterAdminClips(sessionClips, clipFilter);
     return (
       <main className="shell admin-shell">
         <section className="admin-header">
@@ -220,11 +225,14 @@ export function AdminPage() {
         <section className="metric-grid">
           <div><span>Status</span><strong>{selectedSession.status}</strong></div>
           <div><span>Clips</span><strong>{sessionClips.length}</strong></div>
+          <div><span>Positive</span><strong>{selectedSession.positive_clip_count}</strong></div>
+          <div><span>Negative</span><strong>{selectedSession.negative_clip_count}</strong></div>
           <div><span>Submitted</span><strong>{selectedSession.submitted_at_utc ? "Yes" : "No"}</strong></div>
           <div><span>Batch</span><strong>{selectedSession.batch_id}</strong></div>
         </section>
 
-        <ClipsTable clips={sessionClips} onDeleteClip={handleDeleteClip} />
+        <ClipFilters active={clipFilter} onChange={setClipFilter} />
+        <ClipsTable clips={filteredClips} totalCount={sessionClips.length} onDeleteClip={handleDeleteClip} />
       </main>
     );
   }
@@ -272,7 +280,8 @@ export function AdminPage() {
           <div><span>Sessions</span><strong>{clientSessions.length}</strong></div>
           <div><span>Submitted</span><strong>{submittedCount}</strong></div>
           <div><span>Clips</span><strong>{clipCount}</strong></div>
-          <div><span>Segments</span><strong>{selectedClient.segment_count}</strong></div>
+          <div><span>Positive</span><strong>{selectedClient.positive_clip_count}</strong></div>
+          <div><span>Negative</span><strong>{selectedClient.negative_clip_count}</strong></div>
           <div><span>Last login</span><strong>{selectedClient.last_login_at_utc ? new Date(selectedClient.last_login_at_utc).toLocaleString() : "Never"}</strong></div>
         </section>
 
@@ -288,15 +297,18 @@ export function AdminPage() {
                   <th>Batch</th>
                   <th>Session</th>
                   <th>Status</th>
-                  <th>Clips</th>
+                  <th>Total clips</th>
+                  <th>Positive clips</th>
+                  <th>Negative clips</th>
                   <th>Created</th>
                   <th>Submitted</th>
+                  <th>Open</th>
                   <th>Delete</th>
                 </tr>
               </thead>
               <tbody>
                 {clientSessions.length === 0 && (
-                  <tr><td colSpan={7}>No sessions for this account.</td></tr>
+                  <tr><td colSpan={10}>No sessions for this account.</td></tr>
                 )}
                 {clientSessions.map((session) => (
                   <tr key={session.session_id} className="clickable-row" onClick={() => openSession(session)}>
@@ -304,8 +316,22 @@ export function AdminPage() {
                     <td>{session.session_id}</td>
                     <td>{session.status}</td>
                     <td>{session.clip_count}</td>
+                    <td>{session.positive_clip_count}</td>
+                    <td>{session.negative_clip_count}</td>
                     <td>{new Date(session.created_at_utc).toLocaleString()}</td>
                     <td>{session.submitted_at_utc ? new Date(session.submitted_at_utc).toLocaleString() : "Not submitted"}</td>
+                    <td>
+                      <button
+                        className="button secondary icon-button"
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          void openSession(session);
+                        }}
+                      >
+                        Open
+                      </button>
+                    </td>
                     <td>
                       <button
                         className="button danger icon-button"
@@ -365,11 +391,29 @@ export function AdminPage() {
           <div><span>Accounts</span><strong>{summary.participants}</strong></div>
           <div><span>Sessions</span><strong>{summary.sessions}</strong></div>
           <div><span>Submitted</span><strong>{summary.submitted_sessions}</strong></div>
-          <div><span>Raw clips</span><strong>{summary.total_clips}</strong></div>
-          <div><span>Segments</span><strong>{summary.total_segments}</strong></div>
+          <div><span>Total clips</span><strong>{summary.total_clips}</strong></div>
+          <div><span>Positive clips</span><strong>{summary.positive_clips}</strong></div>
+          <div><span>Negative clips</span><strong>{summary.negative_clips}</strong></div>
           <div><span>Auto accepted</span><strong>{summary.auto_accepted}</strong></div>
           <div><span>Flagged</span><strong>{summary.flagged}</strong></div>
           <div><span>Rejected</span><strong>{summary.rejected}</strong></div>
+        </section>
+      )}
+
+      {summary && (
+        <section className="table-panel">
+          <div className="section-title">
+            <h2>Prompt Group Summary</h2>
+            <span>{summary.total_clips} clips</span>
+          </div>
+          <div className="prompt-summary-grid">
+            {["P1_vigil_only", "P2_phrase_plus_vigil", "P3_vigil_plus_phrase", "P4_negative", "legacy"].map((group) => (
+              <div key={group}>
+                <span>{group}</span>
+                <strong>{summary.prompt_group_counts[group] ?? 0}</strong>
+              </div>
+            ))}
+          </div>
         </section>
       )}
 
@@ -393,14 +437,16 @@ export function AdminPage() {
                 <th>Sessions</th>
                 <th>Submitted</th>
                 <th>Clips</th>
-                <th>Segments</th>
+                <th>Positive</th>
+                <th>Negative</th>
                 <th>Last login</th>
+                <th>Open</th>
               </tr>
             </thead>
             <tbody>
               {clients.length === 0 && (
                 <tr>
-                  <td colSpan={7}>No accounts yet.</td>
+                  <td colSpan={9}>No accounts yet.</td>
                 </tr>
               )}
               {clients.map((client) => (
@@ -410,8 +456,21 @@ export function AdminPage() {
                   <td>{client.session_count}</td>
                   <td>{client.submitted_session_count}</td>
                   <td>{client.clip_count}</td>
-                  <td>{client.segment_count}</td>
+                  <td>{client.positive_clip_count}</td>
+                  <td>{client.negative_clip_count}</td>
                   <td>{client.last_login_at_utc ? new Date(client.last_login_at_utc).toLocaleString() : "Never"}</td>
+                  <td>
+                    <button
+                      className="button secondary icon-button"
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        void openClient(client);
+                      }}
+                    >
+                      Open
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -429,10 +488,10 @@ export function AdminPage() {
             <thead>
               <tr>
                 <th>Clip</th>
-                <th>Prompt</th>
+                <th>Prompt Group</th>
+                <th>Transcript</th>
                 <th>Status</th>
                 <th>Flags</th>
-                <th>Segments</th>
                 <th>Created</th>
               </tr>
             </thead>
@@ -445,10 +504,10 @@ export function AdminPage() {
               {flagged.map((clip) => (
                 <tr key={clip.clip_id}>
                   <td>{clip.clip_id}</td>
-                  <td>{clip.prompt_id}</td>
+                  <td>{clip.prompt_group}</td>
+                  <td>{clip.transcript}</td>
                   <td>{clip.auto_qc_status}</td>
                   <td>{clip.auto_qc_flags}</td>
-                  <td>{clip.detected_segment_count} / {clip.expected_segment_count}</td>
                   <td>{new Date(clip.created_at_utc).toLocaleString()}</td>
                 </tr>
               ))}
@@ -460,48 +519,101 @@ export function AdminPage() {
   );
 }
 
+function filterAdminClips(clips: AdminClip[], filter: ClipFilter): AdminClip[] {
+  if (filter === "positive") return clips.filter((clip) => clip.wake_intent && !clip.is_negative);
+  if (filter === "negative") return clips.filter((clip) => clip.is_negative);
+  if (filter === "P1") return clips.filter((clip) => clip.prompt_group === "P1_vigil_only");
+  if (filter === "P2") return clips.filter((clip) => clip.prompt_group === "P2_phrase_plus_vigil");
+  if (filter === "P3") return clips.filter((clip) => clip.prompt_group === "P3_vigil_plus_phrase");
+  if (filter === "P4") return clips.filter((clip) => clip.prompt_group === "P4_negative");
+  if (filter === "flagged") return clips.filter((clip) => clip.auto_qc_status !== "auto_accepted");
+  return clips;
+}
+
+function ClipFilters({
+  active,
+  onChange
+}: {
+  active: ClipFilter;
+  onChange: (filter: ClipFilter) => void;
+}) {
+  const filters: Array<{ value: ClipFilter; label: string }> = [
+    { value: "all", label: "All" },
+    { value: "positive", label: "Positive only" },
+    { value: "negative", label: "Negative only" },
+    { value: "P1", label: "P1" },
+    { value: "P2", label: "P2" },
+    { value: "P3", label: "P3" },
+    { value: "P4", label: "P4" },
+    { value: "flagged", label: "Flagged only" }
+  ];
+
+  return (
+    <section className="filter-bar" aria-label="Admin clip filters">
+      {filters.map((filter) => (
+        <button
+          key={filter.value}
+          className={`chip ${active === filter.value ? "active-chip" : ""}`}
+          type="button"
+          onClick={() => onChange(filter.value)}
+        >
+          {filter.label}
+        </button>
+      ))}
+    </section>
+  );
+}
+
 function ClipsTable({
   clips,
+  totalCount,
   onDeleteClip
 }: {
   clips: AdminClip[];
+  totalCount: number;
   onDeleteClip: (clipId: string) => void;
 }) {
   return (
     <section className="table-panel">
       <div className="section-title">
         <h2>Clips</h2>
-        <span>{clips.length} clips</span>
+        <span>{clips.length} of {totalCount} clips</span>
       </div>
       <div className="table-scroll">
         <table>
           <thead>
             <tr>
               <th>Clip</th>
-              <th>Prompt</th>
-              <th>Playback</th>
+              <th>Prompt Group</th>
+              <th>Transcript</th>
+              <th>Contains Vigil</th>
+              <th>Wake Intent</th>
               <th>Status</th>
               <th>Flags</th>
               <th>Duration</th>
               <th>Size</th>
               <th>Created</th>
+              <th>Playback</th>
               <th>Delete</th>
             </tr>
           </thead>
           <tbody>
             {clips.length === 0 && (
-              <tr><td colSpan={9}>No clips in this session.</td></tr>
+              <tr><td colSpan={12}>No clips in this session.</td></tr>
             )}
             {clips.map((clip) => (
               <tr key={clip.clip_id}>
                 <td>{clip.clip_id}</td>
-                <td>{clip.prompt_id}</td>
-                <td><audio className="table-audio" controls src={getAdminClipAudioUrl(clip.clip_id)} /></td>
+                <td>{clip.prompt_group}</td>
+                <td>{clip.transcript}</td>
+                <td>{clip.contains_vigil ? "Yes" : "No"}</td>
+                <td>{clip.wake_intent ? "Yes" : "No"}</td>
                 <td>{clip.auto_qc_status}</td>
                 <td>{clip.auto_qc_flags}</td>
                 <td>{clip.duration_sec?.toFixed(2) ?? "n/a"}s</td>
                 <td>{Math.round(clip.file_size_bytes / 1024)} KB</td>
                 <td>{new Date(clip.created_at_utc).toLocaleString()}</td>
+                <td><audio className="table-audio" controls src={getAdminClipAudioUrl(clip.clip_id)} /></td>
                 <td>
                   <button className="button danger icon-button" type="button" onClick={() => onDeleteClip(clip.clip_id)}>
                     <Trash2 size={16} aria-hidden="true" />

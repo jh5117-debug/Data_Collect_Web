@@ -42,6 +42,12 @@ class PromptOut(BaseModel):
 class ClipUploadOut(BaseModel):
     status: str
     clip_id: str
+    prompt_group: str
+    transcript: str
+    normalized_transcript: str
+    contains_vigil: bool
+    wake_intent: bool
+    is_negative: bool
     auto_qc_status: str
     auto_qc_flags: list[str]
     segmentation_status: str
@@ -55,9 +61,12 @@ class SummaryOut(BaseModel):
     submitted_sessions: int
     total_clips: int
     total_segments: int
+    positive_clips: int
+    negative_clips: int
     auto_accepted: int
     flagged: int
     rejected: int
+    prompt_group_counts: dict[str, int]
 
 
 class FlaggedClipOut(BaseModel):
@@ -67,6 +76,13 @@ class FlaggedClipOut(BaseModel):
     participant_id: str
     session_id: str
     prompt_id: str
+    prompt_group: str
+    prompt_title: str
+    transcript: str
+    normalized_transcript: str
+    contains_vigil: bool
+    wake_intent: bool
+    is_negative: bool
     clip_type: str
     duration_sec: float | None
     auto_qc_status: str
@@ -86,6 +102,8 @@ class AdminClientOut(BaseModel):
     session_count: int
     submitted_session_count: int
     clip_count: int
+    positive_clip_count: int
+    negative_clip_count: int
     segment_count: int
 
 
@@ -97,6 +115,13 @@ class AdminClipOut(BaseModel):
     user_email: str | None
     session_id: str
     prompt_id: str
+    prompt_group: str
+    prompt_title: str
+    transcript: str
+    normalized_transcript: str
+    contains_vigil: bool
+    wake_intent: bool
+    is_negative: bool
     clip_type: str
     raw_audio_path: str
     processed_wav_path: str | None
@@ -150,12 +175,21 @@ class AccountSessionOut(BaseModel):
     created_at_utc: datetime
     submitted_at_utc: datetime | None
     clip_count: int
+    positive_clip_count: int
+    negative_clip_count: int
 
 
 class AccountClipOut(BaseModel):
     clip_id: str
     session_id: str
     prompt_id: str
+    prompt_group: str
+    prompt_title: str
+    transcript: str
+    normalized_transcript: str
+    contains_vigil: bool
+    wake_intent: bool
+    is_negative: bool
     clip_type: str
     duration_sec: float | None
     file_size_bytes: int
