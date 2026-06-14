@@ -759,6 +759,13 @@ h1 {
   overflow-wrap: anywhere;
 }
 
+.metric-grid strong.display-label,
+.prompt-summary-grid .display-label {
+  overflow-wrap: normal;
+  word-break: normal;
+  white-space: nowrap;
+}
+
 .admin-shell {
   display: grid;
   align-content: start;

@@ -18,6 +18,32 @@ import type { AccountSession, AdminClient, AdminClip, AdminSummary, ExportRespon
 
 type ClipFilter = "all" | "positive" | "negative" | "P1" | "P2" | "P3" | "P4" | "flagged";
 
+const PROMPT_GROUP_LABELS: Record<string, string> = {
+  P1_vigil_only: "P1 - VIGIL Only",
+  P2_phrase_plus_vigil: "P2 - Phrase + VIGIL",
+  P3_vigil_plus_phrase: "P3 - VIGIL + Phrase",
+  P4_negative: "P4 - Negative Examples",
+  legacy: "Legacy"
+};
+
+function formatPromptGroup(group: string | null | undefined): string {
+  if (!group) return "Unknown";
+  return PROMPT_GROUP_LABELS[group] ?? group.replaceAll("_", " ").replace(/\bvigil\b/gi, "VIGIL");
+}
+
+function formatBatchId(batchId: string | null | undefined): string {
+  if (!batchId) return "Unknown";
+  if (batchId === "vigil_batch_v0_1") return "VIGIL Batch v0.1";
+  return batchId.replaceAll("_", " ").replace(/\bvigil\b/gi, "VIGIL");
+}
+
+function formatStatus(status: string | null | undefined): string {
+  if (!status) return "Unknown";
+  return status
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
 export function AdminPage() {
   const [summary, setSummary] = useState<AdminSummary | null>(null);
   const [flagged, setFlagged] = useState<FlaggedClip[]>([]);
@@ -223,12 +249,12 @@ export function AdminPage() {
         {error && <p className="error-text">{error}</p>}
 
         <section className="metric-grid">
-          <div><span>Status</span><strong>{selectedSession.status}</strong></div>
+          <div><span>Status</span><strong>{formatStatus(selectedSession.status)}</strong></div>
           <div><span>Clips</span><strong>{sessionClips.length}</strong></div>
           <div><span>Positive</span><strong>{selectedSession.positive_clip_count}</strong></div>
           <div><span>Negative</span><strong>{selectedSession.negative_clip_count}</strong></div>
           <div><span>Submitted</span><strong>{selectedSession.submitted_at_utc ? "Yes" : "No"}</strong></div>
-          <div><span>Batch</span><strong>{selectedSession.batch_id}</strong></div>
+          <div><span>Batch</span><strong className="display-label">{formatBatchId(selectedSession.batch_id)}</strong></div>
         </section>
 
         <ClipFilters active={clipFilter} onChange={setClipFilter} />
@@ -311,9 +337,9 @@ export function AdminPage() {
                 )}
                 {clientSessions.map((session) => (
                   <tr key={session.session_id} className="clickable-row" onClick={() => openSession(session)}>
-                    <td>{session.batch_id}</td>
+                    <td>{formatBatchId(session.batch_id)}</td>
                     <td>{session.session_id}</td>
-                    <td>{session.status}</td>
+                    <td>{formatStatus(session.status)}</td>
                     <td>{session.clip_count}</td>
                     <td>{session.positive_clip_count}</td>
                     <td>{session.negative_clip_count}</td>
@@ -368,7 +394,7 @@ export function AdminPage() {
             }}
           />
           <p className="eyebrow">Coordinator</p>
-          <h1>Vigil Recorder Admin</h1>
+          <h1>VIGIL Recorder Admin</h1>
         </div>
         <div className="button-row">
           <button className="button secondary" type="button" onClick={() => refreshAdminData(null, null)} disabled={loading}>
@@ -386,7 +412,7 @@ export function AdminPage() {
 
       {summary && (
         <section className="metric-grid">
-          <div><span>Batch</span><strong>{summary.batch_id}</strong></div>
+          <div><span>Batch</span><strong className="display-label">{formatBatchId(summary.batch_id)}</strong></div>
           <div><span>Accounts</span><strong>{summary.participants}</strong></div>
           <div><span>Sessions</span><strong>{summary.sessions}</strong></div>
           <div><span>Submitted</span><strong>{summary.submitted_sessions}</strong></div>
@@ -408,7 +434,7 @@ export function AdminPage() {
           <div className="prompt-summary-grid">
             {["P1_vigil_only", "P2_phrase_plus_vigil", "P3_vigil_plus_phrase", "P4_negative", "legacy"].map((group) => (
               <div key={group}>
-                <span>{group}</span>
+                <span className="display-label">{formatPromptGroup(group)}</span>
                 <strong>{summary.prompt_group_counts[group] ?? 0}</strong>
               </div>
             ))}
@@ -501,9 +527,9 @@ export function AdminPage() {
               {flagged.map((clip) => (
                 <tr key={clip.clip_id}>
                   <td>{clip.clip_id}</td>
-                  <td>{clip.prompt_group}</td>
+                  <td>{formatPromptGroup(clip.prompt_group)}</td>
                   <td>{clip.transcript}</td>
-                  <td>{clip.auto_qc_status}</td>
+                  <td>{formatStatus(clip.auto_qc_status)}</td>
                   <td>{clip.auto_qc_flags}</td>
                   <td>{new Date(clip.created_at_utc).toLocaleString()}</td>
                 </tr>
@@ -601,11 +627,11 @@ function ClipsTable({
             {clips.map((clip) => (
               <tr key={clip.clip_id}>
                 <td>{clip.clip_id}</td>
-                <td>{clip.prompt_group}</td>
+                <td>{formatPromptGroup(clip.prompt_group)}</td>
                 <td>{clip.transcript}</td>
                 <td>{clip.contains_vigil ? "Yes" : "No"}</td>
                 <td>{clip.wake_intent ? "Yes" : "No"}</td>
-                <td>{clip.auto_qc_status}</td>
+                <td>{formatStatus(clip.auto_qc_status)}</td>
                 <td>{clip.auto_qc_flags}</td>
                 <td>{clip.duration_sec?.toFixed(2) ?? "n/a"}s</td>
                 <td>{Math.round(clip.file_size_bytes / 1024)} KB</td>
