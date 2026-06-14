@@ -14,8 +14,34 @@ import type {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, options);
+type ApiRequestInit = RequestInit & {
+  timeoutMs?: number;
+};
+
+async function request<T>(path: string, options?: ApiRequestInit): Promise<T> {
+  const { timeoutMs, ...fetchOptions } = options ?? {};
+  const controller = timeoutMs ? new AbortController() : null;
+  const timeoutId = controller
+    ? window.setTimeout(() => controller.abort(), timeoutMs)
+    : null;
+
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...fetchOptions,
+      signal: controller?.signal ?? fetchOptions.signal
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error("Request timed out. Please try again.");
+    }
+    throw error;
+  } finally {
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
+  }
+
   if (!response.ok) {
     let message = `${response.status} ${response.statusText}`;
     try {
@@ -119,7 +145,8 @@ export async function requestLoginCode(email: string): Promise<{ status: string;
   return request("/api/auth/request-code", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email })
+    body: JSON.stringify({ email }),
+    timeoutMs: 15000
   });
 }
 
