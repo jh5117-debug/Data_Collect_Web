@@ -4,6 +4,31 @@ from app.routes import auth as auth_routes
 from app.services.email_auth import send_login_code
 
 
+def test_name_login_creates_account_and_session_token(client):
+    response = client.post("/api/auth/name-login", json={"name": "  Jia   Huang  "})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "verified"
+    assert body["email"] == "Jia Huang"
+    assert body["name"] == "Jia Huang"
+    assert body["auth_token"]
+
+    sessions = client.get(
+        "/api/auth/accounts/Jia%20Huang/sessions",
+        headers={"X-Auth-Token": body["auth_token"]},
+    )
+    assert sessions.status_code == 200
+    assert sessions.json() == []
+
+
+def test_name_login_rejects_slashes(client):
+    response = client.post("/api/auth/name-login", json={"name": "Jia/Huang"})
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "name cannot contain slashes"
+
+
 def test_request_code_returns_dev_code_when_email_delivery_fails(client, monkeypatch):
     monkeypatch.setattr(auth_routes, "send_login_code", lambda email, code: False)
 

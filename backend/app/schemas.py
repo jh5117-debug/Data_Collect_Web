@@ -161,9 +161,14 @@ class AuthCodeVerify(BaseModel):
     code: str
 
 
+class NameLoginRequest(BaseModel):
+    name: str
+
+
 class AuthVerifyOut(BaseModel):
     status: str
     email: str
+    name: str | None = None
     auth_token: str
     expires_at_utc: datetime
 

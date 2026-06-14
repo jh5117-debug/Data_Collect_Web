@@ -150,6 +150,15 @@ export async function requestLoginCode(email: string): Promise<{ status: string;
   });
 }
 
+export async function loginWithName(name: string): Promise<{ status: string; email: string; name?: string | null; auth_token: string; expires_at_utc: string }> {
+  return request("/api/auth/name-login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name }),
+    timeoutMs: 15000
+  });
+}
+
 export async function verifyLoginCode(email: string, code: string): Promise<{ status: string; email: string; auth_token: string; expires_at_utc: string }> {
   return request("/api/auth/verify-code", {
     method: "POST",

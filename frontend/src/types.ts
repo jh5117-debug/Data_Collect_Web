@@ -201,6 +201,7 @@ export interface AccountClip {
 
 export interface AuthSession {
   email: string;
+  name?: string | null;
   auth_token: string;
   expires_at_utc: string;
 }

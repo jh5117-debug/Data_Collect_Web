@@ -17,6 +17,10 @@ def normalize_email(email: str) -> str:
     return email.strip().lower()
 
 
+def normalize_account_identifier(value: str) -> str:
+    return " ".join(value.strip().split())
+
+
 def generate_code() -> str:
     return f"{secrets.randbelow(1_000_000):06d}"
 
@@ -119,7 +123,7 @@ def verify_login_code(db: Session, email: str, code: str) -> bool:
 
 
 def create_session_token(db: Session, email: str) -> tuple[str, datetime]:
-    normalized = normalize_email(email)
+    normalized = normalize_account_identifier(email)
     token = secrets.token_urlsafe(32)
     expires_at = datetime.now(UTC).replace(tzinfo=None) + timedelta(hours=1)
     db.add(UserSessionToken(token=token, email=normalized, expires_at_utc=expires_at))
@@ -130,7 +134,7 @@ def create_session_token(db: Session, email: str) -> tuple[str, datetime]:
 def verify_session_token(db: Session, email: str, token: str | None) -> bool:
     if not token:
         return False
-    normalized = normalize_email(email)
+    normalized = normalize_account_identifier(email)
     now = datetime.now(UTC).replace(tzinfo=None)
     session_token = db.get(UserSessionToken, token)
     return bool(

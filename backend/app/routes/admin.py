@@ -9,7 +9,7 @@ from ..models import Clip, EmailLoginCode, Participant, RecordingSession, Segmen
 from ..schemas import AccountSessionOut, AdminClientOut, AdminClipOut, DeleteClipOut, ExportOut, FlaggedClipOut, SummaryOut
 from ..services.deletion import delete_clip_and_files, delete_generated_exports, delete_session_and_files
 from ..services.export import create_export_zip
-from ..services.email_auth import normalize_email
+from ..services.email_auth import normalize_account_identifier
 from ..services.prompt_groups import contains_exact_vigil
 from ..services.qc import flags_from_json, flags_to_json
 from ..services.storage import get_storage_backend
@@ -289,7 +289,7 @@ def admin_clips(db: Session = Depends(get_db)) -> list[AdminClipOut]:
 
 @router.get("/clients/{email}/sessions", response_model=list[AccountSessionOut])
 def admin_client_sessions(email: str, db: Session = Depends(get_db)) -> list[AccountSessionOut]:
-    normalized = normalize_email(email)
+    normalized = normalize_account_identifier(email)
     sessions = (
         db.execute(
             select(RecordingSession)
@@ -335,7 +335,7 @@ def admin_client_sessions(email: str, db: Session = Depends(get_db)) -> list[Acc
 
 @router.get("/clients/{email}/clips", response_model=list[AdminClipOut])
 def admin_client_clips(email: str, db: Session = Depends(get_db)) -> list[AdminClipOut]:
-    normalized = normalize_email(email)
+    normalized = normalize_account_identifier(email)
     rows = (
         db.execute(
             select(Clip, Participant.user_email)
@@ -367,7 +367,7 @@ def admin_session_clips(session_id: str, db: Session = Depends(get_db)) -> list[
 
 @router.delete("/clients/{email}")
 def delete_admin_client(email: str, db: Session = Depends(get_db)) -> dict[str, object]:
-    normalized = normalize_email(email)
+    normalized = normalize_account_identifier(email)
     account = db.get(UserAccount, normalized)
     participants = db.execute(select(Participant).where(Participant.user_email == normalized)).scalars().all()
     deleted_files: list[str] = []
@@ -411,7 +411,7 @@ def delete_admin_client(email: str, db: Session = Depends(get_db)) -> dict[str, 
 
 @router.delete("/clients/{email}/sessions")
 def delete_admin_client_sessions(email: str, db: Session = Depends(get_db)) -> dict[str, object]:
-    normalized = normalize_email(email)
+    normalized = normalize_account_identifier(email)
     account = db.get(UserAccount, normalized)
     participants = db.execute(select(Participant).where(Participant.user_email == normalized)).scalars().all()
     if not account and not participants:

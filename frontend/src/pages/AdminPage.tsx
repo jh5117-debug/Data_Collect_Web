@@ -276,7 +276,6 @@ export function AdminPage() {
         {error && <p className="error-text">{error}</p>}
 
         <section className="metric-grid">
-          <div><span>Verified</span><strong>{selectedClient.verified ? "Yes" : "No"}</strong></div>
           <div><span>Sessions</span><strong>{clientSessions.length}</strong></div>
           <div><span>Submitted</span><strong>{submittedCount}</strong></div>
           <div><span>Clips</span><strong>{clipCount}</strong></div>
@@ -432,8 +431,7 @@ export function AdminPage() {
           <table>
             <thead>
               <tr>
-                <th>Email</th>
-                <th>Verified</th>
+                <th>Name</th>
                 <th>Sessions</th>
                 <th>Submitted</th>
                 <th>Clips</th>
@@ -446,13 +444,12 @@ export function AdminPage() {
             <tbody>
               {clients.length === 0 && (
                 <tr>
-                  <td colSpan={9}>No accounts yet.</td>
+                  <td colSpan={8}>No accounts yet.</td>
                 </tr>
               )}
               {clients.map((client) => (
                 <tr key={client.email ?? "unknown"} className="clickable-row" onClick={() => openClient(client)}>
                   <td>{client.email ?? "Unknown"}</td>
-                  <td>{client.verified ? "Yes" : "No"}</td>
                   <td>{client.session_count}</td>
                   <td>{client.submitted_session_count}</td>
                   <td>{client.clip_count}</td>

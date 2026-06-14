@@ -1,16 +1,46 @@
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from fastapi.responses import Response
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Clip, Participant, RecordingSession
-from ..schemas import AccountClipOut, AccountSessionOut, AuthCodeRequest, AuthCodeRequestOut, AuthCodeVerify, AuthVerifyOut, DeleteClipOut
+from ..models import Clip, Participant, RecordingSession, UserAccount
+from ..schemas import AccountClipOut, AccountSessionOut, AuthCodeRequest, AuthCodeRequestOut, AuthCodeVerify, AuthVerifyOut, DeleteClipOut, NameLoginRequest
 from ..services.deletion import delete_clip_and_files, delete_generated_exports
-from ..services.email_auth import create_login_code, create_session_token, normalize_email, send_login_code, verify_login_code, verify_session_token
+from ..services.email_auth import create_login_code, create_session_token, normalize_account_identifier, normalize_email, send_login_code, verify_login_code, verify_session_token
 from ..services.storage import get_storage_backend
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
+
+
+def validate_account_name(name: str) -> str:
+    normalized = normalize_account_identifier(name)
+    if len(normalized) < 2:
+        raise HTTPException(status_code=400, detail="name must be at least 2 characters")
+    if len(normalized) > 80:
+        raise HTTPException(status_code=400, detail="name must be 80 characters or fewer")
+    if "/" in normalized or "\\" in normalized:
+        raise HTTPException(status_code=400, detail="name cannot contain slashes")
+    return normalized
+
+
+@router.post("/name-login", response_model=AuthVerifyOut)
+def name_login(payload: NameLoginRequest, db: Session = Depends(get_db)) -> AuthVerifyOut:
+    account_name = validate_account_name(payload.name)
+    now = datetime.now(UTC).replace(tzinfo=None)
+    account = db.get(UserAccount, account_name)
+    if not account:
+        account = UserAccount(email=account_name, verified=True, last_login_at_utc=now)
+        db.add(account)
+    else:
+        account.verified = True
+        account.last_login_at_utc = now
+    db.commit()
+
+    token, expires_at = create_session_token(db, account_name)
+    return AuthVerifyOut(status="verified", email=account_name, name=account_name, auth_token=token, expires_at_utc=expires_at)
 
 
 @router.post("/request-code", response_model=AuthCodeRequestOut)
@@ -33,11 +63,11 @@ def verify_code(payload: AuthCodeVerify, db: Session = Depends(get_db)) -> AuthV
     if not verify_login_code(db, email, payload.code):
         raise HTTPException(status_code=400, detail="invalid or expired code")
     token, expires_at = create_session_token(db, email)
-    return AuthVerifyOut(status="verified", email=email, auth_token=token, expires_at_utc=expires_at)
+    return AuthVerifyOut(status="verified", email=email, name=email, auth_token=token, expires_at_utc=expires_at)
 
 
 def require_account_token(email: str, x_auth_token: str | None, db: Session) -> str:
-    normalized = normalize_email(email)
+    normalized = normalize_account_identifier(email)
     if not verify_session_token(db, normalized, x_auth_token):
         raise HTTPException(status_code=401, detail="login required")
     return normalized
