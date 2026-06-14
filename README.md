@@ -51,7 +51,7 @@ For production raw collection with Supabase:
 
 ```bash
 STORAGE_BACKEND=supabase
-DATABASE_URL=postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-0-REGION.pooler.supabase.com:6543/postgres
+DATABASE_URL=postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres?sslmode=require
 SUPABASE_URL=https://PROJECT_REF.supabase.co
 SUPABASE_SECRET_KEY=your-server-side-secret-or-service-role-key
 SUPABASE_STORAGE_BUCKET=vigil-audio

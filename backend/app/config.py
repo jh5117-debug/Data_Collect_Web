@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from dotenv import load_dotenv
 
@@ -30,6 +31,20 @@ def _resolve_path(value: str | None, default: Path) -> Path:
     return (BACKEND_DIR / path).resolve()
 
 
+def _database_url_with_defaults(value: str) -> str:
+    database_url = value.strip()
+    if "supabase.com" not in database_url or not database_url.startswith("postgresql"):
+        return database_url
+
+    parts = urlsplit(database_url)
+    query_pairs = parse_qsl(parts.query, keep_blank_values=True)
+    query = dict(query_pairs)
+    if "sslmode" not in query:
+        query_pairs.append(("sslmode", "require"))
+
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query_pairs), parts.fragment))
+
+
 class Settings:
     app_name: str = "Vigil Recorder"
     prompt_version: str = "v0.1"
@@ -38,8 +53,10 @@ class Settings:
     local_storage_root: Path = _resolve_path(
         os.getenv("LOCAL_STORAGE_ROOT"), BACKEND_DIR / "storage"
     )
-    database_url: str = os.getenv(
-        "DATABASE_URL", f"sqlite:///{local_storage_root / 'vigil_recorder.sqlite3'}"
+    database_url: str = _database_url_with_defaults(
+        os.getenv(
+            "DATABASE_URL", f"sqlite:///{local_storage_root / 'vigil_recorder.sqlite3'}"
+        )
     )
     cors_origins: list[str] = list(
         dict.fromkeys(

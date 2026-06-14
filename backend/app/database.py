@@ -1,14 +1,38 @@
 from collections.abc import Generator
+import logging
+import time
 
 from sqlalchemy import create_engine, text
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy.pool import NullPool
 
 from .config import settings
 
 
-connect_args = {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
+logger = logging.getLogger(__name__)
 
-engine = create_engine(settings.database_url, connect_args=connect_args, future=True)
+is_sqlite = settings.database_url.startswith("sqlite")
+is_supabase_transaction_pooler = (
+    "pooler.supabase.com:6543" in settings.database_url
+    or "pooler.supabase.co:6543" in settings.database_url
+)
+
+if is_sqlite:
+    connect_args = {"check_same_thread": False}
+else:
+    connect_args = {"prepare_threshold": None}
+
+engine_kwargs = {
+    "connect_args": connect_args,
+    "future": True,
+}
+if not is_sqlite:
+    engine_kwargs["pool_pre_ping"] = True
+if is_supabase_transaction_pooler:
+    engine_kwargs["poolclass"] = NullPool
+
+engine = create_engine(settings.database_url, **engine_kwargs)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
 
 
@@ -24,11 +48,25 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
-def init_db() -> None:
+def init_db(max_attempts: int = 5, retry_delay_seconds: float = 3.0) -> None:
     from . import models  # noqa: F401
 
-    Base.metadata.create_all(bind=engine)
-    ensure_sqlite_schema()
+    for attempt in range(1, max_attempts + 1):
+        try:
+            Base.metadata.create_all(bind=engine)
+            ensure_sqlite_schema()
+            return
+        except OperationalError:
+            if attempt == max_attempts:
+                raise
+            logger.warning(
+                "Database initialization failed on attempt %s/%s; retrying in %.1fs",
+                attempt,
+                max_attempts,
+                retry_delay_seconds,
+                exc_info=True,
+            )
+            time.sleep(retry_delay_seconds)
 
 
 def ensure_sqlite_schema() -> None:

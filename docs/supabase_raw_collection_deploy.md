@@ -33,11 +33,13 @@ Get your database connection string:
 Project dashboard -> Connect -> Connection string
 ```
 
-For deployment platforms, use the pooler connection string and convert the scheme for SQLAlchemy:
+For long-running Python deployments such as Render, prefer the Supabase session pooler connection string and convert the scheme for SQLAlchemy:
 
 ```text
-postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-0-REGION.pooler.supabase.com:6543/postgres
+postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres?sslmode=require
 ```
+
+The transaction pooler usually uses port `6543` and is more appropriate for short-lived/serverless workloads. The backend has compatibility handling for it, but the session pooler on port `5432` is the recommended Render setting.
 
 Get your server-side key:
 
@@ -73,7 +75,7 @@ Backend environment variables:
 
 ```bash
 STORAGE_BACKEND=supabase
-DATABASE_URL=postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-0-REGION.pooler.supabase.com:6543/postgres
+DATABASE_URL=postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres?sslmode=require
 SUPABASE_URL=https://PROJECT_REF.supabase.co
 SUPABASE_SECRET_KEY=your-server-side-secret-or-service-role-key
 SUPABASE_STORAGE_BUCKET=vigil-audio

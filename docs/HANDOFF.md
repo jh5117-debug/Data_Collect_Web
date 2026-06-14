@@ -135,7 +135,7 @@ Use real values in Render only. Do not commit these values to Git.
 
 ```text
 STORAGE_BACKEND=supabase
-DATABASE_URL=postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-REGION.pooler.supabase.com:6543/postgres
+DATABASE_URL=postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-REGION.pooler.supabase.com:5432/postgres?sslmode=require
 SUPABASE_URL=https://PROJECT_REF.supabase.co
 SUPABASE_SECRET_KEY=YOUR_SERVER_SIDE_SECRET
 SUPABASE_STORAGE_BUCKET=vigil-audio
@@ -367,6 +367,18 @@ Render must use the root Dockerfile. The repository now includes one at:
 Dockerfile
 ```
 
+### Render fails with a Supabase Postgres connection error
+
+Check `DATABASE_URL`.
+
+For Render, prefer Supabase's session pooler on port `5432`, with SSL required:
+
+```text
+postgresql+psycopg://postgres.PROJECT_REF:YOUR_DB_PASSWORD@aws-REGION.pooler.supabase.com:5432/postgres?sslmode=require
+```
+
+The transaction pooler usually uses port `6543`. The backend has compatibility handling for it, but the session pooler is the safer default for a long-running FastAPI service.
+
 ### Login code email does not send
 
 Check Render environment variables:
@@ -461,4 +473,3 @@ Recommended before broad participant collection:
 7. Write offline conversion and Qwen ASR review scripts.
 8. Define final train/eval split rules.
 9. Add cost alerts in Supabase, Render, and Vercel.
-
