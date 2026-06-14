@@ -8,6 +8,13 @@ BACKEND_DIR = Path(__file__).resolve().parents[1]
 REPO_DIR = BACKEND_DIR.parent
 load_dotenv(BACKEND_DIR / ".env")
 
+DEFAULT_CORS_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://data-collect-web.onrender.com",
+    "https://data-collect-web.vercel.app",
+]
+
 
 def _resolve_path(value: str | None, default: Path) -> Path:
     if not value:
@@ -34,13 +41,16 @@ class Settings:
     database_url: str = os.getenv(
         "DATABASE_URL", f"sqlite:///{local_storage_root / 'vigil_recorder.sqlite3'}"
     )
-    cors_origins: list[str] = [
-        origin.strip()
-        for origin in os.getenv(
-            "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
-        ).split(",")
-        if origin.strip()
-    ]
+    cors_origins: list[str] = list(
+        dict.fromkeys(
+            DEFAULT_CORS_ORIGINS
+            + [
+                origin.strip()
+                for origin in os.getenv("CORS_ORIGINS", "").split(",")
+                if origin.strip()
+            ]
+        )
+    )
 
     s3_endpoint_url: str | None = os.getenv("S3_ENDPOINT_URL")
     s3_bucket_name: str | None = os.getenv("S3_BUCKET_NAME")
