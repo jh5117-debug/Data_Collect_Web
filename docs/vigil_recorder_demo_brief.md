@@ -1,5 +1,9 @@
 # Vigil Recorder Data Collection Website Demo Brief
 
+Note: This file is the earlier demo brief. For the current production architecture,
+prompt-group design, and deployment handoff, use [PRD.md](PRD.md) and
+[HANDOFF.md](HANDOFF.md) as the canonical documents.
+
 ## 1. Project Goal
 
 Vigil Recorder is a web-based data collection tool for gathering clean voice trigger samples for the Vigil wake-word system.

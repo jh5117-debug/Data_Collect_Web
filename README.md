@@ -11,6 +11,12 @@ The product name and wake word is Vigil. The word `visual` appears only as a har
 - Audio: raw browser upload collection online; offline WAV conversion and ASR review
 - Storage: local filesystem under `backend/storage/` locally or Supabase Storage in production
 
+## Project Documents
+
+- [Product Requirements Document](docs/PRD.md)
+- [Production Handoff](docs/HANDOFF.md)
+- [Supabase raw collection deployment notes](docs/supabase_raw_collection_deploy.md)
+
 ## Requirements
 
 - Python 3.11+
