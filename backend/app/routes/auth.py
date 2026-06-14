@@ -7,7 +7,7 @@ from ..database import get_db
 from ..models import Clip, Participant, RecordingSession
 from ..schemas import AccountClipOut, AccountSessionOut, AuthCodeRequest, AuthCodeRequestOut, AuthCodeVerify, AuthVerifyOut, DeleteClipOut
 from ..services.deletion import delete_clip_and_files, delete_generated_exports
-from ..services.email_auth import create_login_code, create_session_token, normalize_email, send_login_code, smtp_configured, verify_login_code, verify_session_token
+from ..services.email_auth import create_login_code, create_session_token, normalize_email, send_login_code, verify_login_code, verify_session_token
 from ..services.storage import get_storage_backend
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -20,10 +20,10 @@ def request_code(payload: AuthCodeRequest, db: Session = Depends(get_db)) -> Aut
         raise HTTPException(status_code=400, detail="valid email is required")
 
     code = create_login_code(db, email)
-    send_login_code(email, code)
+    email_sent = send_login_code(email, code)
     return AuthCodeRequestOut(
-        status="sent" if smtp_configured() else "dev_code",
-        dev_code=None if smtp_configured() else code,
+        status="sent" if email_sent else "dev_code",
+        dev_code=None if email_sent else code,
     )
 
 

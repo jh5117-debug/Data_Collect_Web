@@ -1,3 +1,4 @@
+import logging
 import os
 import secrets
 import smtplib
@@ -8,6 +9,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..models import EmailLoginCode, UserAccount, UserSessionToken
+
+logger = logging.getLogger(__name__)
 
 
 def normalize_email(email: str) -> str:
@@ -43,9 +46,16 @@ def smtp_configured() -> bool:
     )
 
 
-def send_login_code(email: str, code: str) -> None:
+def smtp_timeout_seconds() -> float:
+    try:
+        return float(os.getenv("SMTP_TIMEOUT_SECONDS", "8"))
+    except ValueError:
+        return 8.0
+
+
+def send_login_code(email: str, code: str) -> bool:
     if not smtp_configured():
-        return
+        return False
 
     host = os.environ["SMTP_HOST"]
     port = int(os.environ["SMTP_PORT"])
@@ -53,6 +63,7 @@ def send_login_code(email: str, code: str) -> None:
     password = os.environ["SMTP_PASSWORD"]
     from_email = os.environ["SMTP_FROM_EMAIL"]
     use_ssl = os.getenv("SMTP_USE_SSL", "true").lower() in {"true", "1", "yes"}
+    timeout = smtp_timeout_seconds()
 
     message = EmailMessage()
     message["Subject"] = "Vigil Recorder login code"
@@ -60,15 +71,20 @@ def send_login_code(email: str, code: str) -> None:
     message["To"] = email
     message.set_content(f"Your Vigil Recorder login code is: {code}\n\nThis code expires in 10 minutes.")
 
-    if use_ssl:
-        with smtplib.SMTP_SSL(host, port) as smtp:
-            smtp.login(username, password)
-            smtp.send_message(message)
-    else:
-        with smtplib.SMTP(host, port) as smtp:
-            smtp.starttls()
-            smtp.login(username, password)
-            smtp.send_message(message)
+    try:
+        if use_ssl:
+            with smtplib.SMTP_SSL(host, port, timeout=timeout) as smtp:
+                smtp.login(username, password)
+                smtp.send_message(message)
+        else:
+            with smtplib.SMTP(host, port, timeout=timeout) as smtp:
+                smtp.starttls()
+                smtp.login(username, password)
+                smtp.send_message(message)
+    except (OSError, TimeoutError, smtplib.SMTPException):
+        logger.warning("Failed to send login code via SMTP", exc_info=True)
+        return False
+    return True
 
 
 def verify_login_code(db: Session, email: str, code: str) -> bool:
