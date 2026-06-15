@@ -741,6 +741,10 @@ h1 {
   padding: 14px;
 }
 
+.metric-grid .metric-card-wide {
+  grid-column: span 2;
+}
+
 .summary-grid span,
 .metric-grid span {
   display: block;
@@ -895,6 +899,10 @@ td {
 
   .recording-total {
     text-align: left;
+  }
+
+  .metric-grid .metric-card-wide {
+    grid-column: span 1;
   }
 
   .prompt-group-grid {

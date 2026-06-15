@@ -254,7 +254,7 @@ export function AdminPage() {
           <div><span>Positive</span><strong>{selectedSession.positive_clip_count}</strong></div>
           <div><span>Negative</span><strong>{selectedSession.negative_clip_count}</strong></div>
           <div><span>Submitted</span><strong>{selectedSession.submitted_at_utc ? "Yes" : "No"}</strong></div>
-          <div><span>Batch</span><strong className="display-label">{formatBatchId(selectedSession.batch_id)}</strong></div>
+          <div className="metric-card-wide"><span>Batch</span><strong className="display-label">{formatBatchId(selectedSession.batch_id)}</strong></div>
         </section>
 
         <ClipFilters active={clipFilter} onChange={setClipFilter} />
@@ -412,7 +412,7 @@ export function AdminPage() {
 
       {summary && (
         <section className="metric-grid">
-          <div><span>Batch</span><strong className="display-label">{formatBatchId(summary.batch_id)}</strong></div>
+          <div className="metric-card-wide"><span>Batch</span><strong className="display-label">{formatBatchId(summary.batch_id)}</strong></div>
           <div><span>Accounts</span><strong>{summary.participants}</strong></div>
           <div><span>Sessions</span><strong>{summary.sessions}</strong></div>
           <div><span>Submitted</span><strong>{summary.submitted_sessions}</strong></div>
