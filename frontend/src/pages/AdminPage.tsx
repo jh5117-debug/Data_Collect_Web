@@ -9,6 +9,7 @@ import {
   getAdminClientSessions,
   getAdminClipAudioUrl,
   getAdminClients,
+  getExportDownloadUrl,
   getAdminSessionClips,
   getAdminSummary,
   getFlaggedClips
@@ -54,6 +55,8 @@ export function AdminPage() {
   const [sessionClips, setSessionClips] = useState<AdminClip[]>([]);
   const [clipFilter, setClipFilter] = useState<ClipFilter>("all");
   const [exportResult, setExportResult] = useState<ExportResponse | null>(null);
+  const [exportDownloadUrl, setExportDownloadUrl] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -201,13 +204,23 @@ export function AdminPage() {
 
   async function handleExport() {
     setError(null);
+    setExporting(true);
+    const exportWindow = window.open("about:blank", "_blank");
     try {
       const result = await createExport();
+      const downloadUrl = getExportDownloadUrl(result.download_path);
       setExportResult(result);
-      window.open(result.download_path, "_blank");
-      await refreshAdminData();
+      setExportDownloadUrl(downloadUrl);
+      if (exportWindow) {
+        exportWindow.location.href = downloadUrl;
+      } else {
+        setError("Export created. Use the download link below if the browser blocked the new tab.");
+      }
     } catch (err) {
+      exportWindow?.close();
       setError(err instanceof Error ? err.message : "Export failed.");
+    } finally {
+      setExporting(false);
     }
   }
 
@@ -401,9 +414,9 @@ export function AdminPage() {
             <RefreshCw size={18} aria-hidden="true" />
             Refresh
           </button>
-          <button className="button primary" type="button" onClick={handleExport}>
+          <button className="button primary" type="button" onClick={handleExport} disabled={exporting}>
             <Download size={18} aria-hidden="true" />
-            Export
+            {exporting ? "Exporting..." : "Export"}
           </button>
         </div>
       </section>
@@ -444,7 +457,14 @@ export function AdminPage() {
 
       {exportResult && (
         <p className="success-text">
-          Export created: {exportResult.file_name}
+          Export created:{" "}
+          {exportDownloadUrl ? (
+            <a href={exportDownloadUrl} target="_blank" rel="noreferrer">
+              {exportResult.file_name}
+            </a>
+          ) : (
+            exportResult.file_name
+          )}
         </p>
       )}
 

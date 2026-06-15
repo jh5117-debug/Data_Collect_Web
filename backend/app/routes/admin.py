@@ -17,11 +17,7 @@ from ..services.storage import get_storage_backend
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 
-def _is_positive_clip(clip: Clip) -> bool:
-    return bool(clip.contains_vigil and clip.wake_intent and not clip.is_negative)
-
-
-def _clip_effective_flags(clip: Clip) -> list[str]:
+def _clip_effective_flags(clip: Clip, *, check_storage: bool = False) -> list[str]:
     flags = set(flags_from_json(clip.auto_qc_flags))
     if not clip.normalized_transcript:
         flags.add("missing_transcript")
@@ -32,15 +28,18 @@ def _clip_effective_flags(clip: Clip) -> list[str]:
     if clip.prompt_group == "P4_negative" and contains_exact_vigil(clip.normalized_transcript):
         flags.add("negative_transcript_contains_vigil")
 
-    storage = get_storage_backend()
     relative_path = clip.processed_wav_path or clip.raw_audio_path
-    if not relative_path or not storage.exists(relative_path):
+    if not relative_path:
         flags.add("missing_audio_file")
+    elif check_storage:
+        storage = get_storage_backend()
+        if not storage.exists(relative_path):
+            flags.add("missing_audio_file")
     return sorted(flags)
 
 
-def _clip_effective_status(clip: Clip) -> str:
-    flags = _clip_effective_flags(clip)
+def _clip_effective_status(clip: Clip, *, check_storage: bool = False) -> str:
+    flags = _clip_effective_flags(clip, check_storage=check_storage)
     if clip.auto_qc_status == "auto_rejected":
         return "auto_rejected"
     if flags or clip.auto_qc_status == "flagged_for_review":
@@ -48,8 +47,8 @@ def _clip_effective_status(clip: Clip) -> str:
     return "auto_accepted"
 
 
-def _clip_flag_string(clip: Clip) -> str:
-    return flags_to_json(_clip_effective_flags(clip))
+def _clip_flag_string(clip: Clip, *, check_storage: bool = False) -> str:
+    return flags_to_json(_clip_effective_flags(clip, check_storage=check_storage))
 
 
 @router.get("/summary", response_model=SummaryOut)
@@ -101,15 +100,30 @@ def admin_summary(db: Session = Depends(get_db)) -> SummaryOut:
         .join(UserAccount, Participant.user_email == UserAccount.email)
         .where(Clip.auto_qc_status == "auto_rejected")
     ).scalar_one()
-    clips = (
-        db.execute(
-            select(Clip)
-            .join(Participant, Clip.participant_id == Participant.participant_id)
-            .join(UserAccount, Participant.user_email == UserAccount.email)
+    positive_clips = db.execute(
+        select(func.count())
+        .select_from(Clip)
+        .join(Participant, Clip.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
+        .where(
+            Clip.contains_vigil.is_(True),
+            Clip.wake_intent.is_(True),
+            Clip.is_negative.is_(False),
         )
-        .scalars()
-        .all()
-    )
+    ).scalar_one()
+    negative_clips = db.execute(
+        select(func.count())
+        .select_from(Clip)
+        .join(Participant, Clip.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
+        .where(Clip.is_negative.is_(True))
+    ).scalar_one()
+    prompt_group_rows = db.execute(
+        select(Clip.prompt_group, func.count())
+        .join(Participant, Clip.participant_id == Participant.participant_id)
+        .join(UserAccount, Participant.user_email == UserAccount.email)
+        .group_by(Clip.prompt_group)
+    ).all()
     prompt_group_counts: dict[str, int] = {
         "P1_vigil_only": 0,
         "P2_phrase_plus_vigil": 0,
@@ -117,8 +131,9 @@ def admin_summary(db: Session = Depends(get_db)) -> SummaryOut:
         "P4_negative": 0,
         "legacy": 0,
     }
-    for clip in clips:
-        prompt_group_counts[clip.prompt_group or "legacy"] = prompt_group_counts.get(clip.prompt_group or "legacy", 0) + 1
+    for prompt_group, count in prompt_group_rows:
+        key = prompt_group or "legacy"
+        prompt_group_counts[key] = count
 
     return SummaryOut(
         batch_id=settings.default_batch_id,
@@ -127,8 +142,8 @@ def admin_summary(db: Session = Depends(get_db)) -> SummaryOut:
         submitted_sessions=submitted_sessions,
         total_clips=total_clips,
         total_segments=total_segments,
-        positive_clips=sum(1 for clip in clips if _is_positive_clip(clip)),
-        negative_clips=sum(1 for clip in clips if clip.is_negative),
+        positive_clips=positive_clips,
+        negative_clips=negative_clips,
         auto_accepted=auto_accepted,
         flagged=flagged,
         rejected=rejected,

@@ -55,6 +55,12 @@ async function request<T>(path: string, options?: ApiRequestInit): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+export function apiUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) return path;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${API_BASE_URL}${normalizedPath}`;
+}
+
 export async function createParticipant(payload: {
   user_email?: string;
   english_native_speaker: EnglishNativeSpeaker;
@@ -139,6 +145,10 @@ export async function deleteAdminClip(clipId: string): Promise<{ status: string;
 
 export async function createExport(): Promise<ExportResponse> {
   return request("/api/admin/export", { method: "POST" });
+}
+
+export function getExportDownloadUrl(downloadPath: string): string {
+  return apiUrl(downloadPath);
 }
 
 export async function requestLoginCode(email: string): Promise<{ status: string; dev_code?: string | null }> {

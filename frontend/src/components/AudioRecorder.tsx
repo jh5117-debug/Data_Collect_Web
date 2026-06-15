@@ -17,6 +17,7 @@ interface AudioRecorderProps {
 
 export function AudioRecorder({ onBlobChange, disabled = false }: AudioRecorderProps) {
   const [hasPermission, setHasPermission] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [playbackUrl, setPlaybackUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -70,9 +71,13 @@ export function AudioRecorder({ onBlobChange, disabled = false }: AudioRecorderP
     setError(null);
     onBlobChange(null);
     setNextPlaybackUrl(null);
+    setIsStarting(true);
 
     const stream = activeStream() ?? (await requestMicrophone());
-    if (!stream) return;
+    if (!stream) {
+      setIsStarting(false);
+      return;
+    }
 
     chunksRef.current = [];
     const mimeType = chooseMimeType();
@@ -82,15 +87,30 @@ export function AudioRecorder({ onBlobChange, disabled = false }: AudioRecorderP
     } catch {
       streamRef.current = null;
       setHasPermission(false);
+      setIsStarting(false);
       setError("Could not start recording. Please enable the microphone again.");
       return;
     }
+
+    recorder.onstart = () => {
+      setElapsedSec(0);
+      setIsStarting(false);
+      setIsRecording(true);
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+      }
+      timerRef.current = window.setInterval(() => {
+        setElapsedSec((value) => value + 1);
+      }, 1000);
+    };
 
     recorder.ondataavailable = (event) => {
       if (event.data.size > 0) chunksRef.current.push(event.data);
     };
 
     recorder.onstop = () => {
+      setIsStarting(false);
+      setIsRecording(false);
       const blobType = mimeType ?? chunksRef.current[0]?.type ?? "audio/webm";
       const blob = new Blob(chunksRef.current, { type: blobType });
       if (blob.size === 0) {
@@ -103,13 +123,14 @@ export function AudioRecorder({ onBlobChange, disabled = false }: AudioRecorderP
       onBlobChange(blob);
     };
 
+    recorder.onerror = () => {
+      setIsStarting(false);
+      setIsRecording(false);
+      setError("Recording failed. Please redo it.");
+    };
+
     recorderRef.current = recorder;
     recorder.start();
-    setElapsedSec(0);
-    setIsRecording(true);
-    timerRef.current = window.setInterval(() => {
-      setElapsedSec((value) => value + 1);
-    }, 1000);
   }
 
   function stopRecording() {
@@ -120,6 +141,7 @@ export function AudioRecorder({ onBlobChange, disabled = false }: AudioRecorderP
       window.clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    setIsStarting(false);
     setIsRecording(false);
   }
 
@@ -136,7 +158,7 @@ export function AudioRecorder({ onBlobChange, disabled = false }: AudioRecorderP
     <div className="recorder">
       <div className="recorder-actions">
         {!hasPermission && (
-          <button className="button secondary" type="button" onClick={requestMicrophone} disabled={disabled}>
+          <button className="button secondary" type="button" onClick={requestMicrophone} disabled={disabled || isStarting || isRecording}>
             <Mic size={18} aria-hidden="true" />
             Enable Microphone
           </button>
@@ -145,7 +167,7 @@ export function AudioRecorder({ onBlobChange, disabled = false }: AudioRecorderP
           className="button primary"
           type="button"
           onClick={startRecording}
-          disabled={disabled || isRecording}
+          disabled={disabled || isRecording || isStarting}
           title="Record"
         >
           <Mic size={18} aria-hidden="true" />
@@ -174,8 +196,18 @@ export function AudioRecorder({ onBlobChange, disabled = false }: AudioRecorderP
       </div>
 
       <div className="recording-state" aria-live="polite">
-        {isRecording ? <span className="status-dot" /> : <Play size={16} aria-hidden="true" />}
-        <span>{isRecording ? `Recording ${elapsedSec}s` : playbackUrl ? "Ready for playback" : "No recording yet"}</span>
+        {isRecording || isStarting ? <span className="status-dot" /> : <Play size={16} aria-hidden="true" />}
+        <span>
+          {isStarting
+            ? "Starting microphone. Wait for Recording before speaking."
+            : isRecording
+              ? `Recording ${elapsedSec}s`
+              : playbackUrl
+                ? "Ready for playback"
+                : hasPermission
+                  ? "Microphone ready"
+                  : "No recording yet"}
+        </span>
       </div>
 
       {playbackUrl && <audio className="playback" controls src={playbackUrl} />}
