@@ -132,9 +132,14 @@ export function LoginPage({ onBack, onVerified }: LoginPageProps) {
 
           <button className="button primary wide" type="submit" disabled={loading}>
             {loading ? <Loader2 className="spin" size={18} aria-hidden="true" /> : <UserRound size={18} aria-hidden="true" />}
-            Continue
+            {loading ? "Connecting..." : "Continue"}
             {!loading && <ArrowRight size={18} aria-hidden="true" />}
           </button>
+          {loading && (
+            <p className="helper-text">
+              First visit may take up to 60 seconds while the backend wakes up.
+            </p>
+          )}
         </form>
       </section>
     </main>

@@ -13,6 +13,7 @@ import type {
 } from "./types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+const LOGIN_TIMEOUT_MS = 90000;
 
 type ApiRequestInit = RequestInit & {
   timeoutMs?: number;
@@ -33,7 +34,7 @@ async function request<T>(path: string, options?: ApiRequestInit): Promise<T> {
     });
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
-      throw new Error("Request timed out. Please try again.");
+      throw new Error("Request timed out. The backend may still be waking up. Please try again in a few seconds.");
     }
     throw error;
   } finally {
@@ -156,7 +157,7 @@ export async function requestLoginCode(email: string): Promise<{ status: string;
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
-    timeoutMs: 15000
+    timeoutMs: LOGIN_TIMEOUT_MS
   });
 }
 
@@ -165,7 +166,7 @@ export async function loginWithName(name: string): Promise<{ status: string; ema
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name }),
-    timeoutMs: 15000
+    timeoutMs: LOGIN_TIMEOUT_MS
   });
 }
 
