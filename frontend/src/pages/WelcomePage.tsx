@@ -12,8 +12,7 @@ export function WelcomePage({ onStart }: WelcomePageProps) {
         <h1>Vigil Voice Trigger Data Collection</h1>
         <p className="lede">
           Welcome to Vigil Recorder. This tool collects clean voice samples for the Vigil voice trigger
-          system. Please speak naturally. Do not imitate another accent. Please record in a relatively
-          quiet place if possible.
+          system. Please speak naturally. Do not imitate another accent.
         </p>
         <button className="button primary wide" type="button" onClick={onStart}>
           Start
