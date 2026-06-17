@@ -17,7 +17,7 @@ export const PROMPT_GROUPS: PromptGroupConfig[] = [
     id: "P1_vigil_only",
     title: "Prompt 1 — VIGIL Only",
     instruction: 'Please say "VIGIL" once per recording. You can upload as many recordings as you like. The more the better.',
-    fixedTranscript: "Vigil",
+    fixedTranscript: "VIGIL",
     examples: [],
     contains_vigil: true,
     wake_intent: true,
@@ -35,7 +35,7 @@ export const PROMPT_GROUPS: PromptGroupConfig[] = [
       "Hello VIGIL.",
       "Next, VIGIL.",
       "What's next, VIGIL?",
-      "Am I doing right, VIGIL?"
+      "Am I doing it yet right, VIGIL?"
     ],
     contains_vigil: true,
     wake_intent: true,

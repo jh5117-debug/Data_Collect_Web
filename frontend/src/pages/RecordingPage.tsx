@@ -22,7 +22,7 @@ type ErrorMap = Partial<Record<PromptGroupId, string | null>>;
 type KeyMap = Record<PromptGroupId, number>;
 
 const INITIAL_TEXT: TextMap = {
-  P1_vigil_only: "Vigil",
+  P1_vigil_only: "VIGIL",
   P2_phrase_plus_vigil: "",
   P3_vigil_plus_phrase: "",
   P4_negative: ""

@@ -157,12 +157,6 @@ export function AudioRecorder({ onBlobChange, disabled = false }: AudioRecorderP
   return (
     <div className="recorder">
       <div className="recorder-actions">
-        {!hasPermission && (
-          <button className="button secondary" type="button" onClick={requestMicrophone} disabled={disabled || isStarting || isRecording}>
-            <Mic size={18} aria-hidden="true" />
-            Enable Microphone
-          </button>
-        )}
         <button
           className="button primary"
           type="button"
