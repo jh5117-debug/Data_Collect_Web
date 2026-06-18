@@ -35,7 +35,7 @@ export const PROMPT_GROUPS: PromptGroupConfig[] = [
       "Hello VIGIL.",
       "Next, VIGIL.",
       "What's next, VIGIL?",
-      "Am I doing it yet right, VIGIL?"
+      "Am I doing it right, VIGIL?"
     ],
     contains_vigil: true,
     wake_intent: true,
@@ -51,7 +51,7 @@ export const PROMPT_GROUPS: PromptGroupConfig[] = [
       "VIGIL, next.",
       "VIGIL, go back.",
       "VIGIL, what's next?",
-      "VIGIL, am I doing right?"
+      "VIGIL, am I doing it right?"
     ],
     contains_vigil: true,
     wake_intent: true,
