@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, RefreshCw, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { deleteAccountClip, getAccountClipAudioUrl, getAccountSessionClips, getAccountSessions } from "../api";
 import { BackButton } from "../components/BackButton";
@@ -134,6 +134,12 @@ export function AccountPage({ email, authToken, onBack, onStart }: AccountPagePr
         <p className="eyebrow">Participant Workspace</p>
         <h1>Your Sessions</h1>
         <p className="instruction">{email}</p>
+        <div className="download-row">
+          <a className="button secondary" href="/instruction_v2.pdf" download>
+            <Download size={18} aria-hidden="true" />
+            Download Instructions
+          </a>
+        </div>
         <div className="button-row">
           <button className="button primary" type="button" onClick={onStart}>
             Start New Session

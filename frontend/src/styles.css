@@ -167,6 +167,7 @@ h1 {
   cursor: pointer;
   font-weight: 800;
   letter-spacing: 0;
+  text-decoration: none;
   transition:
     transform 120ms ease,
     box-shadow 120ms ease,
@@ -223,6 +224,11 @@ h1 {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 22px;
+}
+
+.download-row {
+  display: flex;
+  margin-top: 14px;
 }
 
 .check-list {
