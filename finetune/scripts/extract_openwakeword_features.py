@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import inspect
 import json
 from importlib import metadata
 from pathlib import Path
@@ -30,19 +31,40 @@ class OfficialOpenWakeWordExtractor:
             raise RuntimeError(f"official openWakeWord AudioFeatures import failed: {exc}") from exc
         self.version = _package_version("openwakeword")
         self.extractor = AudioFeatures()
-        self.model_checksum = "package_assets_unresolved"
+        self.model_checksum = self._model_asset_checksum(AudioFeatures)
+
+    @staticmethod
+    def _model_asset_checksum(audio_features_cls: type) -> str:
+        checksums: list[str] = []
+        try:
+            signature = inspect.signature(audio_features_cls)
+        except (TypeError, ValueError):
+            return "package_assets_unresolved"
+        for name in ("melspec_onnx_model_path", "embedding_onnx_model_path"):
+            parameter = signature.parameters.get(name)
+            if parameter is None or parameter.default is inspect.Signature.empty:
+                continue
+            path = Path(str(parameter.default))
+            if path.exists():
+                checksums.append(f"{path.name}:{sha256_file(path)}")
+        return "|".join(checksums) if checksums else "package_assets_unresolved"
 
     @staticmethod
     def _normalize_output(output: object) -> np.ndarray:
-        if isinstance(output, (list, tuple)):
-            if not output:
-                raise RuntimeError("official openWakeWord returned an empty feature list")
-            output = output[0]
-        arr = np.asarray(output)
+        try:
+            arr = np.asarray(output)
+        except ValueError as exc:
+            raise RuntimeError("official openWakeWord returned a ragged/object feature array") from exc
+        if arr.dtype == object:
+            raise RuntimeError("official openWakeWord returned a ragged/object feature array")
+        if arr.size == 0:
+            raise RuntimeError("official openWakeWord returned empty features")
         if arr.ndim == 3 and arr.shape[0] == 1:
             arr = arr[0]
         if arr.ndim == 1:
             arr = arr.reshape(1, -1)
+        if arr.ndim > 2 and arr.shape[-1] > 1:
+            arr = arr.reshape(-1, arr.shape[-1])
         if arr.ndim != 2:
             raise RuntimeError(f"official openWakeWord returned unsupported feature shape {arr.shape}")
         arr = arr.astype(np.float32, copy=False)
@@ -54,17 +76,10 @@ class OfficialOpenWakeWordExtractor:
         sample_rate, audio = read_wav(wav_path)
         if sample_rate != 16000:
             raise RuntimeError(f"official openWakeWord expects 16 kHz WAV, got {sample_rate}")
-        audio_i16 = np.clip(audio, -32768, 32767).astype(np.int16)
+        audio_i16 = np.clip(audio, -32768, 32767).astype(np.int16).reshape(1, -1)
         attempts = []
         if hasattr(self.extractor, "embed_clips"):
-            attempts.extend(
-                [
-                    lambda: self.extractor.embed_clips([audio_i16], batch_size=1),
-                    lambda: self.extractor.embed_clips(audio_i16, batch_size=1),
-                    lambda: self.extractor.embed_clips([audio_i16]),
-                    lambda: self.extractor.embed_clips(audio_i16),
-                ]
-            )
+            attempts.append(lambda: self.extractor.embed_clips(audio_i16, batch_size=1))
         if callable(self.extractor):
             attempts.append(lambda: self.extractor(audio_i16))
         errors = []
