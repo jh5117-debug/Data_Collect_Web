@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import importlib.util
 from typing import Any
 
 import torch
@@ -35,10 +36,28 @@ class FrozenQwenAudioAdapter:
         self.model_name = model_name
         self.model: Any | None = None
         self.processor: Any | None = None
+        self.extraction_path: str | None = None
 
     def load(self) -> None:
         if not torch.cuda.is_available():
             raise QwenAdapterUnavailable("CUDA is not available; Qwen3-ASR-1.7B encoder extraction was not run.")
+        if importlib.util.find_spec("qwen_asr") is not None:
+            try:
+                from qwen_asr import Qwen3ASRModel  # type: ignore
+            except Exception as exc:
+                raise QwenAdapterUnavailable(f"qwen_asr import failed: {exc}") from exc
+            try:
+                self.model = Qwen3ASRModel.from_pretrained(self.model_name)
+                if hasattr(self.model, "to"):
+                    self.model.to("cuda:0")
+            except Exception as exc:
+                raise QwenAdapterUnavailable(f"Qwen ASR model load failed: {exc}") from exc
+            if hasattr(self.model, "eval"):
+                self.model.eval()
+            if hasattr(self.model, "parameters"):
+                for param in self.model.parameters():
+                    param.requires_grad = False
+            return
         try:
             from transformers import AutoModelForCausalLM, AutoProcessor
         except Exception as exc:
@@ -60,12 +79,62 @@ class FrozenQwenAudioAdapter:
     def integrity(self) -> FrozenIntegrity:
         if self.model is None:
             raise QwenAdapterUnavailable("Qwen model is not loaded.")
+        if not hasattr(self.model, "named_parameters"):
+            raise QwenAdapterUnavailable("Loaded Qwen wrapper does not expose named_parameters; frozen integrity cannot be proven.")
         return checksum_representative_parameters(self.model)
 
     def extract_audio_features(self, wav_path: str) -> torch.Tensor:
+        if self.model is None:
+            raise QwenAdapterUnavailable("Qwen model is not loaded.")
+        attempts: list[tuple[str, Any]] = []
+        for name in ("extract_audio_features", "get_audio_features", "encode_audio"):
+            if hasattr(self.model, name):
+                method = getattr(self.model, name)
+                attempts.append((name, lambda method=method: method(wav_path)))
+                attempts.append((f"{name}_list", lambda method=method: method([wav_path])))
+        nested = getattr(self.model, "model", None)
+        if nested is not None:
+            for name in ("extract_audio_features", "get_audio_features", "encode_audio"):
+                if hasattr(nested, name):
+                    method = getattr(nested, name)
+                    attempts.append((f"model.{name}", lambda method=method: method(wav_path)))
+                    attempts.append((f"model.{name}_list", lambda method=method: method([wav_path])))
+        errors = []
+        with torch.inference_mode():
+            for name, attempt in attempts:
+                try:
+                    output = attempt()
+                    tensor = self._coerce_hidden_states(output)
+                    self.extraction_path = name
+                    return tensor
+                except Exception as exc:  # pragma: no cover - depends on installed Qwen runtime
+                    errors.append(f"{name}:{type(exc).__name__}:{exc}")
         raise QwenAdapterUnavailable(
-            "Qwen3-ASR audio-encoder adapter requires source inspection for this installed version; no transcript decoder features are used."
+            "No supported Qwen3-ASR audio-encoder hidden-state method was found. "
+            "Transcript decoder outputs were not used. Attempts: "
+            + " | ".join(errors)
         )
+
+    @staticmethod
+    def _coerce_hidden_states(output: Any) -> torch.Tensor:
+        if isinstance(output, dict):
+            for key in ("hidden_states", "audio_features", "features", "last_hidden_state"):
+                if key in output:
+                    return FrozenQwenAudioAdapter._coerce_hidden_states(output[key])
+        if isinstance(output, (list, tuple)):
+            if not output:
+                raise QwenAdapterUnavailable("Qwen audio feature output was empty")
+            return FrozenQwenAudioAdapter._coerce_hidden_states(output[0])
+        if not isinstance(output, torch.Tensor):
+            output = torch.as_tensor(output)
+        if output.ndim == 3 and output.shape[0] == 1:
+            output = output[0]
+        if output.ndim != 2:
+            raise QwenAdapterUnavailable(f"Qwen audio features must have shape [T, D], got {tuple(output.shape)}")
+        output = output.detach()
+        if not torch.isfinite(output.float()).all():
+            raise QwenAdapterUnavailable("Qwen audio features contain NaN or Inf")
+        return output
 
 
 class DummyFrozenEncoder(torch.nn.Module):

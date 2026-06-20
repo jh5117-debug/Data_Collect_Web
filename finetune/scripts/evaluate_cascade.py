@@ -31,7 +31,22 @@ def package_version(name: str) -> str | None:
 
 
 def write_predictions_csv(path: Path, preds: list[dict]) -> None:
-    fields = ["clip_id", "speaker_id", "session_id", "prompt_group", "transcript", "label", "phrase_id", "split", "score"]
+    fields = [
+        "clip_id",
+        "speaker_id",
+        "session_id",
+        "prompt_group",
+        "transcript",
+        "label",
+        "phrase_id",
+        "split",
+        "window_index",
+        "score",
+        "stage1_score",
+        "stage2_score",
+        "candidate",
+        "final_trigger",
+    ]
     with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
@@ -80,7 +95,7 @@ def write_reproducibility(path: Path, project_root: Path, dataset_report: dict, 
         if (run_dir / "config_resolved.yaml").exists()
         else None,
         "executed_commands": [
-            "bash finetune/scripts/run_smoke.sh /home/hj/Data_Collect_Web/finetune/data/vigil_dataset_export_20260620_020617.zip"
+            "bash finetune/scripts/run_official_smoke_local_3090.sh <physical_gpu_index> /home/hj/Data_Collect_Web/finetune/data/vigil_dataset_export_20260620_020617.zip"
         ],
     }
     write_json(path, reproducibility)
@@ -128,6 +143,60 @@ def main() -> int:
         path = run_dir / name / "metrics.json"
         if path.exists():
             summary[name] = read_json(path)
+    if stage1_predictions_path.exists():
+        stage1_preds = read_jsonl(stage1_predictions_path)
+        stage1_metrics = read_json(stage1_metrics_path) if stage1_metrics_path.exists() else {}
+        theta_1 = float(stage1_metrics.get("theta_1", 0.5))
+        cascade_results = {}
+        for name in ("stage2_bce", "stage2_bce_supcon"):
+            metrics_path = run_dir / name / "metrics.json"
+            preds_path = run_dir / name / "test_predictions.jsonl"
+            if not metrics_path.exists() or not preds_path.exists():
+                continue
+            metrics = read_json(metrics_path)
+            if metrics.get("status") != "ok":
+                continue
+            theta_2 = float(metrics.get("theta_2", 0.5))
+            stage2_by_key = {(p["clip_id"], p.get("window_index", 0)): p for p in read_jsonl(preds_path)}
+            cascade_preds = []
+            labels = []
+            final_scores = []
+            for p in stage1_preds:
+                key = (p["clip_id"], p.get("window_index", 0))
+                s2 = stage2_by_key.get(key)
+                if not s2:
+                    continue
+                candidate = float(p["score"]) >= theta_1
+                final_trigger = candidate and float(s2["stage2_score"]) >= theta_2
+                row = dict(p)
+                row["stage1_score"] = float(p["score"])
+                row["stage2_score"] = float(s2["stage2_score"])
+                row["candidate"] = candidate
+                row["final_trigger"] = final_trigger
+                cascade_preds.append(row)
+                labels.append(int(p["label"]))
+                final_scores.append(1.0 if final_trigger else 0.0)
+            cascade_metrics = binary_metrics(labels, final_scores, 0.5)
+            cascade_metrics.update(
+                {
+                    "status": "ok",
+                    "variant": name,
+                    "theta_1": theta_1,
+                    "theta_2": theta_2,
+                    "candidate_rate": sum(1 for p in stage1_preds if float(p["score"]) >= theta_1) / len(stage1_preds)
+                    if stage1_preds
+                    else None,
+                    "stage2_rows_matched": len(cascade_preds),
+                }
+            )
+            cascade_results[name] = cascade_metrics
+            write_predictions_csv(cascade_dir / f"{name}_predictions.csv", cascade_preds)
+        if cascade_results:
+            summary["cascade"] = {
+                "status": "ok",
+                "variants": cascade_results,
+                "theta_1": theta_1,
+            }
     write_json(cascade_dir / "metrics.json", summary["cascade"])
     write_json(run_dir / "summary.json", summary)
     write_reproducibility(run_dir / "reproducibility.json", project_root, dataset_report, run_dir)

@@ -54,6 +54,8 @@ def predict(model, rows, device):
             scores = torch.sigmoid(model(x.to(device), lengths.to(device))).cpu().numpy().tolist()
             for row, score in zip(batch_rows, scores):
                 pred = {k: row[k] for k in ("clip_id", "speaker_id", "session_id", "prompt_group", "transcript", "label", "phrase_id", "split")}
+                if "window_index" in row:
+                    pred["window_index"] = row["window_index"]
                 pred["score"] = float(score)
                 out.append(pred)
     return out
