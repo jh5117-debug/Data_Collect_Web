@@ -1,0 +1,59 @@
+seed: 20260620
+
+audio:
+  sample_rate: 16000
+  channels: 1
+  sample_width_bits: 16
+  window_seconds: 2.0
+  streaming_chunk_ms: 80
+
+data:
+  synthetic_enabled: false
+  speaker_split: true
+  duplicate_hash_grouping: true
+  hard_negative_phrases:
+    - visual
+    - visuals
+    - visible
+    - digital
+    - individual
+    - vigilant
+    - video
+    - vital
+    - residual
+
+stage1:
+  feature_backend: openwakeword
+  allow_acoustic_fallback_when_openwakeword_missing: false
+  epochs: 20
+  batch_size: 32
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  gru_hidden_size: 64
+  gru_layers: 2
+  dropout: 0.10
+  gradient_clip_norm: 5.0
+  early_stopping_patience: 5
+  recall_target: 0.95
+
+stage2:
+  model_name: Qwen/Qwen3-ASR-1.7B
+  epochs: 20
+  batch_size: 8
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  projection_dim: 256
+  embedding_dim: 128
+  gradient_clip_norm: 5.0
+  early_stopping_patience: 5
+  lambda_supcon: 0.10
+  temperature: 0.07
+  recall_target: 0.90
+  allow_skip_without_gpu: false
+
+runtime:
+  max_gpus: 1
+  qwen_extraction_batch_size: 1
+  use_bfloat16_when_supported: true
+  use_cloud_logging: false
+  smoke_mode: false

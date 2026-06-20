@@ -28,6 +28,22 @@ backend/storage/*
 *.tar
 *.tgz
 
+# VIGIL research pipeline generated artifacts
+finetune/data/extracted/
+finetune/data/processed/
+finetune/cache/
+finetune/third_party/
+finetune/runs/
+finetune/**/*.npy
+finetune/**/*.npz
+finetune/**/*.pt
+finetune/**/*.pth
+finetune/**/*.onnx
+finetune/**/*.log
+finetune/**/events.out.tfevents*
+finetune/**/predictions*.jsonl
+finetune/**/predictions*.csv
+
 # OS/editor
 .DS_Store
 .idea/
