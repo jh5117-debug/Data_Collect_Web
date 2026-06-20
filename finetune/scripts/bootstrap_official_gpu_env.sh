@@ -14,9 +14,39 @@ if ! command -v conda >/dev/null 2>&1; then
   exit 2
 fi
 
-if ! conda env list | awk '{print $1}' | grep -qx "${ENV_NAME}"; then
-  conda create -y -n "${ENV_NAME}" "python=${PYTHON_VERSION}"
+print_conda_tos_help() {
+  cat >&2 <<'EOF'
+ERROR: Conda requires you to accept the Anaconda channel Terms of Service first.
+
+Run these two commands from the normal HAL SSH shell, then rerun this bootstrap:
+
+  conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+  conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
+EOF
+}
+
+CONDA_ERR="$(mktemp)"
+if ! conda env list > /tmp/vigil_conda_envs.txt 2>"${CONDA_ERR}"; then
+  if grep -q "CondaToSNonInteractiveError" "${CONDA_ERR}"; then
+    print_conda_tos_help
+    exit 2
+  fi
+  cat "${CONDA_ERR}" >&2
+  exit 2
 fi
+
+if ! awk '{print $1}' /tmp/vigil_conda_envs.txt | grep -qx "${ENV_NAME}"; then
+  if ! conda create -y --solver=classic -n "${ENV_NAME}" "python=${PYTHON_VERSION}" 2>"${CONDA_ERR}"; then
+    if grep -q "CondaToSNonInteractiveError" "${CONDA_ERR}"; then
+      print_conda_tos_help
+      exit 2
+    fi
+    cat "${CONDA_ERR}" >&2
+    exit 2
+  fi
+fi
+rm -f "${CONDA_ERR}" /tmp/vigil_conda_envs.txt
 
 conda run -n "${ENV_NAME}" python -m pip install --upgrade pip setuptools wheel
 
