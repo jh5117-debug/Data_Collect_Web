@@ -34,44 +34,50 @@ def checksum_representative_parameters(model: torch.nn.Module, limit: int = 8) -
 class FrozenQwenAudioAdapter:
     def __init__(self, model_name: str):
         self.model_name = model_name
-        self.model: Any | None = None
+        self.wrapper: Any | None = None
+        self.model: torch.nn.Module | None = None
         self.processor: Any | None = None
         self.extraction_path: str | None = None
+        self.dtype: torch.dtype | None = None
 
     def load(self) -> None:
         if not torch.cuda.is_available():
             raise QwenAdapterUnavailable("CUDA is not available; Qwen3-ASR-1.7B encoder extraction was not run.")
+        self.dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
         if importlib.util.find_spec("qwen_asr") is not None:
             try:
                 from qwen_asr import Qwen3ASRModel  # type: ignore
             except Exception as exc:
                 raise QwenAdapterUnavailable(f"qwen_asr import failed: {exc}") from exc
             try:
-                self.model = Qwen3ASRModel.from_pretrained(self.model_name)
-                if hasattr(self.model, "to"):
-                    self.model.to("cuda:0")
+                loaded = Qwen3ASRModel.from_pretrained(self.model_name, torch_dtype=self.dtype)
             except Exception as exc:
                 raise QwenAdapterUnavailable(f"Qwen ASR model load failed: {exc}") from exc
-            if hasattr(self.model, "eval"):
-                self.model.eval()
-            if hasattr(self.model, "parameters"):
-                for param in self.model.parameters():
-                    param.requires_grad = False
+            self._set_loaded_model(loaded)
             return
         try:
-            from transformers import AutoModelForCausalLM, AutoProcessor
+            from transformers import AutoModel, AutoProcessor
         except Exception as exc:
             raise QwenAdapterUnavailable(f"transformers import failed: {exc}") from exc
         try:
             self.processor = AutoProcessor.from_pretrained(self.model_name, trust_remote_code=True)
-            self.model = AutoModelForCausalLM.from_pretrained(
+            loaded = AutoModel.from_pretrained(
                 self.model_name,
                 trust_remote_code=True,
-                torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
-                device_map="cuda:0",
+                torch_dtype=self.dtype,
             )
         except Exception as exc:
             raise QwenAdapterUnavailable(f"Qwen model load failed: {exc}") from exc
+        self._set_loaded_model(loaded, processor=self.processor)
+
+    def _set_loaded_model(self, loaded: Any, processor: Any | None = None) -> None:
+        self.wrapper = loaded if hasattr(loaded, "model") and not hasattr(loaded, "named_parameters") else None
+        self.model = getattr(loaded, "model", loaded)
+        self.processor = processor or getattr(loaded, "processor", self.processor)
+        if not hasattr(self.model, "named_parameters"):
+            raise QwenAdapterUnavailable("Loaded Qwen object does not expose a torch model for frozen integrity checks.")
+        if torch.cuda.is_available() and hasattr(self.model, "to"):
+            self.model.to("cuda:0")
         self.model.eval()
         for param in self.model.parameters():
             param.requires_grad = False
@@ -86,6 +92,12 @@ class FrozenQwenAudioAdapter:
     def extract_audio_features(self, wav_path: str) -> torch.Tensor:
         if self.model is None:
             raise QwenAdapterUnavailable("Qwen model is not loaded.")
+        errors = []
+        with torch.inference_mode():
+            try:
+                return self._extract_qwen3_asr_thinker_features(wav_path)
+            except Exception as exc:  # pragma: no cover - depends on installed Qwen runtime
+                errors.append(f"model.thinker.get_audio_features:{type(exc).__name__}:{exc}")
         attempts: list[tuple[str, Any]] = []
         for name in ("extract_audio_features", "get_audio_features", "encode_audio"):
             if hasattr(self.model, name):
@@ -99,7 +111,6 @@ class FrozenQwenAudioAdapter:
                     method = getattr(nested, name)
                     attempts.append((f"model.{name}", lambda method=method: method(wav_path)))
                     attempts.append((f"model.{name}_list", lambda method=method: method([wav_path])))
-        errors = []
         with torch.inference_mode():
             for name, attempt in attempts:
                 try:
@@ -114,6 +125,35 @@ class FrozenQwenAudioAdapter:
             "Transcript decoder outputs were not used. Attempts: "
             + " | ".join(errors)
         )
+
+    def _extract_qwen3_asr_thinker_features(self, wav_path: str) -> torch.Tensor:
+        if self.model is None or self.processor is None:
+            raise QwenAdapterUnavailable("Qwen model or processor is not loaded.")
+        thinker = getattr(self.model, "thinker", None)
+        get_audio_features = getattr(thinker, "get_audio_features", None)
+        if get_audio_features is None:
+            raise QwenAdapterUnavailable("Loaded Qwen model does not expose thinker.get_audio_features.")
+        try:
+            from qwen_asr.inference.utils import normalize_audio_input  # type: ignore
+        except Exception as exc:
+            raise QwenAdapterUnavailable(f"Could not import qwen_asr audio normalization utility: {exc}") from exc
+        audio = normalize_audio_input(wav_path)
+        audio_token = getattr(self.processor, "audio_token", "<|AUDIO|>")
+        inputs = self.processor(text=[audio_token], audio=[audio], return_tensors="pt", padding=True)
+        if "input_features" not in inputs:
+            raise QwenAdapterUnavailable("Qwen processor did not return input_features for audio encoder extraction.")
+        device = next(self.model.parameters()).device
+        model_dtype = self.dtype or next(self.model.parameters()).dtype
+        input_features = inputs["input_features"].to(device=device, dtype=model_dtype)
+        feature_attention_mask = inputs.get("feature_attention_mask")
+        if feature_attention_mask is not None:
+            feature_attention_mask = feature_attention_mask.to(device=device)
+        output = get_audio_features(
+            input_features=input_features,
+            feature_attention_mask=feature_attention_mask,
+        )
+        self.extraction_path = "model.thinker.get_audio_features"
+        return self._coerce_hidden_states(output)
 
     @staticmethod
     def _coerce_hidden_states(output: Any) -> torch.Tensor:
