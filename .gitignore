@@ -44,6 +44,15 @@ finetune/**/events.out.tfevents*
 finetune/**/predictions*.jsonl
 finetune/**/predictions*.csv
 
+# LibriSpeech ASR benchmark generated/downloaded artifacts
+finetune/benchmarks/asr/downloads/
+finetune/benchmarks/asr/data/
+finetune/benchmarks/asr/runs/
+finetune/benchmarks/asr/logs/
+finetune/benchmarks/asr/manifests/*.jsonl
+finetune/benchmarks/asr/reports/generated/
+finetune/benchmarks/asr/third_party/
+
 # OS/editor
 .DS_Store
 .idea/
