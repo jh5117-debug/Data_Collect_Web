@@ -8,24 +8,11 @@ from typing import Any
 
 import torch
 from huggingface_hub import model_info
+from vigil_two_stage.qwen_text_result import extract_qwen_text
 
 
 class QwenRunnerError(RuntimeError):
     pass
-
-
-def _extract_text(result: object) -> str:
-    if isinstance(result, str):
-        return result
-    if isinstance(result, dict):
-        for key in ("text", "transcript", "prediction", "output", "hypothesis"):
-            if key in result:
-                return _extract_text(result[key])
-    if isinstance(result, (list, tuple)):
-        if not result:
-            return ""
-        return _extract_text(result[0])
-    return str(result)
 
 
 def _model_parameter_module(obj: Any) -> torch.nn.Module | None:
@@ -42,6 +29,8 @@ class TranscriptionResult:
     hypothesis: str
     latency_sec: float
     peak_gpu_memory_gb: float | None
+    text_extraction_path: str
+    result_type: str
 
 
 class QwenASRRunner:
@@ -81,10 +70,11 @@ class QwenASRRunner:
 
         self.model_revision = self._resolve_model_revision()
         started = time.perf_counter()
+        kwargs = {"torch_dtype": self.dtype}
         try:
-            self.model = Qwen3ASRModel.from_pretrained(self.model_name, torch_dtype=self.dtype)
+            self.model = Qwen3ASRModel.from_pretrained(self.model_name, max_new_tokens=self.max_new_tokens, **kwargs)
         except TypeError:
-            self.model = Qwen3ASRModel.from_pretrained(self.model_name)
+            self.model = Qwen3ASRModel.from_pretrained(self.model_name, max_new_tokens=self.max_new_tokens)
         self.load_time_sec = time.perf_counter() - started
         if hasattr(self.model, "eval"):
             self.model.eval()
@@ -127,36 +117,36 @@ class QwenASRRunner:
             torch.cuda.reset_peak_memory_stats()
         attempts = []
         if hasattr(self.model, "transcribe"):
-            attempts.extend(
-                [
-                    lambda: self.model.transcribe(str(audio_path), language=self.language),
-                    lambda: self.model.transcribe(str(audio_path)),
-                    lambda: self.model.transcribe([str(audio_path)]),
-                ]
-            )
+            attempts.append(("transcribe_path_language", lambda: self.model.transcribe(str(audio_path), language=self.language)))
         if hasattr(self.model, "generate"):
             attempts.extend(
                 [
-                    lambda: self.model.generate(str(audio_path), max_new_tokens=self.max_new_tokens, do_sample=False),
-                    lambda: self.model.generate(str(audio_path)),
+                    ("generate_path_greedy", lambda: self.model.generate(str(audio_path), max_new_tokens=self.max_new_tokens, do_sample=False)),
+                    ("generate_path_default", lambda: self.model.generate(str(audio_path))),
                 ]
             )
         if callable(self.model):
-            attempts.append(lambda: self.model(str(audio_path)))
+            attempts.append(("callable_path", lambda: self.model(str(audio_path))))
         errors: list[str] = []
         started = time.perf_counter()
         with torch.inference_mode():
-            for attempt in attempts:
+            for call_variant, attempt in attempts:
                 try:
-                    hypothesis = _extract_text(attempt()).strip()
+                    extracted = extract_qwen_text(attempt())
                     latency = time.perf_counter() - started
                     peak = float(torch.cuda.max_memory_allocated() / 1024**3) if torch.cuda.is_available() else None
-                    return TranscriptionResult(hypothesis=hypothesis, latency_sec=latency, peak_gpu_memory_gb=peak)
+                    return TranscriptionResult(
+                        hypothesis=extracted.text,
+                        latency_sec=latency,
+                        peak_gpu_memory_gb=peak,
+                        text_extraction_path=extracted.extraction_path,
+                        result_type=extracted.result_type,
+                    )
                 except TypeError as exc:
-                    errors.append(f"TypeError:{exc}")
+                    errors.append(f"{call_variant}:TypeError:{exc}")
                     continue
                 except Exception as exc:
-                    errors.append(f"{type(exc).__name__}:{exc}")
+                    errors.append(f"{call_variant}:{type(exc).__name__}:{exc}")
                     continue
         raise QwenRunnerError("Qwen transcription failed: " + " | ".join(errors))
 

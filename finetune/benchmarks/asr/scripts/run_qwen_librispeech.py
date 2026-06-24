@@ -318,6 +318,8 @@ def main() -> int:
                     "status": "success",
                     "hypothesis": result.hypothesis,
                     "normalized_hypothesis": normalize_librispeech_text(result.hypothesis),
+                    "text_extraction_path": result.text_extraction_path,
+                    "result_type": result.result_type,
                     "latency_sec": result.latency_sec,
                     "real_time_factor": result.latency_sec / float(item.get("duration_sec") or 1.0),
                     "peak_gpu_memory_gb": result.peak_gpu_memory_gb,

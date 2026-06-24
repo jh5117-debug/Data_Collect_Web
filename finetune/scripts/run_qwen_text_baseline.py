@@ -11,21 +11,17 @@ from typing import Any
 import torch
 
 from vigil_two_stage.metrics import binary_metrics
+from vigil_two_stage.qwen_text_result import extract_qwen_text
 from vigil_two_stage.utils import contains_exact_vigil, ensure_dir, read_jsonl, write_json, write_jsonl
 
 
-def _extract_text(result: object) -> str:
-    if isinstance(result, str):
-        return result
-    if isinstance(result, dict):
-        for key in ("text", "transcript", "prediction", "output"):
-            if key in result:
-                return _extract_text(result[key])
-    if isinstance(result, (list, tuple)):
-        if not result:
-            return ""
-        return _extract_text(result[0])
-    return str(result)
+def _model_parameter_module(obj: Any) -> torch.nn.Module | None:
+    if hasattr(obj, "named_parameters"):
+        return obj
+    nested = getattr(obj, "model", None)
+    if nested is not None and hasattr(nested, "named_parameters"):
+        return nested
+    return None
 
 
 class QwenAsrTranscriber:
@@ -34,29 +30,46 @@ class QwenAsrTranscriber:
             raise RuntimeError("qwen_asr package is not importable in this environment")
         from qwen_asr import Qwen3ASRModel  # type: ignore
 
-        self.model = Qwen3ASRModel.from_pretrained(model_name)
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA is required; refusing CPU Qwen inference")
+        if torch.cuda.device_count() != 1:
+            raise RuntimeError(f"expected exactly one visible CUDA device, got {torch.cuda.device_count()}")
+        self.dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+        self.model = Qwen3ASRModel.from_pretrained(model_name, max_new_tokens=1024, torch_dtype=self.dtype)
         if hasattr(self.model, "eval"):
             self.model.eval()
+        self.torch_module = _model_parameter_module(self.model)
+        if self.torch_module is None:
+            raise RuntimeError("Loaded Qwen object does not expose named_parameters")
+        if hasattr(self.torch_module, "to"):
+            self.torch_module.to("cuda:0")
+        self.torch_module.eval()
+        for param in self.torch_module.parameters():
+            param.requires_grad = False
+        self.total_parameters = sum(param.numel() for param in self.torch_module.parameters())
+        self.trainable_parameters = sum(param.numel() for param in self.torch_module.parameters() if param.requires_grad)
+        if self.trainable_parameters:
+            raise RuntimeError(f"Qwen must remain frozen, got {self.trainable_parameters} trainable parameters")
+        self.last_extraction_path: str | None = None
+        self.last_result_type: str | None = None
 
     def transcribe(self, wav_path: Path) -> str:
         candidates = []
         if hasattr(self.model, "transcribe"):
-            candidates.extend(
-                [
-                    lambda: self.model.transcribe(str(wav_path)),
-                    lambda: self.model.transcribe([str(wav_path)]),
-                ]
-            )
+            candidates.append(("transcribe_path_language_none", lambda: self.model.transcribe(str(wav_path), language=None)))
         if hasattr(self.model, "generate"):
-            candidates.append(lambda: self.model.generate(str(wav_path)))
+            candidates.append(("generate_path_default", lambda: self.model.generate(str(wav_path))))
         if callable(self.model):
-            candidates.append(lambda: self.model(str(wav_path)))
+            candidates.append(("callable_path", lambda: self.model(str(wav_path))))
         errors = []
-        for candidate in candidates:
+        for call_variant, candidate in candidates:
             try:
-                return _extract_text(candidate()).strip()
+                extracted = extract_qwen_text(candidate())
+                self.last_extraction_path = extracted.extraction_path
+                self.last_result_type = extracted.result_type
+                return extracted.text
             except Exception as exc:  # pragma: no cover - depends on installed Qwen runtime
-                errors.append(f"{type(exc).__name__}: {exc}")
+                errors.append(f"{call_variant}:{type(exc).__name__}: {exc}")
         raise RuntimeError("Qwen ASR transcription failed; attempts: " + " | ".join(errors))
 
 
@@ -291,6 +304,8 @@ def main() -> int:
         latency = time.perf_counter() - started
         latencies.append(latency)
         pred["predicted_transcript"] = predicted_text
+        pred["text_extraction_path"] = transcriber.last_extraction_path
+        pred["qwen_result_type"] = transcriber.last_result_type
         pred["exact_trigger_decision"] = contains_exact_vigil(pred["predicted_transcript"])
         pred["latency_sec"] = latency
         pred["evaluation_unit"] = args.evaluation_unit
@@ -304,11 +319,18 @@ def main() -> int:
         deduplicate_by=args.deduplicate_by,
         mean_latency_sec=float(sum(latencies) / len(latencies)) if latencies else None,
         peak_gpu_memory_gb=float(torch.cuda.max_memory_allocated() / 1024**3) if torch.cuda.is_available() else None,
-        extra={"source_manifest_rows": len(source_rows), "unique_audio_transcriptions": len(eval_rows)},
+        extra={
+            "source_manifest_rows": len(source_rows),
+            "unique_audio_transcriptions": len(eval_rows),
+            "text_extraction_paths": sorted({str(pred.get("text_extraction_path")) for pred in preds}),
+            "qwen_result_types": sorted({str(pred.get("qwen_result_type")) for pred in preds}),
+            "qwen_dtype": str(transcriber.dtype),
+            "qwen_total_parameters": transcriber.total_parameters,
+            "qwen_trainable_parameters": transcriber.trainable_parameters,
+        },
     )
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

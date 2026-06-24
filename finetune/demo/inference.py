@@ -10,6 +10,7 @@ import torch
 
 from audio_processing import convert_to_wav, load_wav_float32, sliding_windows, temporary_audio_dir, write_window_wav
 from model_loader import VigilRuntime
+from vigil_two_stage.qwen_text_result import extract_qwen_text
 
 
 VARIANT_LABELS = {
@@ -17,20 +18,6 @@ VARIANT_LABELS = {
     "BCE": "stage2_bce",
     "BCE + SupCon": "stage2_bce_supcon",
 }
-
-
-def _extract_text(result: object) -> str:
-    if isinstance(result, str):
-        return result
-    if isinstance(result, dict):
-        for key in ("text", "transcript", "prediction", "output", "hypothesis"):
-            if key in result:
-                return _extract_text(result[key])
-    if isinstance(result, (list, tuple)):
-        if not result:
-            return ""
-        return _extract_text(result[0])
-    return str(result)
 
 
 @dataclass
@@ -74,20 +61,20 @@ class VigilInference:
             raise RuntimeError("Qwen model is not loaded")
         attempts = []
         if hasattr(model, "transcribe"):
-            attempts.extend([lambda: model.transcribe(str(wav_path), language="English"), lambda: model.transcribe(str(wav_path))])
+            attempts.append(("transcribe_path_language_none", lambda: model.transcribe(str(wav_path), language=None)))
         if hasattr(model, "generate"):
-            attempts.extend([lambda: model.generate(str(wav_path), do_sample=False), lambda: model.generate(str(wav_path))])
+            attempts.extend([("generate_path_greedy", lambda: model.generate(str(wav_path), do_sample=False)), ("generate_path_default", lambda: model.generate(str(wav_path)))])
         if callable(model):
-            attempts.append(lambda: model(str(wav_path)))
+            attempts.append(("callable_path", lambda: model(str(wav_path))))
         errors = []
         with torch.inference_mode():
-            for attempt in attempts:
+            for call_variant, attempt in attempts:
                 try:
-                    return _extract_text(attempt()).strip()
+                    return extract_qwen_text(attempt()).text
                 except TypeError as exc:
-                    errors.append(f"TypeError:{exc}")
+                    errors.append(f"{call_variant}:TypeError:{exc}")
                 except Exception as exc:
-                    errors.append(f"{type(exc).__name__}:{exc}")
+                    errors.append(f"{call_variant}:{type(exc).__name__}:{exc}")
         raise RuntimeError("Qwen transcript failed: " + " | ".join(errors))
 
     def analyze(
@@ -214,4 +201,3 @@ class VigilInference:
                 "timings": timings,
                 "model_selection": self.runtime.model_selection,
             }
-
