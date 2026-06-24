@@ -4,7 +4,7 @@
 
 - Repository: `/home/hj/Data_Collect_Web`
 - Branch: `research/vigil-eval-live-demo-20260624`
-- Commit: pushed at least through `df32ddb`; run `git rev-parse --short HEAD` for the exact latest handoff-status commit.
+- Commit: local code fix commit `538f646`; documentation/status commit still pending.
 - Remote: `origin git@github.com:jh5117-debug/Data_Collect_Web.git`
 - Dataset ZIP: `/home/hj/Data_Collect_Web/finetune/data/vigil_dataset_export_20260624_072023_180681.zip`
 - Dataset fingerprint: `0fad4c7828149099`
@@ -13,9 +13,36 @@
 - Current run report: `/home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full/FINAL_REPORT.md`
 - Current evaluation audit: `/home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full/EVALUATION_AUDIT.md`
 - Current model selection: `/home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full/MODEL_SELECTION.md`
-- Completed LibriSpeech full benchmark: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`
-- Completed LibriSpeech full report: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full/FINAL_REPORT.md`
+- Invalid historical LibriSpeech full benchmark: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`
+- Corrected LibriSpeech full benchmark: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_185419_qwen3_asr_1_7b_fixed_text_extraction_baseline_full`
 - Preserved untracked file, do not touch/commit: `docs/VIGIL_Recorder_Participant_Guide.docx`
+
+## Qwen Transcript Extraction Correction
+
+- Root cause: `qwen_asr.inference.qwen3_asr.Qwen3ASRModel.transcribe()` returns `list[qwen_asr.inference.qwen3_asr.ASRTranscription]`; old extractors recursed into `[0]` and then used `str(result)`, storing `ASRTranscription(language=..., text=..., time_stamps=None)` instead of `.text`.
+- Actual result type: outer `builtins.list`, length 1; item type `qwen_asr.inference.qwen3_asr.ASRTranscription`; transcript field `.text`; extraction path `$[0].text`.
+- Files changed in fix commit `538f646`: `finetune/src/vigil_two_stage/qwen_text_result.py`, `finetune/src/vigil_two_stage/__init__.py`, `finetune/benchmarks/asr/src/qwen_runner.py`, `finetune/benchmarks/asr/scripts/run_qwen_librispeech.py`, `finetune/scripts/run_qwen_text_baseline.py`, `finetune/demo/inference.py`, `finetune/tests/test_qwen_text_result.py`, `finetune/benchmarks/asr/tests/test_qwen_transcript_call_sites.py`.
+- Old invalid run: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`; 5559/5559 stored hypotheses were structured object reprs. Its 0.40069005613854497 normalized WER is invalid for scientific reporting.
+- Runtime diagnostic: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/reports/QWEN_RUNTIME_RESULT_DIAGNOSTIC.md`.
+- Old-run audit: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/reports/QWEN_OLD_RUN_EXTRACTION_AUDIT.md`.
+- One-utterance sanity check: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/reports/QWEN_FIXED_ONE_UTTERANCE_SANITY.md`; clean transcript, path `$[0].text`, latency 2.6987866358831525s, peak GPU 3.885563850402832 GB.
+- Corrected smoke run: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_185009_qwen3_asr_1_7b_fixed_text_extraction_smoke_smoke`; 64 successes, 0 failures, normalized WER 0.037165082108902334, test-clean 0.015455950540958269, test-other 0.06470588235294118, malformed hypotheses 0.
+- Corrected full run: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_185419_qwen3_asr_1_7b_fixed_text_extraction_baseline_full`; 5559 successes, 0 failures, normalized WER 0.02751646508258752, test-clean 0.018411442483262326, test-other 0.03666201784383776, normalized CER 0.009904616200632524, raw WER 0.9862560642019081, malformed hypotheses 0.
+- Corrected VIGIL Qwen baseline: `/home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full/baseline_qwen_exact_clip_fixed_text_extraction`; n 93, precision 1.0, recall 0.6862745098039216, FPR 0.0, F1 0.813953488372093. The old 0.6862745098039216 recall did not change because exact wake-word matching still found `vigil` inside many object reprs, but old transcripts are not valid transcript artifacts.
+- Selected GPU: physical GPU 6 only.
+- Benchmark tmux sessions: `librispeech_qwen_fixed_smoke` and `librispeech_qwen_fixed_full` completed and exited.
+- Active demo tmux session: `vigil_live_demo`, Python PID `1099372`, log `/home/hj/Data_Collect_Web/finetune/demo/logs/vigil_demo_20260624_205136_gpu6.log`.
+- Demo status: running on `127.0.0.1:7860`, `share=False`; file-upload validation passed for P1/P2/P3 and three P4 examples. Browser microphone capture has not been human-validated.
+- Demo validation report: `/home/hj/Data_Collect_Web/finetune/demo/reports/VIGIL_LIVE_DEMO_FILE_UPLOAD_VALIDATION.md`.
+- ASR preservation report: `/home/hj/Data_Collect_Web/finetune/reports/ASR_PRESERVATION_REPORT.md`.
+- Progress: code fix committed; docs/report commit and push pending.
+- Exact next command:
+
+```bash
+cd /home/hj/Data_Collect_Web && PATH=/home/hj/miniconda/envs/vigil-two-stage/bin:$PATH PYTHONPATH=finetune/src:. pytest -q finetune/tests
+```
+
+- Push status: branch was previously pushed through `22ffe6c`; commits after `538f646` are not pushed yet.
 
 ## Completed Phases
 
@@ -30,34 +57,34 @@
 - Created validation-only model selection artifacts.
 - Downloaded and prepared LibriSpeech `test-clean` and `test-other` manifests: 2620 + 2939 = 5559 utterances, smoke subset 64.
 - Fixed ASR benchmark CER scoring to avoid corpus-wide character DP; resume progress now reports `skipped_existing`.
-- Ran LibriSpeech 64-utterance smoke on physical GPU 6:
+- Historical invalid LibriSpeech 64-utterance smoke on physical GPU 6:
   - sanity check succeeded.
   - 64 predictions, 0 failures.
-  - normalized WER 0.43042350907519444.
-  - raw WER 1.0924805531547104.
-  - normalized CER 0.5938211382113822.
+  - normalized WER 0.43042350907519444, invalid due the same structured-object transcript extraction bug.
+  - raw WER 1.0924805531547104, invalid due the same structured-object transcript extraction bug.
+  - normalized CER 0.5938211382113822, invalid due the same structured-object transcript extraction bug.
   - mean latency 0.809393223884399 seconds.
   - mean real-time factor 0.12325373119946118.
   - peak GPU memory 3.9380016326904297 GB.
   - resume verification: `completed_now=0`, `skipped_existing=64`, WER unchanged.
-- Completed full LibriSpeech baseline on physical GPU 6:
+- Historical invalid full LibriSpeech baseline on physical GPU 6:
   - 5559 predictions, 0 failures.
-  - normalized WER 0.40069005613854497.
-  - raw WER 1.0919852457610157.
-  - normalized CER 0.5702244505102952.
-  - test-clean normalized WER 0.3694841752891053.
-  - test-other normalized WER 0.43203484706646544.
+  - normalized WER 0.40069005613854497, invalid for scientific reporting.
+  - raw WER 1.0919852457610157, invalid for scientific reporting.
+  - normalized CER 0.5702244505102952, invalid for scientific reporting.
+  - test-clean normalized WER 0.3694841752891053, invalid for scientific reporting.
+  - test-other normalized WER 0.43203484706646544, invalid for scientific reporting.
   - mean latency 0.8274251775317502 seconds.
   - mean real-time factor 0.12909503772819741.
   - peak GPU memory 4.068508625030518 GB.
-- Added `finetune/demo/` Gradio browser microphone demo source, startup script, and CPU tests. Demo has not been launched yet; GPU 6 is now idle after the full benchmark.
+- Added `finetune/demo/` Gradio browser microphone demo source, startup script, and CPU tests. Demo is now running in `vigil_live_demo` on GPU 6.
 - Ran tests:
-  - `PYTHONPATH=finetune/src:. pytest -q finetune/tests` -> 36 passed.
+  - `PYTHONPATH=finetune/src:. pytest -q finetune/tests` -> 56 passed.
   - `PYTHONPATH=finetune/src:finetune/evaluation:. pytest -q finetune/evaluation/tests` -> 13 passed.
-  - `PYTHONPATH=finetune/benchmarks/asr/src:finetune/src:. pytest -q finetune/benchmarks/asr/tests` -> 14 passed.
+  - `PYTHONPATH=finetune/benchmarks/asr/src:finetune/src:. pytest -q finetune/benchmarks/asr/tests` -> 17 passed.
   - `PYTHONPATH=finetune/src:finetune/demo:. pytest -q finetune/demo/tests` -> 4 passed.
-  - `python -m compileall -q finetune/src finetune/scripts finetune/evaluation finetune/demo finetune/benchmarks/asr` -> passed.
-  - `bash -n finetune/demo/run_demo.sh` and benchmark launcher shell syntax checks -> passed.
+  - `python -m compileall -q finetune/src finetune/scripts finetune/benchmarks/asr finetune/evaluation finetune/demo` -> passed.
+  - `bash -n` on ASR benchmark launchers, demo launcher, and `finetune/scripts/*.sh` -> passed.
 
 ## Exact Current Audit Results
 
@@ -87,14 +114,17 @@
 
 ## Active tmux Sessions
 
-- None from this VIGIL/LibriSpeech work as of the full benchmark completion check.
-- The completed full benchmark log is `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/logs/librispeech_full_20260624_090118_gpu6.log`.
-- The completed full benchmark run dir is `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`.
+- `vigil_live_demo`: running the Gradio browser/upload demo on physical GPU 6.
+- Demo Python PID: `1099372`.
+- Demo log: `/home/hj/Data_Collect_Web/finetune/demo/logs/vigil_demo_20260624_205136_gpu6.log`.
+- Completed corrected full benchmark log: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/logs/librispeech_full_20260624_185419_gpu6.log`.
+- Completed corrected full benchmark run dir: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_185419_qwen3_asr_1_7b_fixed_text_extraction_baseline_full`.
+- Invalid historical full benchmark run dir: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`.
 
 ## Current GPU
 
-- Physical GPU 6 was used for `librispeech_qwen_full` and is idle after completion.
-- If launching the live demo, use physical GPU 6 only and do not start another concurrent GPU job.
+- Physical GPU 6 is assigned to the active `vigil_live_demo` tmux session.
+- Do not start another concurrent GPU job on GPU 6 while the demo is running.
 - Required check:
 
 ```bash
@@ -136,10 +166,10 @@ bash -n finetune/demo/run_demo.sh
 
 ```bash
 cd /home/hj/Data_Collect_Web
-nvidia-smi --query-gpu=index,memory.used,memory.free,utilization.gpu --format=csv,noheader,nounits -i 6
+PATH=/home/hj/miniconda/envs/vigil-two-stage/bin:$PATH PYTHONPATH=finetune/src:. pytest -q finetune/tests
 ```
 
-The full benchmark has finished and its report/metrics files are present. The next likely step is launching the live demo on GPU 6 and verifying it with a real browser microphone.
+The corrected full benchmark and file-upload demo validation are complete. Browser microphone validation still requires a human opening the page.
 
 ## Blockers
 
@@ -165,6 +195,9 @@ The full benchmark has finished and its report/metrics files are present. The ne
 
 ## Git Commit And Push Status
 
+- Qwen extractor code/test commit created locally: `538f646 Fix structured Qwen ASR transcript extraction`.
+- Documentation/status commit is pending.
+- Push pending for commits after `22ffe6c`.
 - Source/docs commit created: `2f68674 Fix VIGIL clip evaluation workflow`.
 - Handoff status commit created: `8c6e3d7 Update VIGIL handoff status`.
 - Branch push status commit created: `df32ddb Record VIGIL branch push status`.
