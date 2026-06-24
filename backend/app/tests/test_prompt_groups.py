@@ -1,5 +1,6 @@
 import io
 import math
+import time
 import wave
 from zipfile import ZipFile
 
@@ -59,6 +60,24 @@ def _upload(client, participant_id: str, session_id: str, prompt_group: str, tra
         data=data,
         files={"audio": ("clip.wav", _wav_bytes(), "audio/wav")},
     )
+
+
+def _create_export_and_wait(client, attempts: int = 100):
+    response = client.post("/api/admin/export")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["job_id"]
+
+    for _ in range(attempts):
+        status = client.get(f"/api/admin/export/jobs/{payload['job_id']}")
+        assert status.status_code == 200
+        job = status.json()
+        if job["status"] in {"completed", "completed_with_warnings"}:
+            return job
+        if job["status"] == "failed":
+            raise AssertionError(job["error_message"])
+        time.sleep(0.05)
+    raise AssertionError("export job did not finish")
 
 
 def test_prompt_group_upload_validation_and_labels(client):
@@ -127,13 +146,20 @@ def test_summary_detail_export_and_deletion_for_prompt_groups(client):
     }
     assert any(clip["transcript"] == "visual" for clip in admin_clips)
 
-    export_response = client.post("/api/admin/export").json()
+    export_response = _create_export_and_wait(client)
     export_path = get_storage_backend().absolute_path(f"exports/{export_response['file_name']}")
     with ZipFile(export_path) as archive:
         names = archive.namelist()
-        assert any("/by_prompt_group/P4_negative/raw_audio/" in name for name in names)
+        assert any("/by_prompt_group/P4_negative/clips.jsonl" in name for name in names)
         assert any("/audio_raw/" in name for name in names)
+        assert not any("/raw_audio/" in name for name in names)
         assert any(name.endswith("/metadata/clips.csv") for name in names)
+        p4_manifest = "\n".join(
+            archive.read(name).decode("utf-8")
+            for name in names
+            if name.endswith("/by_prompt_group/P4_negative/clips.jsonl")
+        )
+        assert '"audio": "audio_raw/' in p4_manifest
         qwen_train = "\n".join(
             archive.read(name).decode("utf-8")
             for name in names
@@ -164,7 +190,7 @@ def test_summary_detail_export_and_deletion_for_prompt_groups(client):
 
     participant_id, session_id, _token = _participant_and_session(client, "delete-me@example.com")
     _upload(client, participant_id, session_id, "P4_negative", "digital")
-    export_response = client.post("/api/admin/export").json()
+    export_response = _create_export_and_wait(client)
     old_export_path = get_storage_backend().absolute_path(f"exports/{export_response['file_name']}")
     assert old_export_path.exists()
     delete_account = client.delete("/api/admin/clients/delete-me@example.com")

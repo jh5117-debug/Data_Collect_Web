@@ -141,10 +141,24 @@ class DeleteClipOut(BaseModel):
     deleted_files: list[str]
 
 
-class ExportOut(BaseModel):
+class ExportJobOut(BaseModel):
     status: str
-    file_name: str
-    download_path: str
+    job_id: str
+    phase: str
+    total_items: int
+    processed_items: int
+    progress_percent: float
+    current_item: str | None = None
+    file_name: str | None = None
+    download_path: str | None = None
+    file_size_bytes: int | None = None
+    warning_count: int
+    error_message: str | None = None
+    created_at_utc: datetime
+    started_at_utc: datetime | None = None
+    updated_at_utc: datetime
+    completed_at_utc: datetime | None = None
+    export_version: str
 
 
 class AuthCodeRequest(BaseModel):

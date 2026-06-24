@@ -5,16 +5,41 @@ from sqlalchemy.orm import Session
 
 from ..config import settings
 from ..database import get_db
-from ..models import Clip, EmailLoginCode, Participant, RecordingSession, Segment, UserAccount, UserSessionToken
-from ..schemas import AccountSessionOut, AdminClientOut, AdminClipOut, DeleteClipOut, ExportOut, FlaggedClipOut, SummaryOut
+from ..models import Clip, EmailLoginCode, ExportJob, Participant, RecordingSession, Segment, UserAccount, UserSessionToken
+from ..schemas import AccountSessionOut, AdminClientOut, AdminClipOut, DeleteClipOut, ExportJobOut, FlaggedClipOut, SummaryOut
 from ..services.deletion import delete_clip_and_files, delete_generated_exports, delete_session_and_files
-from ..services.export import create_export_zip
+from ..services.export_jobs import EXPORT_JOB_TERMINAL_STATUSES, create_export_job
 from ..services.email_auth import normalize_account_identifier
 from ..services.prompt_groups import contains_exact_vigil
 from ..services.qc import flags_from_json, flags_to_json
 from ..services.storage import get_storage_backend
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
+
+
+def export_job_out(job: ExportJob) -> ExportJobOut:
+    download_path = None
+    if job.status in {"completed", "completed_with_warnings"} and job.file_name:
+        download_path = f"/api/admin/export/jobs/{job.job_id}/download"
+    return ExportJobOut(
+        status=job.status,
+        job_id=job.job_id,
+        phase=job.phase,
+        total_items=job.total_items,
+        processed_items=job.processed_items,
+        progress_percent=job.progress_percent,
+        current_item=job.current_item,
+        file_name=job.file_name,
+        download_path=download_path,
+        file_size_bytes=job.file_size_bytes,
+        warning_count=job.warning_count,
+        error_message=job.error_message,
+        created_at_utc=job.created_at_utc,
+        started_at_utc=job.started_at_utc,
+        updated_at_utc=job.updated_at_utc,
+        completed_at_utc=job.completed_at_utc,
+        export_version=job.export_version,
+    )
 
 
 def _clip_effective_flags(clip: Clip, *, check_storage: bool = False) -> list[str]:
@@ -413,7 +438,7 @@ def delete_admin_client(email: str, db: Session = Depends(get_db)) -> dict[str, 
     ).scalars().all():
         db.delete(session_token)
 
-    deleted_files.extend(delete_generated_exports())
+    deleted_files.extend(delete_generated_exports(db))
     db.commit()
     return {
         "status": "deleted",
@@ -441,7 +466,7 @@ def delete_admin_client_sessions(email: str, db: Session = Depends(get_db)) -> d
         for session in sessions:
             deleted_files.extend(delete_session_and_files(db, session))
             deleted_sessions += 1
-    deleted_files.extend(delete_generated_exports())
+    deleted_files.extend(delete_generated_exports(db))
     db.commit()
     return {
         "status": "deleted",
@@ -458,7 +483,7 @@ def delete_admin_session(session_id: str, db: Session = Depends(get_db)) -> dict
         raise HTTPException(status_code=404, detail="session not found")
 
     deleted_files = delete_session_and_files(db, session)
-    deleted_files.extend(delete_generated_exports())
+    deleted_files.extend(delete_generated_exports(db))
     db.commit()
     return {
         "status": "deleted",
@@ -474,7 +499,7 @@ def delete_clip(clip_id: str, db: Session = Depends(get_db)) -> DeleteClipOut:
         raise HTTPException(status_code=404, detail="clip_id not found")
 
     deleted_files = delete_clip_and_files(db, clip)
-    deleted_files.extend(delete_generated_exports())
+    deleted_files.extend(delete_generated_exports(db))
     db.commit()
     return DeleteClipOut(status="deleted", clip_id=clip_id, deleted_files=deleted_files)
 
@@ -500,14 +525,34 @@ def admin_clip_audio(clip_id: str, db: Session = Depends(get_db)):
     )
 
 
-@router.post("/export", response_model=ExportOut)
-def export_dataset(db: Session = Depends(get_db)) -> ExportOut:
-    zip_path, file_name = create_export_zip(db)
-    return ExportOut(
-        status="created",
-        file_name=file_name,
-        download_path=f"/api/admin/export/download/{file_name}",
-    )
+@router.post("/export", response_model=ExportJobOut)
+def export_dataset(db: Session = Depends(get_db)) -> ExportJobOut:
+    return export_job_out(create_export_job(db))
+
+
+@router.get("/export/jobs/{job_id}", response_model=ExportJobOut)
+def export_job_status(job_id: str, db: Session = Depends(get_db)) -> ExportJobOut:
+    job = db.get(ExportJob, job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="export job not found")
+    return export_job_out(job)
+
+
+@router.get("/export/jobs/{job_id}/download")
+def download_export_job(job_id: str, db: Session = Depends(get_db)):
+    job = db.get(ExportJob, job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="export job not found")
+    if job.status not in EXPORT_JOB_TERMINAL_STATUSES:
+        raise HTTPException(status_code=409, detail="export is not finished")
+    if job.status == "failed":
+        raise HTTPException(status_code=409, detail="export failed")
+    if not job.file_name or "/" in job.file_name or "\\" in job.file_name or not job.file_name.endswith(".zip"):
+        raise HTTPException(status_code=404, detail="export file not found")
+    path = settings.local_storage_root / "exports" / job.file_name
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="export file not found")
+    return FileResponse(path, media_type="application/zip", filename=job.file_name)
 
 
 @router.get("/export/download/{file_name}")

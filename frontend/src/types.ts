@@ -160,10 +160,24 @@ export interface AdminClip {
   created_at_utc: string;
 }
 
-export interface ExportResponse {
+export interface ExportJob {
   status: string;
-  file_name: string;
-  download_path: string;
+  job_id: string;
+  phase: string;
+  total_items: number;
+  processed_items: number;
+  progress_percent: number;
+  current_item: string | null;
+  file_name: string | null;
+  download_path: string | null;
+  file_size_bytes: number | null;
+  warning_count: number;
+  error_message: string | null;
+  created_at_utc: string;
+  started_at_utc: string | null;
+  updated_at_utc: string;
+  completed_at_utc: string | null;
+  export_version: string;
 }
 
 export interface AccountSession {

@@ -1,4 +1,6 @@
 from datetime import UTC, datetime
+from collections.abc import Callable
+from dataclasses import dataclass
 import hashlib
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -104,6 +106,8 @@ Prompt groups:
 
 Audio format:
 - Raw browser uploads are preserved exactly as received.
+- Each raw clip is written once under audio_raw/ and referenced by manifests.
+- by_prompt_group/ contains lightweight clip manifests rather than duplicate audio files.
 - Online collection does not convert audio or run temporal segmentation.
 - Convert raw audio to 16 kHz mono WAV offline before ASR training or Qwen review.
 
@@ -128,6 +132,17 @@ PROMPT_GROUP_EXPORTS = [
     "P4_negative",
     "legacy",
 ]
+
+
+EXPORT_VERSION = "export_job_v1"
+ExportProgress = Callable[[dict[str, object]], None]
+
+
+@dataclass(frozen=True)
+class ExportZipResult:
+    zip_path: Path
+    file_name: str
+    warning_count: int
 
 
 def _split_for_clip(clip: Clip, participant_email_by_id: dict[str, str | None]) -> str:
@@ -159,14 +174,41 @@ def _kws_row(clip: Clip) -> dict[str, object]:
     }
 
 
-def create_export_zip(db: Session) -> tuple[Path, str]:
+def _emit_progress(progress: ExportProgress | None, **payload: object) -> None:
+    if progress:
+        progress(payload)
+
+
+def _download_progress(processed_items: int, total_items: int) -> float:
+    if total_items <= 0:
+        return 90.0
+    return min(90.0, 5.0 + (processed_items / total_items) * 85.0)
+
+
+def _group_manifest_row(clip: Clip, audio_path: str) -> dict[str, object]:
+    return {
+        "clip_id": clip.clip_id,
+        "participant_id": clip.participant_id,
+        "session_id": clip.session_id,
+        "prompt_id": clip.prompt_id,
+        "prompt_group": clip.prompt_group,
+        "transcript": clip.normalized_transcript or clip.transcript,
+        "audio": audio_path,
+        "contains_vigil": clip.contains_vigil,
+        "wake_intent": clip.wake_intent,
+        "is_negative": clip.is_negative,
+    }
+
+
+def create_export_zip(db: Session, progress: ExportProgress | None = None) -> ExportZipResult:
     storage = get_storage_backend()
-    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S_%f")
     export_dir_name = f"vigil_dataset_export_{timestamp}"
     file_name = f"{export_dir_name}.zip"
     zip_path = storage.export_path(file_name)
     zip_path.parent.mkdir(parents=True, exist_ok=True)
 
+    _emit_progress(progress, phase="collecting_metadata", progress_percent=2.0, current_item="metadata")
     participants = db.execute(select(Participant).order_by(Participant.participant_id)).scalars().all()
     accounts = db.execute(select(UserAccount).order_by(UserAccount.email)).scalars().all()
     sessions = db.execute(select(RecordingSession).order_by(RecordingSession.session_id)).scalars().all()
@@ -184,11 +226,31 @@ def create_export_zip(db: Session) -> tuple[Path, str]:
     qwen_eval_rows: list[dict[str, object]] = []
     kws_train_rows: list[dict[str, object]] = []
     kws_eval_rows: list[dict[str, object]] = []
+    group_rows: dict[str, list[dict[str, object]]] = {group: [] for group in PROMPT_GROUP_EXPORTS}
+    warnings: list[dict[str, str]] = []
+    total_items = (
+        sum(1 for clip in clips if clip.raw_audio_path)
+        + sum(1 for clip in clips if clip.processed_wav_path)
+        + sum(1 for segment in segments if segment.segment_audio_path)
+    )
+    processed_items = 0
+
+    _emit_progress(
+        progress,
+        phase="downloading_audio",
+        total_items=total_items,
+        processed_items=processed_items,
+        progress_percent=5.0,
+        current_item="starting audio download",
+    )
 
     with ZipFile(zip_path, "w", compression=ZIP_DEFLATED) as archive:
         base = export_dir_name
         archive.writestr(f"{base}/README.md", DATASET_README)
         archive.write(PROMPT_CSV_PATH, f"{base}/prompts/prompts_v0_1.csv")
+        archive.writestr(f"{base}/audio_raw/.gitkeep", "")
+        archive.writestr(f"{base}/processed_wav/.gitkeep", "")
+        archive.writestr(f"{base}/segments/.gitkeep", "")
         for group in PROMPT_GROUP_EXPORTS:
             archive.writestr(f"{base}/by_prompt_group/{group}/.gitkeep", "")
         archive.writestr(f"{base}/metadata/accounts.csv", rows_to_csv(account_rows, ACCOUNT_FIELDS))
@@ -203,13 +265,34 @@ def create_export_zip(db: Session) -> tuple[Path, str]:
         archive.writestr(f"{base}/metadata/qc_report.csv", rows_to_csv(qc_rows, QC_FIELDS))
 
         for clip in clips:
-            if clip.raw_audio_path and storage.exists(clip.raw_audio_path):
-                raw_bytes = storage.download_bytes(clip.raw_audio_path)
+            if clip.raw_audio_path:
+                processed_items += 1
+                _emit_progress(
+                    progress,
+                    phase="downloading_audio",
+                    total_items=total_items,
+                    processed_items=processed_items,
+                    progress_percent=_download_progress(processed_items, total_items),
+                    current_item=clip.raw_audio_path,
+                )
+                try:
+                    raw_bytes = storage.download_bytes(clip.raw_audio_path)
+                except FileNotFoundError:
+                    warnings.append(
+                        {
+                            "kind": "missing_raw_audio",
+                            "clip_id": clip.clip_id,
+                            "path": clip.raw_audio_path,
+                        }
+                    )
+                    continue
                 raw_name = f"{clip.clip_id}{Path(clip.raw_audio_path).suffix or '.webm'}"
-                archive.writestr(f"{base}/{clip.raw_audio_path}", raw_bytes)
-                archive.writestr(f"{base}/raw_audio/{raw_name}", raw_bytes)
-                archive.writestr(f"{base}/audio_raw/{raw_name}", raw_bytes)
-                archive.writestr(f"{base}/by_prompt_group/{clip.prompt_group}/raw_audio/{raw_name}", raw_bytes)
+                canonical_audio_path = f"audio_raw/{raw_name}"
+                archive.writestr(f"{base}/{canonical_audio_path}", raw_bytes)
+                group_key = clip.prompt_group if clip.prompt_group in PROMPT_GROUP_EXPORTS else "legacy"
+                group_rows[group_key].append(
+                    _group_manifest_row(clip, canonical_audio_path)
+                )
                 split = _split_for_clip(clip, participant_email_by_id)
                 if split == "eval":
                     qwen_eval_rows.append(_qwen_asr_row(clip))
@@ -218,23 +301,77 @@ def create_export_zip(db: Session) -> tuple[Path, str]:
                     qwen_train_rows.append(_qwen_asr_row(clip))
                     kws_train_rows.append(_kws_row(clip))
 
-            if clip.processed_wav_path and storage.exists(clip.processed_wav_path):
-                wav_bytes = storage.download_bytes(clip.processed_wav_path)
-                archive.writestr(f"{base}/{clip.processed_wav_path}", wav_bytes)
-                archive.writestr(f"{base}/by_prompt_group/{clip.prompt_group}/processed_wav/{clip.clip_id}.wav", wav_bytes)
+            if clip.processed_wav_path:
+                processed_items += 1
+                _emit_progress(
+                    progress,
+                    phase="downloading_audio",
+                    total_items=total_items,
+                    processed_items=processed_items,
+                    progress_percent=_download_progress(processed_items, total_items),
+                    current_item=clip.processed_wav_path,
+                )
+                try:
+                    wav_bytes = storage.download_bytes(clip.processed_wav_path)
+                except FileNotFoundError:
+                    warnings.append(
+                        {
+                            "kind": "missing_processed_wav",
+                            "clip_id": clip.clip_id,
+                            "path": clip.processed_wav_path,
+                        }
+                    )
+                    continue
+                archive.writestr(f"{base}/processed_wav/{clip.clip_id}.wav", wav_bytes)
 
         for segment in segments:
-            if storage.exists(segment.segment_audio_path):
-                segment_bytes = storage.download_bytes(segment.segment_audio_path)
-                archive.writestr(f"{base}/{segment.segment_audio_path}", segment_bytes)
-                archive.writestr(
-                    f"{base}/legacy_segments/{segment.prompt_id}/{segment.parent_clip_id}_seg{segment.segment_index:03d}.wav",
-                    segment_bytes,
+            if segment.segment_audio_path:
+                processed_items += 1
+                _emit_progress(
+                    progress,
+                    phase="downloading_audio",
+                    total_items=total_items,
+                    processed_items=processed_items,
+                    progress_percent=_download_progress(processed_items, total_items),
+                    current_item=segment.segment_audio_path,
                 )
+                try:
+                    segment_bytes = storage.download_bytes(segment.segment_audio_path)
+                except FileNotFoundError:
+                    warnings.append(
+                        {
+                            "kind": "missing_segment_audio",
+                            "segment_id": segment.segment_id,
+                            "path": segment.segment_audio_path,
+                        }
+                    )
+                    continue
+                archive.writestr(f"{base}/segments/{segment.segment_id}.wav", segment_bytes)
 
+        _emit_progress(
+            progress,
+            phase="writing_manifests",
+            total_items=total_items,
+            processed_items=processed_items,
+            progress_percent=94.0,
+            current_item="manifests",
+            warning_count=len(warnings),
+        )
+        for group in PROMPT_GROUP_EXPORTS:
+            archive.writestr(f"{base}/by_prompt_group/{group}/clips.jsonl", rows_to_jsonl(group_rows.get(group, [])))
         archive.writestr(f"{base}/qwen_asr/train.jsonl", rows_to_jsonl(qwen_train_rows))
         archive.writestr(f"{base}/qwen_asr/eval.jsonl", rows_to_jsonl(qwen_eval_rows))
         archive.writestr(f"{base}/keyword_spotting/kws_train.jsonl", rows_to_jsonl(kws_train_rows))
         archive.writestr(f"{base}/keyword_spotting/kws_eval.jsonl", rows_to_jsonl(kws_eval_rows))
+        archive.writestr(f"{base}/metadata/export_warnings.jsonl", rows_to_jsonl(warnings))
 
-    return zip_path, file_name
+    _emit_progress(
+        progress,
+        phase="finalizing",
+        total_items=total_items,
+        processed_items=processed_items,
+        progress_percent=98.0,
+        current_item=file_name,
+        warning_count=len(warnings),
+    )
+    return ExportZipResult(zip_path=zip_path, file_name=file_name, warning_count=len(warnings))

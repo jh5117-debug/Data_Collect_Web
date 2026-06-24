@@ -132,3 +132,25 @@ class Segment(Base):
     wake_intent: Mapped[bool] = mapped_column(Boolean, nullable=False)
     expected_transcript: Mapped[str] = mapped_column(Text, nullable=False)
     created_at_utc: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+
+
+class ExportJob(Base):
+    __tablename__ = "export_jobs"
+
+    job_id: Mapped[str] = mapped_column(String, primary_key=True)
+    status: Mapped[str] = mapped_column(String, default="queued", nullable=False, index=True)
+    phase: Mapped[str] = mapped_column(String, default="queued", nullable=False)
+    total_items: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    processed_items: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    progress_percent: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    current_item: Mapped[str | None] = mapped_column(Text, nullable=True)
+    file_name: Mapped[str | None] = mapped_column(String, nullable=True)
+    local_file_path: Mapped[str | None] = mapped_column(Text, nullable=True)
+    file_size_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    warning_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at_utc: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+    started_at_utc: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    updated_at_utc: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+    completed_at_utc: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    export_version: Mapped[str] = mapped_column(String, default="export_job_v1", nullable=False)
