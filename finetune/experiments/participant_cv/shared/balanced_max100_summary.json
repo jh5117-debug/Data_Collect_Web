@@ -1,0 +1,644 @@
+{
+  "balanced_manifest_sha256": "44815508a013b9022a8efc99a3972b6847884ebbb3578e356f18a50b822f5a03",
+  "clips_after": 1026,
+  "clips_before": 1277,
+  "excluded_duplicate_clip_ids": [
+    "C000446",
+    "C000447",
+    "C000448",
+    "C000449",
+    "C000450",
+    "C000451",
+    "C000452",
+    "C000453",
+    "C001089",
+    "C001090",
+    "C001091",
+    "C001092",
+    "C001093",
+    "C001094",
+    "C001095",
+    "C001096",
+    "C001097",
+    "C001098",
+    "C001099",
+    "C001100",
+    "C001101"
+  ],
+  "formal_valid_clips_after_duplicate_policy": 1277,
+  "label_counts_after": {
+    "0": 441,
+    "1": 585
+  },
+  "max_clips_per_participant": 100,
+  "participant_summary": [
+    {
+      "clips_after": 54,
+      "clips_before": 54,
+      "clips_removed": 0,
+      "negative_after": 30,
+      "participant_alias": "P001",
+      "positive_after": 24,
+      "prompt_counts_after": {
+        "P1_vigil_only": 4,
+        "P2_phrase_plus_vigil": 12,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 30
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 4,
+        "P2_phrase_plus_vigil": 12,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 30
+      }
+    },
+    {
+      "clips_after": 4,
+      "clips_before": 4,
+      "clips_removed": 0,
+      "negative_after": 1,
+      "participant_alias": "P002",
+      "positive_after": 3,
+      "prompt_counts_after": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 1,
+        "P3_vigil_plus_phrase": 1,
+        "P4_negative": 1
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 1,
+        "P3_vigil_plus_phrase": 1,
+        "P4_negative": 1
+      }
+    },
+    {
+      "clips_after": 8,
+      "clips_before": 8,
+      "clips_removed": 0,
+      "negative_after": 3,
+      "participant_alias": "P003",
+      "positive_after": 5,
+      "prompt_counts_after": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 1,
+        "P3_vigil_plus_phrase": 1,
+        "P4_negative": 3
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 1,
+        "P3_vigil_plus_phrase": 1,
+        "P4_negative": 3
+      }
+    },
+    {
+      "clips_after": 16,
+      "clips_before": 16,
+      "clips_removed": 0,
+      "negative_after": 3,
+      "participant_alias": "P004",
+      "positive_after": 13,
+      "prompt_counts_after": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 7,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 3
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 7,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 3
+      }
+    },
+    {
+      "clips_after": 19,
+      "clips_before": 19,
+      "clips_removed": 0,
+      "negative_after": 0,
+      "participant_alias": "P005",
+      "positive_after": 19,
+      "prompt_counts_after": {
+        "P1_vigil_only": 5,
+        "P2_phrase_plus_vigil": 14
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 5,
+        "P2_phrase_plus_vigil": 14
+      }
+    },
+    {
+      "clips_after": 30,
+      "clips_before": 30,
+      "clips_removed": 0,
+      "negative_after": 15,
+      "participant_alias": "P006",
+      "positive_after": 15,
+      "prompt_counts_after": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 6,
+        "P4_negative": 15
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 6,
+        "P4_negative": 15
+      }
+    },
+    {
+      "clips_after": 32,
+      "clips_before": 32,
+      "clips_removed": 0,
+      "negative_after": 15,
+      "participant_alias": "P007",
+      "positive_after": 17,
+      "prompt_counts_after": {
+        "P1_vigil_only": 4,
+        "P2_phrase_plus_vigil": 8,
+        "P3_vigil_plus_phrase": 5,
+        "P4_negative": 15
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 4,
+        "P2_phrase_plus_vigil": 8,
+        "P3_vigil_plus_phrase": 5,
+        "P4_negative": 15
+      }
+    },
+    {
+      "clips_after": 26,
+      "clips_before": 26,
+      "clips_removed": 0,
+      "negative_after": 15,
+      "participant_alias": "P008",
+      "positive_after": 11,
+      "prompt_counts_after": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 15
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 15
+      }
+    },
+    {
+      "clips_after": 33,
+      "clips_before": 33,
+      "clips_removed": 0,
+      "negative_after": 20,
+      "participant_alias": "P009",
+      "positive_after": 13,
+      "prompt_counts_after": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 6,
+        "P4_negative": 20
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 6,
+        "P4_negative": 20
+      }
+    },
+    {
+      "clips_after": 27,
+      "clips_before": 27,
+      "clips_removed": 0,
+      "negative_after": 15,
+      "participant_alias": "P010",
+      "positive_after": 12,
+      "prompt_counts_after": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 15
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 15
+      }
+    },
+    {
+      "clips_after": 100,
+      "clips_before": 348,
+      "clips_removed": 248,
+      "negative_after": 36,
+      "participant_alias": "P011",
+      "positive_after": 64,
+      "prompt_counts_after": {
+        "P1_vigil_only": 6,
+        "P2_phrase_plus_vigil": 35,
+        "P3_vigil_plus_phrase": 23,
+        "P4_negative": 36
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 20,
+        "P2_phrase_plus_vigil": 120,
+        "P3_vigil_plus_phrase": 80,
+        "P4_negative": 128
+      }
+    },
+    {
+      "clips_after": 4,
+      "clips_before": 4,
+      "clips_removed": 0,
+      "negative_after": 1,
+      "participant_alias": "P012",
+      "positive_after": 3,
+      "prompt_counts_after": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 1,
+        "P3_vigil_plus_phrase": 1,
+        "P4_negative": 1
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 1,
+        "P3_vigil_plus_phrase": 1,
+        "P4_negative": 1
+      }
+    },
+    {
+      "clips_after": 33,
+      "clips_before": 33,
+      "clips_removed": 0,
+      "negative_after": 14,
+      "participant_alias": "P013",
+      "positive_after": 19,
+      "prompt_counts_after": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 8,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 14
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 8,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 14
+      }
+    },
+    {
+      "clips_after": 14,
+      "clips_before": 14,
+      "clips_removed": 0,
+      "negative_after": 5,
+      "participant_alias": "P014",
+      "positive_after": 9,
+      "prompt_counts_after": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 4,
+        "P3_vigil_plus_phrase": 3,
+        "P4_negative": 5
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 4,
+        "P3_vigil_plus_phrase": 3,
+        "P4_negative": 5
+      }
+    },
+    {
+      "clips_after": 54,
+      "clips_before": 54,
+      "clips_removed": 0,
+      "negative_after": 18,
+      "participant_alias": "P015",
+      "positive_after": 36,
+      "prompt_counts_after": {
+        "P1_vigil_only": 8,
+        "P2_phrase_plus_vigil": 20,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 18
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 8,
+        "P2_phrase_plus_vigil": 20,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 18
+      }
+    },
+    {
+      "clips_after": 80,
+      "clips_before": 80,
+      "clips_removed": 0,
+      "negative_after": 45,
+      "participant_alias": "P016",
+      "positive_after": 35,
+      "prompt_counts_after": {
+        "P1_vigil_only": 5,
+        "P2_phrase_plus_vigil": 18,
+        "P3_vigil_plus_phrase": 12,
+        "P4_negative": 45
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 5,
+        "P2_phrase_plus_vigil": 18,
+        "P3_vigil_plus_phrase": 12,
+        "P4_negative": 45
+      }
+    },
+    {
+      "clips_after": 53,
+      "clips_before": 53,
+      "clips_removed": 0,
+      "negative_after": 30,
+      "participant_alias": "P017",
+      "positive_after": 23,
+      "prompt_counts_after": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 12,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 30
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 12,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 30
+      }
+    },
+    {
+      "clips_after": 15,
+      "clips_before": 15,
+      "clips_removed": 0,
+      "negative_after": 0,
+      "participant_alias": "P018",
+      "positive_after": 15,
+      "prompt_counts_after": {
+        "P1_vigil_only": 5,
+        "P2_phrase_plus_vigil": 10
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 5,
+        "P2_phrase_plus_vigil": 10
+      }
+    },
+    {
+      "clips_after": 100,
+      "clips_before": 103,
+      "clips_removed": 3,
+      "negative_after": 30,
+      "participant_alias": "P019",
+      "positive_after": 70,
+      "prompt_counts_after": {
+        "P1_vigil_only": 29,
+        "P2_phrase_plus_vigil": 27,
+        "P3_vigil_plus_phrase": 14,
+        "P4_negative": 30
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 30,
+        "P2_phrase_plus_vigil": 28,
+        "P3_vigil_plus_phrase": 15,
+        "P4_negative": 30
+      }
+    },
+    {
+      "clips_after": 18,
+      "clips_before": 18,
+      "clips_removed": 0,
+      "negative_after": 6,
+      "participant_alias": "P020",
+      "positive_after": 12,
+      "prompt_counts_after": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 5,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 6
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 5,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 6
+      }
+    },
+    {
+      "clips_after": 15,
+      "clips_before": 15,
+      "clips_removed": 0,
+      "negative_after": 3,
+      "participant_alias": "P021",
+      "positive_after": 12,
+      "prompt_counts_after": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 3
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 3
+      }
+    },
+    {
+      "clips_after": 37,
+      "clips_before": 37,
+      "clips_removed": 0,
+      "negative_after": 15,
+      "participant_alias": "P022",
+      "positive_after": 22,
+      "prompt_counts_after": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 12,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 15
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 12,
+        "P3_vigil_plus_phrase": 8,
+        "P4_negative": 15
+      }
+    },
+    {
+      "clips_after": 27,
+      "clips_before": 27,
+      "clips_removed": 0,
+      "negative_after": 15,
+      "participant_alias": "P023",
+      "positive_after": 12,
+      "prompt_counts_after": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 3,
+        "P4_negative": 15
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 3,
+        "P4_negative": 15
+      }
+    },
+    {
+      "clips_after": 30,
+      "clips_before": 30,
+      "clips_removed": 0,
+      "negative_after": 17,
+      "participant_alias": "P024",
+      "positive_after": 13,
+      "prompt_counts_after": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 17
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 17
+      }
+    },
+    {
+      "clips_after": 31,
+      "clips_before": 31,
+      "clips_removed": 0,
+      "negative_after": 15,
+      "participant_alias": "P025",
+      "positive_after": 16,
+      "prompt_counts_after": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 7,
+        "P3_vigil_plus_phrase": 7,
+        "P4_negative": 15
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 7,
+        "P3_vigil_plus_phrase": 7,
+        "P4_negative": 15
+      }
+    },
+    {
+      "clips_after": 7,
+      "clips_before": 7,
+      "clips_removed": 0,
+      "negative_after": 2,
+      "participant_alias": "P026",
+      "positive_after": 5,
+      "prompt_counts_after": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 1,
+        "P3_vigil_plus_phrase": 2,
+        "P4_negative": 2
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 2,
+        "P2_phrase_plus_vigil": 1,
+        "P3_vigil_plus_phrase": 2,
+        "P4_negative": 2
+      }
+    },
+    {
+      "clips_after": 26,
+      "clips_before": 26,
+      "clips_removed": 0,
+      "negative_after": 15,
+      "participant_alias": "P027",
+      "positive_after": 11,
+      "prompt_counts_after": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 15
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 1,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 15
+      }
+    },
+    {
+      "clips_after": 10,
+      "clips_before": 10,
+      "clips_removed": 0,
+      "negative_after": 2,
+      "participant_alias": "P028",
+      "positive_after": 8,
+      "prompt_counts_after": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 3,
+        "P3_vigil_plus_phrase": 2,
+        "P4_negative": 2
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 3,
+        "P3_vigil_plus_phrase": 2,
+        "P4_negative": 2
+      }
+    },
+    {
+      "clips_after": 28,
+      "clips_before": 28,
+      "clips_removed": 0,
+      "negative_after": 15,
+      "participant_alias": "P029",
+      "positive_after": 13,
+      "prompt_counts_after": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 15
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 3,
+        "P2_phrase_plus_vigil": 6,
+        "P3_vigil_plus_phrase": 4,
+        "P4_negative": 15
+      }
+    },
+    {
+      "clips_after": 95,
+      "clips_before": 95,
+      "clips_removed": 0,
+      "negative_after": 40,
+      "participant_alias": "P030",
+      "positive_after": 55,
+      "prompt_counts_after": {
+        "P1_vigil_only": 5,
+        "P2_phrase_plus_vigil": 30,
+        "P3_vigil_plus_phrase": 20,
+        "P4_negative": 40
+      },
+      "prompt_counts_before": {
+        "P1_vigil_only": 5,
+        "P2_phrase_plus_vigil": 30,
+        "P3_vigil_plus_phrase": 20,
+        "P4_negative": 40
+      }
+    }
+  ],
+  "participants": 30,
+  "prompt_counts_after": {
+    "P1_vigil_only": 117,
+    "P2_phrase_plus_vigil": 290,
+    "P3_vigil_plus_phrase": 178,
+    "P4_negative": 441
+  },
+  "prompt_counts_before": {
+    "P1_vigil_only": 132,
+    "P2_phrase_plus_vigil": 376,
+    "P3_vigil_plus_phrase": 236,
+    "P4_negative": 533
+  },
+  "seed": 20260620,
+  "source_unique_clips": 1298,
+  "windows_after_cap": 1040
+}

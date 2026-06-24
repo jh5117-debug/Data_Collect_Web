@@ -1,0 +1,33 @@
+support_seeds:
+  - 20260620
+  - 20260621
+  - 20260622
+  - 20260623
+  - 20260624
+shots:
+  - 0
+  - 3
+  - 5
+eligibility:
+  three_shot_min_positive: 4
+  five_shot_min_positive: 6
+  min_negative_query: 1
+  preferred_negative_query: 5
+adaptation_grid:
+  learning_rate:
+    - 0.0001
+    - 0.0003
+  steps:
+    - 10
+    - 25
+  l2_to_base:
+    - 0.0
+    - 0.001
+candidate_targets:
+  - stage1
+  - stage2
+  - both
+source_replay:
+  target_positive_to_source_positive_to_source_negative: [1, 1, 2]
+thresholds:
+  tune_on_target_query: false

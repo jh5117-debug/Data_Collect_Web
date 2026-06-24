@@ -58,6 +58,21 @@ finetune/benchmarks/asr/third_party/
 finetune/demo/logs/
 finetune/demo/reports/
 
+# Participant CV / few-shot experiment generated artifacts
+finetune/experiments/participant_cv/runs/
+finetune/experiments/participant_cv/logs/
+finetune/experiments/participant_cv/shared/private/
+finetune/experiments/participant_cv/shared/balanced_max100_manifest.jsonl
+finetune/experiments/participant_cv/shared/participant_distribution_before_cap.csv
+finetune/experiments/participant_cv/shared/*transcript_cache*.jsonl
+finetune/experiments/participant_cv/shared/*transcript_cache*.summary.json
+finetune/experiments/participant_cv/shared/*predictions*.jsonl
+finetune/experiments/participant_cv/shared/*support_sets*.json
+finetune/experiments/participant_cv/reports/*support_sets*.json
+finetune/experiments/participant_cv/reports/duplicate_audio_audit.json
+finetune/experiments/participant_cv/reports/stage_error_predictions.jsonl
+finetune/experiments/participant_cv/reports/plots/
+
 # OS/editor
 .DS_Store
 .idea/
