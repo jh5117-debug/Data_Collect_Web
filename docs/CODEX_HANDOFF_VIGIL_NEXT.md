@@ -4,7 +4,7 @@
 
 - Repository: `/home/hj/Data_Collect_Web`
 - Branch: `research/vigil-eval-live-demo-20260624`
-- Commit: `b369ab9`
+- Commit: `2f68674`
 - Remote: `origin git@github.com:jh5117-debug/Data_Collect_Web.git`
 - Dataset ZIP: `/home/hj/Data_Collect_Web/finetune/data/vigil_dataset_export_20260624_072023_180681.zip`
 - Dataset fingerprint: `0fad4c7828149099`
@@ -81,7 +81,7 @@
   - GPU: physical GPU 6.
   - Log: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/logs/librispeech_full_20260624_090118_gpu6.log`
   - Run dir: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`
-  - Last checked: 337/5559 predictions, 0 known failures at that point.
+  - Last checked: 470/5559 predictions, 0 known failures at that point.
 
 ## Current GPU
 
@@ -157,8 +157,9 @@ When the full benchmark finishes, verify `FINAL_REPORT.md`, metrics JSON files, 
 
 ## Git Commit And Push Status
 
-- No new commit yet for this milestone.
-- Branch has not been pushed yet.
-- Current source/doc files to consider staging: `.gitignore`, `finetune/scripts/run_qwen_text_baseline.py`, `finetune/evaluation/`, `finetune/benchmarks/asr/scripts/run_qwen_librispeech.py`, `finetune/benchmarks/asr/src/scoring.py`, `finetune/benchmarks/asr/tests/test_scoring.py`, `finetune/demo/`, `docs/CODEX_HANDOFF_VIGIL_NEXT.md`.
+- Source/docs commit created: `2f68674 Fix VIGIL clip evaluation workflow`.
+- Branch has not been pushed yet at the time this handoff edit was written.
+- Current handoff file has been updated after commit `2f68674`; commit or push this handoff update before ending if possible.
+- Already staged/committed in `2f68674`: `.gitignore`, `finetune/scripts/run_qwen_text_baseline.py`, `finetune/evaluation/`, `finetune/benchmarks/asr/scripts/run_qwen_librispeech.py`, `finetune/benchmarks/asr/src/scoring.py`, `finetune/benchmarks/asr/tests/test_scoring.py`, `finetune/demo/`, `docs/CODEX_HANDOFF_VIGIL_NEXT.md`.
 - Do not stage: `docs/VIGIL_Recorder_Participant_Guide.docx`.
 - Existing tracked generated changes from before this phase remain unstaged: `finetune/reports/export_inspection.json`, `finetune/reports/export_inspection.md`.
