@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .database import SessionLocal, init_db
 from .routes import admin, auth, clips, participants, prompts, sessions
+from .services.export_jobs import recover_export_jobs
 from .services.prompt_loader import load_prompts
 
 
@@ -26,6 +27,7 @@ def on_startup() -> None:
         load_prompts(db)
     finally:
         db.close()
+    recover_export_jobs()
 
 
 @app.get("/api/health")

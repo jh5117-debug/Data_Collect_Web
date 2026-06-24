@@ -10,12 +10,13 @@ import {
   getAdminClipAudioUrl,
   getAdminClients,
   getExportDownloadUrl,
+  getExportJob,
   getAdminSessionClips,
   getAdminSummary,
   getFlaggedClips
 } from "../api";
 import { BackButton } from "../components/BackButton";
-import type { AccountSession, AdminClient, AdminClip, AdminSummary, ExportResponse, FlaggedClip } from "../types";
+import type { AccountSession, AdminClient, AdminClip, AdminSummary, ExportJob, FlaggedClip } from "../types";
 
 type ClipFilter = "all" | "positive" | "negative" | "P1" | "P2" | "P3" | "P4" | "flagged";
 
@@ -45,6 +46,21 @@ function formatStatus(status: string | null | undefined): string {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function isExportActive(job: ExportJob): boolean {
+  return job.status === "queued" || job.status === "running";
+}
+
+function isExportReady(job: ExportJob): boolean {
+  return job.status === "completed" || job.status === "completed_with_warnings";
+}
+
+function formatBytes(bytes: number | null): string {
+  if (bytes === null) return "n/a";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function AdminPage() {
   const [summary, setSummary] = useState<AdminSummary | null>(null);
   const [flagged, setFlagged] = useState<FlaggedClip[]>([]);
@@ -54,7 +70,7 @@ export function AdminPage() {
   const [selectedSession, setSelectedSession] = useState<AccountSession | null>(null);
   const [sessionClips, setSessionClips] = useState<AdminClip[]>([]);
   const [clipFilter, setClipFilter] = useState<ClipFilter>("all");
-  const [exportResult, setExportResult] = useState<ExportResponse | null>(null);
+  const [exportJob, setExportJob] = useState<ExportJob | null>(null);
   const [exportDownloadUrl, setExportDownloadUrl] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -205,19 +221,11 @@ export function AdminPage() {
   async function handleExport() {
     setError(null);
     setExporting(true);
-    const exportWindow = window.open("about:blank", "_blank");
     try {
-      const result = await createExport();
-      const downloadUrl = getExportDownloadUrl(result.download_path);
-      setExportResult(result);
-      setExportDownloadUrl(downloadUrl);
-      if (exportWindow) {
-        exportWindow.location.href = downloadUrl;
-      } else {
-        setError("Export created. Use the download link below if the browser blocked the new tab.");
-      }
+      const job = await createExport();
+      setExportJob(job);
+      setExportDownloadUrl(job.download_path ? getExportDownloadUrl(job.download_path) : null);
     } catch (err) {
-      exportWindow?.close();
       setError(err instanceof Error ? err.message : "Export failed.");
     } finally {
       setExporting(false);
@@ -227,6 +235,34 @@ export function AdminPage() {
   useEffect(() => {
     void refreshAdminData(null, null);
   }, []);
+
+  useEffect(() => {
+    if (!exportJob || !isExportActive(exportJob)) return;
+
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const nextJob = await getExportJob(exportJob.job_id);
+        if (cancelled) return;
+        setExportJob(nextJob);
+        setExportDownloadUrl(nextJob.download_path ? getExportDownloadUrl(nextJob.download_path) : null);
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Could not refresh export status.");
+        }
+      }
+    };
+
+    const intervalId = window.setInterval(() => {
+      void poll();
+    }, 1500);
+    void poll();
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [exportJob?.job_id, exportJob?.status]);
 
   if (selectedClient && selectedSession) {
     const filteredClips = filterAdminClips(sessionClips, clipFilter);
@@ -414,9 +450,9 @@ export function AdminPage() {
             <RefreshCw size={18} aria-hidden="true" />
             Refresh
           </button>
-          <button className="button primary" type="button" onClick={handleExport} disabled={exporting}>
+          <button className="button primary" type="button" onClick={handleExport} disabled={exporting || (exportJob ? isExportActive(exportJob) : false)}>
             <Download size={18} aria-hidden="true" />
-            {exporting ? "Exporting..." : "Export"}
+            {exporting || (exportJob && isExportActive(exportJob)) ? "Exporting..." : "Export"}
           </button>
         </div>
       </section>
@@ -455,18 +491,7 @@ export function AdminPage() {
         </section>
       )}
 
-      {exportResult && (
-        <p className="success-text">
-          Export created:{" "}
-          {exportDownloadUrl ? (
-            <a href={exportDownloadUrl} target="_blank" rel="noreferrer">
-              {exportResult.file_name}
-            </a>
-          ) : (
-            exportResult.file_name
-          )}
-        </p>
-      )}
+      {exportJob && <ExportJobPanel job={exportJob} downloadUrl={exportDownloadUrl} />}
 
       <section className="table-panel">
         <div className="section-title">
@@ -559,6 +584,50 @@ export function AdminPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+function ExportJobPanel({ job, downloadUrl }: { job: ExportJob; downloadUrl: string | null }) {
+  const percent = Math.max(0, Math.min(100, Math.round(job.progress_percent)));
+  const itemLabel = job.total_items > 0 ? `${job.processed_items} / ${job.total_items}` : "metadata";
+  const ready = isExportReady(job) && downloadUrl;
+  const failed = job.status === "failed";
+
+  return (
+    <section className={`table-panel export-panel ${failed ? "export-panel-error" : ""}`}>
+      <div className="section-title">
+        <h2>Dataset Export</h2>
+        <span>{formatStatus(job.status)}</span>
+      </div>
+      <div className="export-progress-row">
+        <div className="progress-wrap export-progress">
+          <div className="progress-track" aria-hidden="true">
+            <div className="progress-fill" style={{ width: `${percent}%` }} />
+          </div>
+          <span className="progress-label">{percent}%</span>
+        </div>
+        {ready && (
+          <a className="button primary" href={downloadUrl} target="_blank" rel="noreferrer">
+            <Download size={18} aria-hidden="true" />
+            Download ZIP
+          </a>
+        )}
+      </div>
+      <div className="export-meta">
+        <span><strong>Phase</strong>{formatStatus(job.phase)}</span>
+        <span><strong>Items</strong>{itemLabel}</span>
+        <span><strong>Warnings</strong>{job.warning_count}</span>
+        <span><strong>Size</strong>{formatBytes(job.file_size_bytes)}</span>
+        {job.file_name && <span className="export-file-name"><strong>File</strong>{job.file_name}</span>}
+      </div>
+      {job.current_item && isExportActive(job) && <p className="helper-text">{job.current_item}</p>}
+      {job.error_message && <p className="error-text">{job.error_message}</p>}
+      {isExportReady(job) && (
+        <p className="success-text">
+          Export {job.status === "completed_with_warnings" ? "completed with warnings" : "completed"}.
+        </p>
+      )}
+    </section>
   );
 }
 

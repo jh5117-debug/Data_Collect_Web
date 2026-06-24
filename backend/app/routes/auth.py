@@ -197,7 +197,7 @@ def delete_account_clip(
     if not clip:
         raise HTTPException(status_code=404, detail="clip not found")
     deleted_files = delete_clip_and_files(db, clip)
-    deleted_files.extend(delete_generated_exports())
+    deleted_files.extend(delete_generated_exports(db))
     db.commit()
     return DeleteClipOut(status="deleted", clip_id=clip_id, deleted_files=deleted_files)
 

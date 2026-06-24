@@ -5,7 +5,7 @@ import type {
   AccountSession,
   AccountClip,
   EnglishNativeSpeaker,
-  ExportResponse,
+  ExportJob,
   FlaggedClip,
   Prompt,
   RecordingDeviceType,
@@ -144,8 +144,12 @@ export async function deleteAdminClip(clipId: string): Promise<{ status: string;
   return request(`/api/admin/clips/${encodeURIComponent(clipId)}`, { method: "DELETE" });
 }
 
-export async function createExport(): Promise<ExportResponse> {
+export async function createExport(): Promise<ExportJob> {
   return request("/api/admin/export", { method: "POST" });
+}
+
+export async function getExportJob(jobId: string): Promise<ExportJob> {
+  return request(`/api/admin/export/jobs/${encodeURIComponent(jobId)}`);
 }
 
 export function getExportDownloadUrl(downloadPath: string): string {

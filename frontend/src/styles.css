@@ -786,6 +786,56 @@ h1 {
   padding: 22px;
 }
 
+.export-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.export-panel-error {
+  border-color: #d28a8a;
+}
+
+.export-progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.export-progress {
+  flex: 1;
+  min-width: 220px;
+}
+
+.export-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.export-meta span {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-alt);
+  padding: 10px 12px;
+  color: var(--ink);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.export-meta strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.export-file-name {
+  grid-column: span 2;
+}
+
 .section-title {
   display: flex;
   align-items: center;
@@ -916,12 +966,19 @@ td {
   }
 
   .button-row,
-  .recorder-actions {
+  .recorder-actions,
+  .export-progress-row {
     flex-direction: column;
+    align-items: stretch;
   }
 
   .button-row .button,
-  .recorder-actions .button {
+  .recorder-actions .button,
+  .export-progress-row .button {
     width: 100%;
+  }
+
+  .export-file-name {
+    grid-column: span 1;
   }
 }

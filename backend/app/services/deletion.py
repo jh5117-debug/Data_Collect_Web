@@ -1,7 +1,9 @@
+from datetime import UTC, datetime
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..models import Clip, Participant, RecordingSession, Segment
+from ..models import Clip, ExportJob, Participant, RecordingSession, Segment
 from .storage import get_storage_backend
 
 
@@ -42,23 +44,34 @@ def delete_session_clips_and_files(db: Session, session: RecordingSession) -> li
     return deleted_files
 
 
-def delete_generated_exports() -> list[str]:
+def delete_generated_exports(db: Session | None = None) -> list[str]:
     storage = get_storage_backend()
     exports_dir = storage.root / "exports"
     deleted_files: list[str] = []
-    if not exports_dir.exists():
-        return deleted_files
 
-    for path in exports_dir.glob("*.zip"):
-        if not path.is_file():
-            continue
-        try:
-            path.relative_to(storage.root)
-        except ValueError:
-            continue
-        path.unlink()
-        deleted_files.append(str(path.relative_to(storage.root)))
-    remove_empty_parents(exports_dir, storage.root)
+    if exports_dir.exists():
+        for path in exports_dir.glob("*.zip"):
+            if not path.is_file():
+                continue
+            try:
+                path.relative_to(storage.root)
+            except ValueError:
+                continue
+            path.unlink()
+            deleted_files.append(str(path.relative_to(storage.root)))
+        remove_empty_parents(exports_dir, storage.root)
+
+    if db is not None:
+        now = datetime.now(UTC).replace(tzinfo=None)
+        jobs = db.execute(
+            select(ExportJob).where(ExportJob.status.in_(["completed", "completed_with_warnings"]))
+        ).scalars().all()
+        for job in jobs:
+            job.status = "failed"
+            job.phase = "failed"
+            job.error_message = "Export was invalidated after source data changed. Start a new export."
+            job.updated_at_utc = now
+            job.completed_at_utc = now
     return deleted_files
 
 
