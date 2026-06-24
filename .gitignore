@@ -51,7 +51,12 @@ finetune/benchmarks/asr/runs/
 finetune/benchmarks/asr/logs/
 finetune/benchmarks/asr/manifests/*.jsonl
 finetune/benchmarks/asr/reports/generated/
+finetune/benchmarks/asr/reports/dataset_download_report.*
 finetune/benchmarks/asr/third_party/
+
+# VIGIL browser demo generated artifacts
+finetune/demo/logs/
+finetune/demo/reports/
 
 # OS/editor
 .DS_Store

@@ -1,0 +1,12 @@
+run_dir: /home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full
+host: 127.0.0.1
+port: 7860
+audio:
+  sample_rate: 16000
+  window_seconds: 2.0
+  stride_seconds: 0.25
+  top_k: 3
+model:
+  selected_variant_source: model_selection.json
+  qwen_model: Qwen/Qwen3-ASR-1.7B
+

@@ -285,8 +285,11 @@ def main() -> int:
 
     total = len(manifest_rows)
     skipped = 0
+    completed_now = 0
+    last_id = None
     for index, item in enumerate(manifest_rows, start=1):
         utt_id = str(item["id"])
+        last_id = utt_id
         if args.resume and utt_id in completed:
             skipped += 1
             continue
@@ -333,10 +336,11 @@ def main() -> int:
                 }
             )
         append_prediction(predictions_path, row)
+        completed_now += 1
         update_progress(
             run_dir / "progress.json",
             {
-                "completed_now": index - skipped,
+                "completed_now": completed_now,
                 "skipped_existing": skipped,
                 "total_requested": total,
                 "last_id": utt_id,
@@ -345,6 +349,28 @@ def main() -> int:
         )
         print(json.dumps({"id": utt_id, "status": row["status"], "index": index, "total": total}, sort_keys=True), flush=True)
 
+    update_progress(
+        run_dir / "progress.json",
+        {
+            "completed_now": completed_now,
+            "skipped_existing": skipped,
+            "total_requested": total,
+            "last_id": last_id,
+            "updated_at_utc": utc_timestamp(),
+        },
+    )
+    print(
+        json.dumps(
+            {
+                "status": "resume_summary",
+                "completed_now": completed_now,
+                "skipped_existing": skipped,
+                "total_requested": total,
+            },
+            sort_keys=True,
+        ),
+        flush=True,
+    )
     payload = _score_and_write(run_dir, manifest_rows, predictions_path, args)
     print(json.dumps({"run_dir": str(run_dir), "wer": payload["metrics"]["normalized"]["wer"]}, sort_keys=True))
     return 0 if payload["successful_predictions"] else 3
