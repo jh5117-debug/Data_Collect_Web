@@ -4,7 +4,7 @@
 
 - Repository: `/home/hj/Data_Collect_Web`
 - Branch: `research/vigil-eval-live-demo-20260624`
-- Commit: local code fix commit `538f646`; documentation/status commit still pending.
+- Commit: final handoff status is current `HEAD`; code fix commit `538f646`, benchmark/demo documentation commit `3bbc7bf`.
 - Remote: `origin git@github.com:jh5117-debug/Data_Collect_Web.git`
 - Dataset ZIP: `/home/hj/Data_Collect_Web/finetune/data/vigil_dataset_export_20260624_072023_180681.zip`
 - Dataset fingerprint: `0fad4c7828149099`
@@ -35,14 +35,14 @@
 - Demo status: running on `127.0.0.1:7860`, `share=False`; file-upload validation passed for P1/P2/P3 and three P4 examples. Browser microphone capture has not been human-validated.
 - Demo validation report: `/home/hj/Data_Collect_Web/finetune/demo/reports/VIGIL_LIVE_DEMO_FILE_UPLOAD_VALIDATION.md`.
 - ASR preservation report: `/home/hj/Data_Collect_Web/finetune/reports/ASR_PRESERVATION_REPORT.md`.
-- Progress: code fix committed; docs/report commit and push pending.
+- Progress: code fix, corrected reports, documentation, ASR preservation report, and demo status are committed and pushed. This file's final status update is the only later handoff-only change.
 - Exact next command:
 
 ```bash
 cd /home/hj/Data_Collect_Web && PATH=/home/hj/miniconda/envs/vigil-two-stage/bin:$PATH PYTHONPATH=finetune/src:. pytest -q finetune/tests
 ```
 
-- Push status: branch was previously pushed through `22ffe6c`; commits after `538f646` are not pushed yet.
+- Push status: branch pushed to `origin/research/vigil-eval-live-demo-20260624`; `3bbc7bf` is pushed, followed by a final handoff-only status commit if present.
 
 ## Completed Phases
 
@@ -196,8 +196,8 @@ The corrected full benchmark and file-upload demo validation are complete. Brows
 ## Git Commit And Push Status
 
 - Qwen extractor code/test commit created locally: `538f646 Fix structured Qwen ASR transcript extraction`.
-- Documentation/status commit is pending.
-- Push pending for commits after `22ffe6c`.
+- Documentation/status commit created and pushed: `3bbc7bf Record corrected Qwen benchmark and live demo status`.
+- Final handoff status update is this file only.
 - Source/docs commit created: `2f68674 Fix VIGIL clip evaluation workflow`.
 - Handoff status commit created: `8c6e3d7 Update VIGIL handoff status`.
 - Branch push status commit created: `df32ddb Record VIGIL branch push status`.
