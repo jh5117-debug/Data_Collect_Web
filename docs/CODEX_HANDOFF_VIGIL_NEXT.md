@@ -4,7 +4,7 @@
 
 - Repository: `/home/hj/Data_Collect_Web`
 - Branch: `research/vigil-eval-live-demo-20260624`
-- Commit: pushed at least through `8c6e3d7`; run `git rev-parse --short HEAD` for the exact latest handoff-status commit.
+- Commit: pushed at least through `df32ddb`; run `git rev-parse --short HEAD` for the exact latest handoff-status commit.
 - Remote: `origin git@github.com:jh5117-debug/Data_Collect_Web.git`
 - Dataset ZIP: `/home/hj/Data_Collect_Web/finetune/data/vigil_dataset_export_20260624_072023_180681.zip`
 - Dataset fingerprint: `0fad4c7828149099`
@@ -13,6 +13,8 @@
 - Current run report: `/home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full/FINAL_REPORT.md`
 - Current evaluation audit: `/home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full/EVALUATION_AUDIT.md`
 - Current model selection: `/home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full/MODEL_SELECTION.md`
+- Completed LibriSpeech full benchmark: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`
+- Completed LibriSpeech full report: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full/FINAL_REPORT.md`
 - Preserved untracked file, do not touch/commit: `docs/VIGIL_Recorder_Participant_Guide.docx`
 
 ## Completed Phases
@@ -38,8 +40,17 @@
   - mean real-time factor 0.12325373119946118.
   - peak GPU memory 3.9380016326904297 GB.
   - resume verification: `completed_now=0`, `skipped_existing=64`, WER unchanged.
-- Started full LibriSpeech baseline in tmux on physical GPU 6.
-- Added `finetune/demo/` Gradio browser microphone demo source, startup script, and CPU tests. Demo has not been launched yet because GPU 6 is occupied by the full benchmark and no second GPU should be used concurrently.
+- Completed full LibriSpeech baseline on physical GPU 6:
+  - 5559 predictions, 0 failures.
+  - normalized WER 0.40069005613854497.
+  - raw WER 1.0919852457610157.
+  - normalized CER 0.5702244505102952.
+  - test-clean normalized WER 0.3694841752891053.
+  - test-other normalized WER 0.43203484706646544.
+  - mean latency 0.8274251775317502 seconds.
+  - mean real-time factor 0.12909503772819741.
+  - peak GPU memory 4.068508625030518 GB.
+- Added `finetune/demo/` Gradio browser microphone demo source, startup script, and CPU tests. Demo has not been launched yet; GPU 6 is now idle after the full benchmark.
 - Ran tests:
   - `PYTHONPATH=finetune/src:. pytest -q finetune/tests` -> 36 passed.
   - `PYTHONPATH=finetune/src:finetune/evaluation:. pytest -q finetune/evaluation/tests` -> 13 passed.
@@ -76,17 +87,14 @@
 
 ## Active tmux Sessions
 
-- `librispeech_qwen_full`
-  - Started: 2026-06-24 11:01:18 Europe/Berlin.
-  - GPU: physical GPU 6.
-  - Log: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/logs/librispeech_full_20260624_090118_gpu6.log`
-  - Run dir: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`
-  - Last checked: 470/5559 predictions, 0 known failures at that point.
+- None from this VIGIL/LibriSpeech work as of the full benchmark completion check.
+- The completed full benchmark log is `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/logs/librispeech_full_20260624_090118_gpu6.log`.
+- The completed full benchmark run dir is `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`.
 
 ## Current GPU
 
-- Physical GPU 6 is selected and currently used by `librispeech_qwen_full`.
-- Do not start the live demo on another GPU while this full benchmark is active; that would violate the one-GPU rule.
+- Physical GPU 6 was used for `librispeech_qwen_full` and is idle after completion.
+- If launching the live demo, use physical GPU 6 only and do not start another concurrent GPU job.
 - Required check:
 
 ```bash
@@ -128,10 +136,10 @@ bash -n finetune/demo/run_demo.sh
 
 ```bash
 cd /home/hj/Data_Collect_Web
-cat finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full/progress.json && tail -n 20 finetune/benchmarks/asr/logs/librispeech_full_20260624_090118_gpu6.log
+nvidia-smi --query-gpu=index,memory.used,memory.free,utilization.gpu --format=csv,noheader,nounits -i 6
 ```
 
-When the full benchmark finishes, verify `FINAL_REPORT.md`, metrics JSON files, failure rows, and then launch the demo on GPU 6 only if it is idle.
+The full benchmark has finished and its report/metrics files are present. The next likely step is launching the live demo on GPU 6 and verifying it with a real browser microphone.
 
 ## Blockers
 
@@ -152,14 +160,15 @@ When the full benchmark finishes, verify `FINAL_REPORT.md`, metrics JSON files, 
 - LibriSpeech dataset report: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/reports/dataset_download_report.md`
 - LibriSpeech smoke run: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_085312_qwen3_asr_1_7b_smoke_smoke`
 - LibriSpeech smoke log: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/logs/librispeech_smoke_20260624_085312_gpu6.log`
-- LibriSpeech full active run: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`
-- LibriSpeech full active log: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/logs/librispeech_full_20260624_090118_gpu6.log`
+- LibriSpeech full completed run: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full`
+- LibriSpeech full completed log: `/home/hj/Data_Collect_Web/finetune/benchmarks/asr/logs/librispeech_full_20260624_090118_gpu6.log`
 
 ## Git Commit And Push Status
 
 - Source/docs commit created: `2f68674 Fix VIGIL clip evaluation workflow`.
 - Handoff status commit created: `8c6e3d7 Update VIGIL handoff status`.
-- Branch has been pushed to `origin/research/vigil-eval-live-demo-20260624`, at least through `8c6e3d7`.
+- Branch push status commit created: `df32ddb Record VIGIL branch push status`.
+- Branch has been pushed to `origin/research/vigil-eval-live-demo-20260624`, at least through `df32ddb`.
 - If this file has a newer final handoff-status commit, run `git rev-parse --short HEAD` for the exact latest commit.
 - Already staged/committed in `2f68674`: `.gitignore`, `finetune/scripts/run_qwen_text_baseline.py`, `finetune/evaluation/`, `finetune/benchmarks/asr/scripts/run_qwen_librispeech.py`, `finetune/benchmarks/asr/src/scoring.py`, `finetune/benchmarks/asr/tests/test_scoring.py`, `finetune/demo/`, `docs/CODEX_HANDOFF_VIGIL_NEXT.md`.
 - Do not stage: `docs/VIGIL_Recorder_Participant_Guide.docx`.
