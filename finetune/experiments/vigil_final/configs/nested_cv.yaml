@@ -1,0 +1,15 @@
+seed: 20260625
+version: strict_nested_participant_disjoint_five_fold_v2
+folds: finetune/experiments/participant_cv/shared/participant_folds_5fold.json
+balanced_manifest: finetune/experiments/participant_cv/shared/balanced_max100_manifest.jsonl
+source_stage1_manifest: finetune/runs/20260624_075127_0fad4c7828149099_full/stage1/features_manifest.jsonl
+source_qwen_manifest: finetune/runs/20260624_075127_0fad4c7828149099_full/stage2_qwen_features/qwen_features_manifest.jsonl
+qwen_transcript_cache: finetune/experiments/participant_cv/shared/qwen_transcript_cache_balanced_max100.jsonl
+source_run_dir: finetune/runs/20260624_075127_0fad4c7828149099_full
+base_train_config: finetune/configs/full.yaml
+run_root: finetune/experiments/vigil_final/runs/nested_v2
+top_k: 3
+stage1_recall_target: 0.95
+stage2_recall_target: 0.90
+stage2_operating_recall_targets: [0.85, 0.90, 0.95]
+variants: [bce, bce_supcon]

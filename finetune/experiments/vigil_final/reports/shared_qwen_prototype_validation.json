@@ -1,0 +1,5 @@
+{
+  "reason": "public wrapper returns transcript objects but does not expose reusable hidden-state handoff",
+  "status": "blocked_by_runtime_interface",
+  "validated": false
+}

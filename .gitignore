@@ -73,6 +73,20 @@ finetune/experiments/participant_cv/reports/duplicate_audio_audit.json
 finetune/experiments/participant_cv/reports/stage_error_predictions.jsonl
 finetune/experiments/participant_cv/reports/plots/
 
+# Final VIGIL research experiment generated/private artifacts
+finetune/experiments/vigil_final/runs/
+finetune/experiments/vigil_final/logs/
+finetune/experiments/vigil_final/shared/private/
+finetune/experiments/vigil_final/shared/*embedding*.jsonl
+finetune/experiments/vigil_final/shared/*embedding*.npz
+finetune/experiments/vigil_final/shared/*hidden*.npz
+finetune/experiments/vigil_final/shared/*predictions*.jsonl
+finetune/experiments/vigil_final/shared/*support_sets*.json
+finetune/experiments/vigil_final/reports/*predictions*.jsonl
+finetune/experiments/vigil_final/reports/*support_sets*.json
+finetune/experiments/vigil_final/reports/plots/
+finetune/experiments/vigil_final/bundles/
+
 # OS/editor
 .DS_Store
 .idea/

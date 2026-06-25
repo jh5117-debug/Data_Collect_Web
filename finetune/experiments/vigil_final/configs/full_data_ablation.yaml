@@ -1,0 +1,4 @@
+seed: 20260625
+duplicate_policy: drop_within_participant_duplicates
+remove_balancing_only: true
+run_minimum_methods: [stage1_only, validation_selected_two_stage]

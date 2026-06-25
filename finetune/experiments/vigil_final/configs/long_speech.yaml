@@ -1,0 +1,6 @@
+seed: 20260625
+corpus: LibriSpeech test-clean and test-other
+exclude_normalized_word: vigil
+window_seconds: 2.0
+stride_seconds: 0.25
+top_k: 3
