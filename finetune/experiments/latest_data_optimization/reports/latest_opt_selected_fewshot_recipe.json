@@ -1,0 +1,30 @@
+{
+  "selected_by_fold": {
+    "0": {
+      "method": "no_adaptation_zero_shot_fallback",
+      "reason": "no_safe_support_based_f1_improvement",
+      "support_based": false
+    },
+    "1": {
+      "method": "no_adaptation_zero_shot_fallback",
+      "reason": "no_safe_support_based_f1_improvement",
+      "support_based": false
+    },
+    "2": {
+      "method": "no_adaptation_zero_shot_fallback",
+      "reason": "no_safe_support_based_f1_improvement",
+      "support_based": false
+    },
+    "3": {
+      "method": "no_adaptation_zero_shot_fallback",
+      "reason": "no_safe_support_based_f1_improvement",
+      "support_based": false
+    },
+    "4": {
+      "method": "no_adaptation_zero_shot_fallback",
+      "reason": "no_safe_support_based_f1_improvement",
+      "support_based": false
+    }
+  },
+  "support_based_selected": false
+}

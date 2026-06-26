@@ -107,6 +107,17 @@ finetune/experiments/latest_data/reports/rejected_or_inconsistent.jsonl
 finetune/experiments/latest_data/reports/plots/
 finetune/model_bundles/
 
+# Latest-data optimization generated/private artifacts
+finetune/experiments/latest_data_optimization/runs/
+finetune/experiments/latest_data_optimization/logs/
+finetune/experiments/latest_data_optimization/shared/private/
+finetune/experiments/latest_data_optimization/shared/*manifest*.jsonl
+finetune/experiments/latest_data_optimization/shared/*transcript_cache*.jsonl
+finetune/experiments/latest_data_optimization/reports/*predictions*.jsonl
+finetune/experiments/latest_data_optimization/reports/*false_accepts*.jsonl
+finetune/experiments/latest_data_optimization/reports/*support_sets*.json
+finetune/model_bundles/*/*.pt
+
 # OS/editor
 .DS_Store
 .idea/

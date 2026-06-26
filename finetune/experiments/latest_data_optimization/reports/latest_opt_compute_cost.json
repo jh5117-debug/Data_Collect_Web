@@ -1,0 +1,152 @@
+{
+  "accuracy": {
+    "qwen_exact_f1": 0.7514269798385881,
+    "selected_stage2_f1": 0.9675190048375951,
+    "stage1_only_f1": 0.9562878278412912
+  },
+  "accuracy_cost_points": [
+    {
+      "f1": 0.7514269798385881,
+      "median_ms": 250.64418883994222,
+      "system": "Qwen exact"
+    },
+    {
+      "f1": 0.9562878278412912,
+      "median_ms": 1.218139659613371,
+      "system": "Stage1 only head path"
+    },
+    {
+      "f1": 0.9675190048375951,
+      "median_ms": 2.7125380001962185,
+      "system": "Selected Stage2 cached path"
+    },
+    {
+      "f1": 0.9675190048375951,
+      "median_ms": 16.375903971493244,
+      "system": "Selected Stage2 extra encoder path"
+    }
+  ],
+  "accuracy_gain": {
+    "stage2_minus_qwen_exact_f1": 0.21609202499900704,
+    "stage2_minus_stage1_only_f1": 0.011231176996303938
+  },
+  "candidate_rate": {
+    "candidate_rate_per_clip": 0.5520059435364042,
+    "final_triggers": 703,
+    "metrics": {
+      "balanced_accuracy": 0.9679384131747223,
+      "f1": 0.9675190048375951,
+      "false_positive_rate": 0.0049833887043189366,
+      "false_reject_rate": 0.05913978494623656,
+      "fn": 44,
+      "fp": 3,
+      "n": 1346,
+      "negative": 602,
+      "positive": 744,
+      "precision": 0.9957325746799431,
+      "recall": 0.9408602150537635,
+      "specificity": 0.9950166112956811,
+      "tn": 599,
+      "tp": 700
+    },
+    "outer_test_clips": 1346,
+    "stage1_candidates": 743,
+    "stage1_candidates_per_hour": 798.624263116061,
+    "total_audio_hours": 0.9303498958333334
+  },
+  "components": [
+    {
+      "component": "stage1_head",
+      "mean_ms": 1.2050737906247377,
+      "median_ms": 1.1985101737082005,
+      "n": 100,
+      "p90_ms": 1.229449175298214,
+      "p95_ms": 1.242530532181263,
+      "std_ms": 0.028160674754079257
+    },
+    {
+      "component": "stage1_cached_feature_load_plus_head",
+      "mean_ms": 1.2249916419386864,
+      "median_ms": 1.218139659613371,
+      "n": 100,
+      "p90_ms": 1.2489492073655128,
+      "p95_ms": 1.2691989541053772,
+      "std_ms": 0.028542875736415476
+    },
+    {
+      "component": "stage2_head",
+      "mean_ms": 1.4852873142808676,
+      "median_ms": 1.4751083217561245,
+      "n": 100,
+      "p90_ms": 1.5183165669441223,
+      "p95_ms": 1.5391763299703598,
+      "std_ms": 0.03656949447269923
+    },
+    {
+      "component": "stage2_cached_qwen_feature_load_plus_head",
+      "mean_ms": 1.5052339527755976,
+      "median_ms": 1.4943983405828476,
+      "n": 100,
+      "p90_ms": 1.5390869230031967,
+      "p95_ms": 1.5608668327331543,
+      "std_ms": 0.03657905822776028
+    },
+    {
+      "component": "official_openwakeword_feature_extraction",
+      "mean_ms": 33.61225105822086,
+      "median_ms": 29.004013165831566,
+      "n": 100,
+      "openwakeword_version": "0.4.0",
+      "p90_ms": 43.961502611637115,
+      "p95_ms": 44.705767184495926,
+      "std_ms": 6.999816965561306
+    },
+    {
+      "component": "qwen_asr_transcript_from_recorded_cache",
+      "mean_ms": 261.0986425448209,
+      "median_ms": 250.64418883994222,
+      "n": 100,
+      "p90_ms": 359.4574769958854,
+      "p95_ms": 385.60373708605766,
+      "peak_gpu_memory_gb_max": 3.850966453552246,
+      "source": "qwen_transcript_cache_balanced_max100_latest.jsonl recorded latency_sec",
+      "std_ms": 60.195291721417114
+    },
+    {
+      "component": "qwen_audio_encoder_forward",
+      "extraction_path": "model.thinker.get_audio_features",
+      "mean_ms": 14.162587374448776,
+      "median_ms": 13.663365971297026,
+      "n": 20,
+      "p90_ms": 15.59671014547348,
+      "p95_ms": 16.2650840356946,
+      "peak_allocated_gb": 3.8313546180725098,
+      "status": "ok",
+      "std_ms": 1.2597584080908335,
+      "total_qwen_parameters": 2038052480,
+      "trainable_qwen_parameters": 0
+    }
+  ],
+  "device": "cuda:0",
+  "parameters": {
+    "stage1": {
+      "frozen": 0,
+      "total": 56321,
+      "trainable": 56321
+    },
+    "stage2": {
+      "total": 561922,
+      "trainable": 561922
+    }
+  },
+  "qwen_call_accounting": {
+    "shared_qwen_hidden_state_path": "blocked_by_runtime_interface",
+    "system_a_qwen_weight_copies": 1,
+    "system_c_extra_encoder_forward_per_stage1_candidate": 1,
+    "system_c_qwen_weight_copies": 1
+  },
+  "qwen_encoder_samples": 20,
+  "sample_size": 100,
+  "status": "ok",
+  "warmups": 10
+}

@@ -1,0 +1,22 @@
+{
+  "counts": {
+    "STAGE1_FALSE_CANDIDATE_REJECTED": 29,
+    "STAGE1_MISS": 33,
+    "STAGE2_FALSE_ACCEPT": 3,
+    "STAGE2_REJECT": 11
+  },
+  "prompt_counts": {
+    "STAGE1_FALSE_CANDIDATE_REJECTED|P4_negative": 29,
+    "STAGE1_MISS|P1_vigil_only": 20,
+    "STAGE1_MISS|P2_phrase_plus_vigil": 7,
+    "STAGE1_MISS|P3_vigil_plus_phrase": 6,
+    "STAGE2_FALSE_ACCEPT|P4_negative": 3,
+    "STAGE2_REJECT|P1_vigil_only": 5,
+    "STAGE2_REJECT|P2_phrase_plus_vigil": 4,
+    "STAGE2_REJECT|P3_vigil_plus_phrase": 2
+  },
+  "selected_variant": "stage2_bce_supcon",
+  "status": "ok",
+  "top_k": 1,
+  "total_error_records": 76
+}
