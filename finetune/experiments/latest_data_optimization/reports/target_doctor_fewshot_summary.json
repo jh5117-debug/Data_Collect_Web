@@ -1,0 +1,501 @@
+{
+  "aggregate": {
+    "3-shot": {
+      "adapted": {
+        "balanced_accuracy": 0.9688774104683195,
+        "f1": 0.9683074848280513,
+        "false_positive_rate": 0.011666666666666667,
+        "false_reject_rate": 0.05057851239669422,
+        "fn": 153,
+        "fp": 35,
+        "n": 6025,
+        "negative": 3000,
+        "positive": 3025,
+        "precision": 0.9879600963192294,
+        "recall": 0.9494214876033058,
+        "specificity": 0.9883333333333333,
+        "tn": 2965,
+        "tp": 2872
+      },
+      "delta_f1": 0.0423355338250333,
+      "delta_fpr": 0.011666666666666667,
+      "delta_recall": 0.08727272727272728,
+      "paired_doctor_counts": {
+        "degraded": 2,
+        "improved": 13,
+        "unchanged": 18
+      },
+      "zero": {
+        "balanced_accuracy": 0.9310743801652892,
+        "f1": 0.925971951003018,
+        "false_positive_rate": 0.0,
+        "false_reject_rate": 0.13785123966942148,
+        "fn": 417,
+        "fp": 0,
+        "n": 6025,
+        "negative": 3000,
+        "positive": 3025,
+        "precision": 1.0,
+        "recall": 0.8621487603305785,
+        "specificity": 1.0,
+        "tn": 3000,
+        "tp": 2608
+      }
+    },
+    "5-shot": {
+      "adapted": {
+        "balanced_accuracy": 0.9720397249809014,
+        "f1": 0.970976253298153,
+        "false_positive_rate": 0.011764705882352941,
+        "false_reject_rate": 0.04415584415584416,
+        "fn": 119,
+        "fp": 35,
+        "n": 5670,
+        "negative": 2975,
+        "positive": 2695,
+        "precision": 0.9865951742627346,
+        "recall": 0.9558441558441558,
+        "specificity": 0.9882352941176471,
+        "tn": 2940,
+        "tp": 2576
+      },
+      "delta_f1": 0.042333836283642956,
+      "delta_fpr": 0.011764705882352941,
+      "delta_recall": 0.08905380333951762,
+      "paired_doctor_counts": {
+        "degraded": 2,
+        "improved": 12,
+        "unchanged": 17
+      },
+      "zero": {
+        "balanced_accuracy": 0.9333951762523192,
+        "f1": 0.92864241701451,
+        "false_positive_rate": 0.0,
+        "false_reject_rate": 0.1332096474953618,
+        "fn": 359,
+        "fp": 0,
+        "n": 5670,
+        "negative": 2975,
+        "positive": 2695,
+        "precision": 1.0,
+        "recall": 0.8667903525046382,
+        "specificity": 1.0,
+        "tn": 2975,
+        "tp": 2336
+      }
+    }
+  },
+  "base_training_scope": "leave_one_target_doctor_out_heads; trainable heads fit on non-target train participants, thresholds selected on non-target development participants",
+  "conclusion": {
+    "explanation": "The target-doctor-only protocol removes the mixed-query confound and now shows safe aggregate improvement, but this run also uses leave-one-target-doctor base heads and development-selected bias calibration, so the earlier drop cannot be attributed to query mixing alone.",
+    "improved": true,
+    "previous_drop_due_to_mixed_query": "not_isolated",
+    "previous_no_improvement_still_true": false
+  },
+  "elapsed_sec": 99.17448496818542,
+  "eligible_3shot": 33,
+  "eligible_5shot": 31,
+  "records": 11695,
+  "selected_by_target": {
+    "D001": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D002": {},
+    "D003": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D004": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D005": {},
+    "D006": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D007": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D008": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D009": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D010": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D011": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D012": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D013": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D014": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D015": {},
+    "D016": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D017": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D018": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D019": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D020": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D021": {},
+    "D022": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D023": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D024": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D025": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D026": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D027": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D028": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D029": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D030": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D031": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D032": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D033": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D034": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D035": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D036": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    },
+    "D037": {
+      "3": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      },
+      "5": {
+        "bias": 1.0,
+        "method": "positive_bias",
+        "support_based": true
+      }
+    }
+  },
+  "stage1_epochs_max": 12,
+  "stage2_epochs_max": 12,
+  "status": "ok",
+  "support_seeds": [
+    20260620,
+    20260621,
+    20260622,
+    20260623,
+    20260624
+  ]
+}

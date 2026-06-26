@@ -1,0 +1,166 @@
+{
+  "candidate_rule": "p1 >= theta_1",
+  "component_parameters": [
+    {
+      "component": "Stage 1 LayerNorm",
+      "frozen": false,
+      "parameters": 192,
+      "trainable": true
+    },
+    {
+      "component": "Stage 1 2-layer GRU",
+      "frozen": false,
+      "parameters": 56064,
+      "trainable": true
+    },
+    {
+      "component": "Stage 1 Linear classifier",
+      "frozen": false,
+      "parameters": 65,
+      "trainable": true
+    },
+    {
+      "component": "Stage 1 total head",
+      "frozen": false,
+      "parameters": 56321,
+      "trainable": true
+    }
+  ],
+  "head_architecture": "LayerNorm -> 2-layer unidirectional GRU -> Linear trigger logit",
+  "head_input_dim": 96,
+  "head_parameters": {
+    "frozen": 0,
+    "total": 56321,
+    "trainable": 56321
+  },
+  "input_sample_rate_hz": 16000,
+  "latency": {
+    "full_stage1_component_sum_estimate": {
+      "median_ms": 30.202523339539766,
+      "p95_ms": 45.94829771667719
+    },
+    "official_openwakeword_feature_extraction": {
+      "component": "official_openwakeword_feature_extraction",
+      "mean_ms": 33.61225105822086,
+      "median_ms": 29.004013165831566,
+      "n": 100,
+      "openwakeword_version": "0.4.0",
+      "p90_ms": 43.961502611637115,
+      "p95_ms": 44.705767184495926,
+      "std_ms": 6.999816965561306
+    },
+    "source": "finetune/experiments/latest_data_optimization/reports/latest_opt_compute_cost.json",
+    "stage1_cached_feature_load_plus_head": {
+      "component": "stage1_cached_feature_load_plus_head",
+      "mean_ms": 1.2249916419386864,
+      "median_ms": 1.218139659613371,
+      "n": 100,
+      "p90_ms": 1.2489492073655128,
+      "p95_ms": 1.2691989541053772,
+      "std_ms": 0.028542875736415476
+    },
+    "stage1_head": {
+      "component": "stage1_head",
+      "mean_ms": 1.2050737906247377,
+      "median_ms": 1.1985101737082005,
+      "n": 100,
+      "p90_ms": 1.229449175298214,
+      "p95_ms": 1.242530532181263,
+      "std_ms": 0.028160674754079257
+    },
+    "status": "ok"
+  },
+  "latest_deployment_theta_1": 0.9973222613334656,
+  "loss": "weighted BCEWithLogitsLoss",
+  "openwakeword": {
+    "assets": [
+      {
+        "exists": true,
+        "name": "melspec_onnx_model_path",
+        "path": "/home/hj/miniconda/envs/vigil-two-stage/lib/python3.12/site-packages/openwakeword/resources/models/melspectrogram.onnx",
+        "sha256": "ba2b0e0f8b7b875369a2c89cb13360ff53bac436f2895cced9f479fa65eb176f",
+        "shape_info": {
+          "inputs": [
+            {
+              "name": "input",
+              "shape": [
+                "batch_size",
+                "samples"
+              ],
+              "type": "tensor(float)"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "output",
+              "shape": [
+                "time",
+                1,
+                "Clipoutput_dim_2",
+                32
+              ],
+              "type": "tensor(float)"
+            }
+          ],
+          "providers": [
+            "CPUExecutionProvider"
+          ],
+          "status": "ok"
+        },
+        "size_bytes": 1087958
+      },
+      {
+        "exists": true,
+        "name": "embedding_onnx_model_path",
+        "path": "/home/hj/miniconda/envs/vigil-two-stage/lib/python3.12/site-packages/openwakeword/resources/models/embedding_model.onnx",
+        "sha256": "ba754db3cd768a524c655ea90655ee5e6055a43b8dfd29366a11e93716ae9e51",
+        "shape_info": {
+          "inputs": [
+            {
+              "name": "input_1",
+              "shape": [
+                "unk__316",
+                76,
+                32,
+                1
+              ],
+              "type": "tensor(float)"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "conv2d_19",
+              "shape": [
+                "unk__317",
+                1,
+                1,
+                96
+              ],
+              "type": "tensor(float)"
+            }
+          ],
+          "providers": [
+            "CPUExecutionProvider"
+          ],
+          "status": "ok"
+        },
+        "size_bytes": 1328103
+      }
+    ],
+    "embed_clips_signature": "(self, x, batch_size=128, ncpu=1)",
+    "signature": "(melspec_onnx_model_path: str = '/home/hj/miniconda/envs/vigil-two-stage/lib/python3.12/site-packages/openwakeword/resources/models/melspectrogram.onnx', embedding_onnx_model_path: str = '/home/hj/miniconda/envs/vigil-two-stage/lib/python3.12/site-packages/openwakeword/resources/models/embedding_model.onnx', sr: int = 16000, ncpu: int = 1)",
+    "source_file": "/home/hj/miniconda/envs/vigil-two-stage/lib/python3.12/site-packages/openwakeword/utils.py",
+    "status": "ok",
+    "version": "0.4.0"
+  },
+  "output": "p1 = sigmoid(trigger logit)",
+  "qwen_comparison": {
+    "qwen_model": "Qwen/Qwen3-ASR-1.7B",
+    "qwen_parameter_count_from_latest_cost": 2038052480,
+    "stage1_head_parameter_count": 56321,
+    "stage1_produces_transcript": false
+  },
+  "stage1_not_lora": true,
+  "stage1_not_qwen": true,
+  "status": "ok"
+}
