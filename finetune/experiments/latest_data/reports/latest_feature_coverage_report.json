@@ -1,0 +1,29 @@
+{
+  "balanced_windows": 1364,
+  "missing_qwen_clip_ids": [],
+  "missing_stage1_clip_ids": [],
+  "qwen_covered": 1364,
+  "qwen_feature_backend": "frozen_qwen_audio_encoder",
+  "qwen_model_name": "Qwen/Qwen3-ASR-1.7B",
+  "qwen_sample": {
+    "finite": true,
+    "has_inf": false,
+    "has_nan": false,
+    "shape": [
+      26,
+      2048
+    ]
+  },
+  "stage1_covered": 1364,
+  "stage1_feature_backend": "official_openwakeword",
+  "stage1_sample": {
+    "finite": true,
+    "has_inf": false,
+    "has_nan": false,
+    "shape": [
+      16,
+      96
+    ]
+  },
+  "status": "ok"
+}

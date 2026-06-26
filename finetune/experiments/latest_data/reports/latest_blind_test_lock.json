@@ -1,0 +1,7 @@
+{
+  "balanced_manifest_sha256": "549134e307f21470cb942acd44c2c27d2b29fcaa8527b9e7f8e2722e3232b58e",
+  "development_dataset_fingerprint": "2b78e211183d47fb",
+  "fold_definition_sha256": "7c1c65da28f87922f111ee1549b61c053323fc876d2cd26346544de0b37b2a5e",
+  "status": "protocol_ready_lock_pending_final_model",
+  "thresholds_locked": false
+}

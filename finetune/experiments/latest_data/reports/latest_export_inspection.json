@@ -1,0 +1,26 @@
+{
+  "by_prompt_group_audio_files": 0,
+  "canonical_audio_raw_files": 1673,
+  "canonical_samples": 1673,
+  "corrupt_member": null,
+  "label_counts": {
+    "0": 727,
+    "1": 946
+  },
+  "metadata_accounts": 39,
+  "metadata_clip_rows": 1673,
+  "metadata_sessions": 38,
+  "prompt_group_counts": {
+    "P1_vigil_only": 173,
+    "P2_phrase_plus_vigil": 472,
+    "P3_vigil_plus_phrase": 301,
+    "P4_negative": 727
+  },
+  "rejected_or_inconsistent": 0,
+  "root": "vigil_dataset_export_latest_readonly_20260626_042151",
+  "unique_clip_ids": 1673,
+  "zip_file_size_bytes": 63513727,
+  "zip_integrity": "ok",
+  "zip_path": "finetune/data/vigil_dataset_export_latest_readonly_20260626_042151.zip",
+  "zip_sha256": "e2e38518d6725449653138e0ee484c4b5903467e418e8968d4b98ada5fd41701"
+}

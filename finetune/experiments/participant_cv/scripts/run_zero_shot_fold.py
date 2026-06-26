@@ -90,6 +90,7 @@ def main() -> int:
     parser.add_argument("--qwen-manifest", default="finetune/runs/20260624_075127_0fad4c7828149099_full/stage2_qwen_features/qwen_features_manifest.jsonl")
     parser.add_argument("--qwen-cache", default="finetune/experiments/participant_cv/shared/qwen_transcript_cache_balanced_max100.jsonl")
     parser.add_argument("--run-source-dir", default="finetune/runs/20260624_075127_0fad4c7828149099_full")
+    parser.add_argument("--dataset-dir", default="finetune/data/processed/0fad4c7828149099")
     parser.add_argument("--config", default="finetune/configs/full.yaml")
     parser.add_argument("--run-root", default="finetune/experiments/participant_cv/runs/zero_shot")
     args = parser.parse_args()
@@ -100,7 +101,7 @@ def main() -> int:
     py = sys.executable
     run_command([py, "finetune/scripts/train_stage1.py", "--features-manifest", str(run_dir / "stage1_features_manifest.jsonl"), "--config", args.config, "--run-dir", str(run_dir)], log_dir / f"zero_fold{args.outer_fold}_stage1.log")
     for variant in ("bce", "bce_supcon"):
-        run_command([py, "finetune/scripts/train_stage2.py", "--dataset-dir", "finetune/data/processed/0fad4c7828149099", "--config", args.config, "--run-dir", str(run_dir), "--variant", variant], log_dir / f"zero_fold{args.outer_fold}_stage2_{variant}.log")
+        run_command([py, "finetune/scripts/train_stage2.py", "--dataset-dir", args.dataset_dir, "--config", args.config, "--run-dir", str(run_dir), "--variant", variant], log_dir / f"zero_fold{args.outer_fold}_stage2_{variant}.log")
 
     theta1 = float(read_json(run_dir / "stage1" / "threshold.json")["threshold"])
     stage1_test = read_jsonl(run_dir / "stage1" / "test_predictions.jsonl")
