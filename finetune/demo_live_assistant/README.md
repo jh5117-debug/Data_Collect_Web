@@ -17,9 +17,9 @@ Downstream LLM / VQA response generation is intentionally not implemented.
 ## Screens
 
 1. Local profile: user enters a local name and gets a local profile ID.
-2. Onboarding recordings: four prompt-group cards mirror the data-collection recorder flow: choose/type transcript, record, stop, play back, accept, and delete accepted rows.
+2. Onboarding recordings: a light version of the data-collection recorder flow with common VIGIL prompts, Record, Stop, playback, Accept, Delete, and accepted rows.
 3. Calibration result: bounded positive-bias demo calibration using only accepted positive clips.
-4. Assistant listening: rolling transcript, Stage 1 score, Stage 2 score, thresholds, calibration status, trigger state, and cooldown.
+4. Assistant listening: continuous chunked rolling transcript, VIGIL/Virgil highlighting, Stage 1 score, Stage 2 score, thresholds, calibration status, trigger state, and cooldown.
 
 ## Model Notes
 
@@ -27,7 +27,7 @@ Downstream LLM / VQA response generation is intentionally not implemented.
 - The browser assistant loads one Qwen3-ASR-1.7B weight instance.
 - openWakeWord is frozen.
 - Stage 2 uses frozen Qwen audio features and a small verifier head.
-- Rolling transcript uses Qwen `transcribe` on each microphone chunk and extracts `$[0].text`.
+- Rolling transcript uses Qwen `transcribe` on each independently encoded microphone segment and extracts `$[0].text`.
 - Current prototype may run an extra Qwen feature path for Stage 2 candidates.
 - Shared-Qwen hidden-state reuse is not solved in this demo.
 
@@ -52,6 +52,14 @@ SSH tunnel:
 ssh -L 7861:127.0.0.1:7861 hal
 ```
 
+If the laptop already uses local port 7861:
+
+```bash
+ssh -L 7862:127.0.0.1:7861 hj@130.149.110.182
+```
+
+Then open `http://127.0.0.1:7862` on the laptop. The browser and microphone run on the laptop; model inference runs on HAL.
+
 Tmux:
 
 ```bash
@@ -67,7 +75,7 @@ vigil_browser_assistant_demo
 Current log:
 
 ```text
-finetune/demo_live_assistant/logs/demo_20260628_042559_gpu6.log
+finetune/demo_live_assistant/logs/demo_20260628_045447_gpu6.log
 ```
 
 ## Clear Local Data

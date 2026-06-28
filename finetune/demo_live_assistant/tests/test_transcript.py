@@ -46,6 +46,12 @@ class FakeInference:
         }
 
 
+class FailingTriggerInference(FakeInference):
+    def analyze(self, path: object, *, run_transcript_after_trigger: bool) -> dict[str, object]:
+        assert run_transcript_after_trigger is False
+        raise RuntimeError("ffmpeg conversion failed")
+
+
 def test_live_runtime_transcribes_each_chunk_without_trigger(tmp_path) -> None:
     audio_path = tmp_path / "chunk.webm"
     audio_path.write_bytes(b"not a wake word")
@@ -60,3 +66,18 @@ def test_live_runtime_transcribes_each_chunk_without_trigger(tmp_path) -> None:
     assert result["debug"]["qwen_transcript_extraction_path"] == "$[0].text"
     assert result["debug"]["qwen_weight_instances"] == 1
     assert result["debug"]["stage2_qwen_feature_path_used"] is False
+
+
+def test_live_runtime_keeps_transcript_when_trigger_path_fails(tmp_path) -> None:
+    audio_path = tmp_path / "chunk.webm"
+    audio_path.write_bytes(b"bad but transcribable in fake model")
+    runtime = AssistantModelRuntime(force_mock=True)
+    runtime.mode = "real"
+    runtime.inference = FailingTriggerInference()
+
+    result = runtime.analyze_audio(audio_path)
+
+    assert result["rolling_transcript"] == "ordinary background speech"
+    assert result["trigger_detected"] is False
+    assert result["stage1_score"] == 0.0
+    assert "ffmpeg conversion failed" in result["debug"]["trigger_path_error"]

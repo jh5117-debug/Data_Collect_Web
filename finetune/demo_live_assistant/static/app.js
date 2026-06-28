@@ -1,88 +1,35 @@
 const PREFERRED_MIME_TYPES = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
+const ASSISTANT_SEGMENT_MS = 2500;
 
-const PROMPT_GROUPS = [
-  {
-    id: "P1_vigil_only",
-    title: "Prompt 1 - VIGIL Only",
-    instruction: 'Please say "VIGIL" once per recording.',
-    fixedTranscript: "VIGIL",
-    examples: [],
-    containsVigil: true,
-    isNegative: false,
-  },
-  {
-    id: "P2_phrase_plus_vigil",
-    title: "Prompt 2 - Phrase/Sentence + VIGIL",
-    instruction: 'Please say a phrase or sentence ending with or followed by "VIGIL" in one recording.',
-    inputLabel: "Exact phrase/sentence you will say",
-    examples: ["Hi VIGIL.", "Hey VIGIL.", "Hello VIGIL.", "Next, VIGIL.", "What's next, VIGIL?", "Am I doing it right, VIGIL?"],
-    containsVigil: true,
-    isNegative: false,
-  },
-  {
-    id: "P3_vigil_plus_phrase",
-    title: "Prompt 3 - VIGIL + Phrase/Sentence",
-    instruction: 'Please say "VIGIL" plus a phrase or sentence in one recording.',
-    inputLabel: "Exact phrase/sentence you will say",
-    examples: ["VIGIL, next.", "VIGIL, go back.", "VIGIL, what's next?", "VIGIL, am I doing it right?"],
-    containsVigil: true,
-    isNegative: false,
-  },
-  {
-    id: "P4_negative",
-    title: "Prompt 4 - Negative Examples",
-    instruction: 'Please record confusing common words or sentences. Do not say the exact word "Vigil" in this section.',
-    inputLabel: "Exact negative word or sentence you will say",
-    examples: [
-      "visual",
-      "visuals",
-      "visible",
-      "digital",
-      "individual",
-      "residual",
-      "video",
-      "vital",
-      "vigilant",
-      "This is a visual input.",
-      "The video is clear.",
-      "The image is visible.",
-      "This is a digital system.",
-      "The individual is moving.",
-      "The vital signs are normal.",
-    ],
-    containsVigil: false,
-    isNegative: true,
-  },
+const COMMON_PROMPTS = [
+  { group: "P1_vigil_only", text: "VIGIL", positive: true },
+  { group: "P2_phrase_plus_vigil", text: "Hi VIGIL.", positive: true },
+  { group: "P2_phrase_plus_vigil", text: "Hey VIGIL.", positive: true },
+  { group: "P2_phrase_plus_vigil", text: "What's next, VIGIL?", positive: true },
+  { group: "P3_vigil_plus_phrase", text: "VIGIL, next.", positive: true },
+  { group: "P3_vigil_plus_phrase", text: "VIGIL, am I doing it right?", positive: true },
 ];
 
 const state = {
   profileId: null,
   displayName: null,
+  selectedPrompt: COMMON_PROMPTS[0],
+  onboardingRecorder: null,
+  onboardingStream: null,
+  onboardingChunks: [],
+  onboardingDraftBlob: null,
+  onboardingDraftUrl: null,
+  onboardingTimer: null,
+  onboardingElapsedSec: 0,
   clips: [],
-  cardState: Object.fromEntries(
-    PROMPT_GROUPS.map((group) => [
-      group.id,
-      {
-        transcript: group.fixedTranscript || "",
-        draftBlob: null,
-        draftUrl: null,
-        stream: null,
-        recorder: null,
-        chunks: [],
-        isStarting: false,
-        isRecording: false,
-        elapsedSec: 0,
-        timer: null,
-        status: "No recording yet",
-        error: null,
-      },
-    ]),
-  ),
   calibration: null,
   assistantSessionId: null,
   assistantRecorder: null,
   assistantStream: null,
+  assistantActive: false,
+  assistantSegmentTimer: null,
   assistantUploadQueue: Promise.resolve(),
+  transcriptEvents: [],
 };
 
 const $ = (id) => document.getElementById(id);
@@ -100,19 +47,7 @@ function normalizeTranscript(value) {
   return String(value || "")
     .trim()
     .replace(/\s+/g, " ")
-    .replace(/\bvigil\b/gi, "Vigil");
-}
-
-function containsExactVigil(value) {
-  return /\bvigil\b/i.test(value);
-}
-
-function transcriptCountKey(value) {
-  return normalizeTranscript(value).toLowerCase();
-}
-
-function groupById(groupId) {
-  return PROMPT_GROUPS.find((group) => group.id === groupId);
+    .replace(/\bvigil\b/gi, "VIGIL");
 }
 
 function chooseMimeType() {
@@ -120,28 +55,8 @@ function chooseMimeType() {
   return PREFERRED_MIME_TYPES.find((type) => MediaRecorder.isTypeSupported(type));
 }
 
-function validationMessage(group, transcriptValue) {
-  const transcript = normalizeTranscript(group.fixedTranscript || transcriptValue);
-  if (group.fixedTranscript) return null;
-  if (!transcript) return "Choose an example or type the exact transcript before recording.";
-  if ((group.id === "P2_phrase_plus_vigil" || group.id === "P3_vigil_plus_phrase") && !containsExactVigil(transcript)) {
-    return 'This prompt should include the word "Vigil".';
-  }
-  if (group.id === "P4_negative" && containsExactVigil(transcript)) {
-    return 'Negative examples should not contain the exact word "Vigil".';
-  }
-  return null;
-}
-
-function countRowsForTranscript(groupId, transcript) {
-  const key = transcriptCountKey(transcript);
-  return state.clips.filter((clip) => clip.prompt_group === groupId && transcriptCountKey(clip.transcript) === key).length;
-}
-
-function countToneClass(count) {
-  if (count <= 0) return "empty";
-  if (count < 3) return "some";
-  return "enough";
+function promptLabel(prompt) {
+  return prompt.text;
 }
 
 function showScreen(id) {
@@ -178,282 +93,161 @@ async function createProfile() {
   state.profileId = profile.profile_id;
   state.displayName = profile.display_name;
   $("profileStatus").textContent = `Ready, ${profile.display_name}`;
-  renderPromptCards();
+  renderOnboarding();
   showScreen("onboarding");
 }
 
-function clearCardDraft(groupId) {
-  const card = state.cardState[groupId];
-  card.draftBlob = null;
-  if (card.draftUrl) URL.revokeObjectURL(card.draftUrl);
-  card.draftUrl = null;
+function setOnboardingStatus(text, error = "") {
+  $("recordingStatus").textContent = text;
+  $("recordingError").textContent = error;
 }
 
-function stopCardTimer(card) {
-  if (card.timer) window.clearInterval(card.timer);
-  card.timer = null;
+function stopOnboardingTimer() {
+  if (state.onboardingTimer) window.clearInterval(state.onboardingTimer);
+  state.onboardingTimer = null;
 }
 
-function stopCardStream(card) {
-  card.stream?.getTracks().forEach((track) => track.stop());
-  card.stream = null;
+function stopOnboardingStream() {
+  state.onboardingStream?.getTracks().forEach((track) => track.stop());
+  state.onboardingStream = null;
 }
 
-async function requestMicrophone(card) {
-  card.error = null;
-  if (!navigator.mediaDevices?.getUserMedia) {
-    card.error = "This browser does not support microphone recording.";
-    return null;
-  }
+function clearOnboardingDraft(status = "No recording yet") {
+  state.onboardingDraftBlob = null;
+  if (state.onboardingDraftUrl) URL.revokeObjectURL(state.onboardingDraftUrl);
+  state.onboardingDraftUrl = null;
+  $("playback").removeAttribute("src");
+  $("acceptOnboarding").disabled = true;
+  $("deleteDraft").disabled = true;
+  setOnboardingStatus(status);
+}
+
+function selectPrompt(index) {
+  state.selectedPrompt = COMMON_PROMPTS[index] || COMMON_PROMPTS[0];
+  clearOnboardingDraft("No recording yet");
+  renderOnboarding();
+}
+
+async function recordOnboarding() {
+  if (!state.profileId) return;
+  clearOnboardingDraft("Starting microphone. Wait for Recording before speaking.");
+  $("recordOnboarding").disabled = true;
+  $("stopOnboarding").disabled = false;
+  state.onboardingChunks = [];
+  state.onboardingElapsedSec = 0;
+
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    card.stream = stream;
-    return stream;
+    const mimeType = chooseMimeType();
+    const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+    state.onboardingStream = stream;
+    state.onboardingRecorder = recorder;
+
+    recorder.onstart = () => {
+      setOnboardingStatus("Recording 0s");
+      stopOnboardingTimer();
+      state.onboardingTimer = window.setInterval(() => {
+        state.onboardingElapsedSec += 1;
+        setOnboardingStatus(`Recording ${state.onboardingElapsedSec}s`);
+      }, 1000);
+    };
+    recorder.ondataavailable = (event) => {
+      if (event.data.size > 0) state.onboardingChunks.push(event.data);
+    };
+    recorder.onstop = () => {
+      stopOnboardingTimer();
+      stopOnboardingStream();
+      $("recordOnboarding").disabled = false;
+      $("stopOnboarding").disabled = true;
+      const blob = new Blob(state.onboardingChunks, { type: recorder.mimeType || "audio/webm" });
+      if (blob.size === 0) {
+        clearOnboardingDraft("No recording yet");
+        setOnboardingStatus("No recording yet", "The recording is empty. Please redo it.");
+        return;
+      }
+      state.onboardingDraftBlob = blob;
+      state.onboardingDraftUrl = URL.createObjectURL(blob);
+      $("playback").src = state.onboardingDraftUrl;
+      $("acceptOnboarding").disabled = false;
+      $("deleteDraft").disabled = false;
+      setOnboardingStatus("Ready for playback");
+    };
+    recorder.onerror = () => {
+      stopOnboardingTimer();
+      stopOnboardingStream();
+      $("recordOnboarding").disabled = false;
+      $("stopOnboarding").disabled = true;
+      setOnboardingStatus("Recording failed", "Recording failed. Please redo it.");
+    };
+    recorder.start();
   } catch {
-    card.error = "Microphone permission was not granted.";
-    return null;
+    $("recordOnboarding").disabled = false;
+    $("stopOnboarding").disabled = true;
+    setOnboardingStatus("No recording yet", "Microphone permission was not granted.");
   }
 }
 
-async function startCardRecording(groupId) {
-  const group = groupById(groupId);
-  const card = state.cardState[groupId];
-  const validation = validationMessage(group, card.transcript);
-  if (validation || card.isRecording || card.isStarting) {
-    card.error = validation;
-    renderPromptCards();
-    return;
+function stopOnboarding() {
+  if (state.onboardingRecorder?.state === "recording") {
+    state.onboardingRecorder.stop();
   }
-  clearCardDraft(groupId);
-  card.chunks = [];
-  card.error = null;
-  card.isStarting = true;
-  card.status = "Starting microphone. Wait for Recording before speaking.";
-  renderPromptCards();
-
-  const stream = await requestMicrophone(card);
-  if (!stream) {
-    card.isStarting = false;
-    card.status = "No recording yet";
-    renderPromptCards();
-    return;
-  }
-
-  const mimeType = chooseMimeType();
-  let recorder;
-  try {
-    recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
-  } catch {
-    stopCardStream(card);
-    card.isStarting = false;
-    card.status = "No recording yet";
-    card.error = "Could not start recording. Please enable the microphone again.";
-    renderPromptCards();
-    return;
-  }
-
-  recorder.onstart = () => {
-    card.elapsedSec = 0;
-    card.isStarting = false;
-    card.isRecording = true;
-    card.status = "Recording 0s";
-    stopCardTimer(card);
-    card.timer = window.setInterval(() => {
-      card.elapsedSec += 1;
-      card.status = `Recording ${card.elapsedSec}s`;
-      renderPromptCards();
-    }, 1000);
-    renderPromptCards();
-  };
-
-  recorder.ondataavailable = (event) => {
-    if (event.data.size > 0) card.chunks.push(event.data);
-  };
-
-  recorder.onstop = () => {
-    stopCardTimer(card);
-    card.isStarting = false;
-    card.isRecording = false;
-    stopCardStream(card);
-    const blobType = mimeType || card.chunks[0]?.type || "audio/webm";
-    const blob = new Blob(card.chunks, { type: blobType });
-    if (blob.size === 0) {
-      card.error = "The recording is empty. Please redo it.";
-      card.status = "No recording yet";
-      renderPromptCards();
-      return;
-    }
-    card.draftBlob = blob;
-    card.draftUrl = URL.createObjectURL(blob);
-    card.status = "Ready for playback";
-    renderPromptCards();
-  };
-
-  recorder.onerror = () => {
-    stopCardTimer(card);
-    stopCardStream(card);
-    card.isStarting = false;
-    card.isRecording = false;
-    card.status = "Recording failed";
-    card.error = "Recording failed. Please redo it.";
-    renderPromptCards();
-  };
-
-  card.recorder = recorder;
-  recorder.start();
 }
 
-function stopCardRecording(groupId) {
-  const card = state.cardState[groupId];
-  if (card.recorder?.state === "recording") {
-    card.recorder.stop();
-  }
-  card.isStarting = false;
-  renderPromptCards();
-}
-
-function redoCardDraft(groupId) {
-  const card = state.cardState[groupId];
-  if (card.recorder?.state === "recording") {
-    card.recorder.stop();
-  }
-  clearCardDraft(groupId);
-  stopCardTimer(card);
-  stopCardStream(card);
-  card.chunks = [];
-  card.elapsedSec = 0;
-  card.isStarting = false;
-  card.isRecording = false;
-  card.status = "No recording yet";
-  card.error = null;
-  renderPromptCards();
-}
-
-async function acceptCardRecording(groupId) {
-  if (!state.profileId) return;
-  const group = groupById(groupId);
-  const card = state.cardState[groupId];
-  if (!card.draftBlob) return;
-  const validation = validationMessage(group, card.transcript);
-  if (validation) {
-    card.error = validation;
-    renderPromptCards();
-    return;
-  }
-  const transcript = normalizeTranscript(group.fixedTranscript || card.transcript);
+async function acceptOnboarding() {
+  if (!state.profileId || !state.onboardingDraftBlob) return;
+  const prompt = state.selectedPrompt;
   const form = new FormData();
   form.append("profile_id", state.profileId);
-  form.append("prompt_group", group.id);
-  form.append("transcript", transcript);
-  form.append("is_positive", group.isNegative ? "false" : "true");
+  form.append("prompt_group", prompt.group);
+  form.append("transcript", normalizeTranscript(prompt.text));
+  form.append("is_positive", prompt.positive ? "true" : "false");
   form.append("accepted", "true");
-  form.append("file", card.draftBlob, `${group.id}.webm`);
+  form.append("file", state.onboardingDraftBlob, `${prompt.group}.webm`);
   const clip = await jsonFetch("/api/onboarding/clip", { method: "POST", body: form });
   state.clips.push(clip);
-  clearCardDraft(groupId);
-  card.status = "Accepted";
-  card.error = null;
-  renderPromptCards();
+  clearOnboardingDraft("Accepted");
+  renderOnboarding();
 }
 
-async function deleteAcceptedClip(groupId, clipId) {
+function deleteDraft() {
+  clearOnboardingDraft("Deleted");
+}
+
+async function deleteAcceptedClip(clipId) {
   if (!state.profileId || !clipId) return;
   await jsonFetch(`/api/onboarding/clip/${clipId}?profile_id=${encodeURIComponent(state.profileId)}`, { method: "DELETE" });
   state.clips = state.clips.filter((clip) => clip.clip_id !== clipId);
-  const card = state.cardState[groupId];
-  card.status = "Deleted accepted recording";
-  renderPromptCards();
+  renderOnboarding();
 }
 
-function setGroupTranscript(groupId, value) {
-  const card = state.cardState[groupId];
-  card.transcript = value;
-  card.error = null;
-  clearCardDraft(groupId);
-  card.status = "No recording yet";
-  renderPromptCards();
-}
+function renderOnboarding() {
+  const promptButtons = COMMON_PROMPTS.map((prompt, index) => {
+    const active = prompt.text === state.selectedPrompt.text && prompt.group === state.selectedPrompt.group;
+    const count = state.clips.filter((clip) => normalizeTranscript(clip.transcript) === normalizeTranscript(prompt.text)).length;
+    return `<button class="prompt-chip ${active ? "active" : ""}" type="button" data-prompt-index="${index}">
+      <span>${escapeHtml(promptLabel(prompt))}</span><strong>${count}</strong>
+    </button>`;
+  }).join("");
+  $("promptChoices").innerHTML = promptButtons;
+  $("selectedTranscript").textContent = normalizeTranscript(state.selectedPrompt.text);
+  $("selectedPromptGroup").textContent = state.selectedPrompt.group.replaceAll("_", " ");
 
-function renderPromptCards() {
-  const container = $("promptCards");
-  if (!container) return;
-  container.innerHTML = PROMPT_GROUPS.map((group) => renderPromptCard(group)).join("");
-  renderOnboardingSummary();
-}
-
-function renderPromptCard(group) {
-  const card = state.cardState[group.id];
-  const rows = state.clips.filter((clip) => clip.prompt_group === group.id);
-  const validation = validationMessage(group, card.transcript);
-  const canRecord = Boolean(state.profileId) && !validation;
-  const fixedCount = group.fixedTranscript ? countRowsForTranscript(group.id, group.fixedTranscript) : 0;
-  const draftAudio = card.draftUrl ? `<audio class="playback" controls src="${escapeHtml(card.draftUrl)}"></audio>` : "";
-  const examples = group.fixedTranscript
-    ? `<div class="fixed-transcript ${countToneClass(fixedCount)}"><div><span>Transcript</span><strong>${fixedCount}</strong></div><p>${escapeHtml(group.fixedTranscript)}</p></div>`
-    : `
-      <div class="example-chips" aria-label="${escapeHtml(group.title)} examples">
-        ${group.examples
-          .map((example) => {
-            const count = countRowsForTranscript(group.id, example);
-            const active = transcriptCountKey(card.transcript) === transcriptCountKey(example);
-            return `<button class="chip ${countToneClass(count)} ${active ? "active" : ""}" type="button" data-action="choose-example" data-group="${group.id}" data-value="${escapeHtml(example)}"><span>${escapeHtml(example)}</span><strong>${count}</strong></button>`;
-          })
-          .join("")}
-      </div>
-      <label class="compact-field">
-        <span>${escapeHtml(group.inputLabel)}</span>
-        <input data-action="transcript-input" data-group="${group.id}" value="${escapeHtml(card.transcript)}" />
-      </label>
-      ${validation && card.transcript.trim() ? `<p class="error-text">${escapeHtml(validation)}</p>` : ""}
-      ${validation && !card.transcript.trim() ? `<p class="helper-text">${escapeHtml(validation)}</p>` : ""}
-    `;
-  const rowsHtml = rows.length
-    ? `<ul class="clip-list">
-        ${rows
-          .map(
-            (clip) => `<li>
-              <div>
-                <strong>${escapeHtml(clip.transcript || "audio")}</strong>
-                <span>${clip.is_positive ? "positive" : "negative"}</span>
-              </div>
-              <audio controls src="${escapeHtml(clip.playback_url)}"></audio>
-              <button type="button" data-action="delete-clip" data-group="${group.id}" data-clip-id="${escapeHtml(clip.clip_id)}">Delete</button>
-            </li>`,
-          )
-          .join("")}
-      </ul>`
-    : `<p class="helper-text">No accepted recordings yet.</p>`;
-  return `
-    <section class="prompt-group-card ${group.isNegative ? "negative-card" : "positive-card"}">
-      <div class="prompt-card-head">
-        <div>
-          <h3>${escapeHtml(group.title)}</h3>
-          <p>${escapeHtml(group.instruction)}</p>
-        </div>
-        <span class="count-badge ${countToneClass(rows.length)}">${rows.length}</span>
-      </div>
-      ${examples}
-      <div class="record-row">
-        <button type="button" data-action="record" data-group="${group.id}" ${!canRecord || card.isRecording || card.isStarting ? "disabled" : ""}>Record</button>
-        <button type="button" data-action="stop" data-group="${group.id}" ${!card.isRecording ? "disabled" : ""}>Stop</button>
-        <button type="button" data-action="accept" data-group="${group.id}" ${!card.draftBlob || !canRecord ? "disabled" : ""}>Accept</button>
-        <button type="button" data-action="redo" data-group="${group.id}" ${!card.draftBlob && !card.isRecording && !card.isStarting ? "disabled" : ""}>Delete</button>
-      </div>
-      ${draftAudio}
-      <p class="status">${escapeHtml(card.status)}</p>
-      ${card.error ? `<p class="error-text">${escapeHtml(card.error)}</p>` : ""}
-      ${rowsHtml}
-    </section>
-  `;
-}
-
-function renderOnboardingSummary() {
   const positives = state.clips.filter((clip) => clip.is_positive).length;
-  const negatives = state.clips.filter((clip) => !clip.is_positive).length;
   $("totalClips").textContent = String(state.clips.length);
   $("positiveClips").textContent = String(positives);
-  $("negativeClips").textContent = String(negatives);
   $("calibrateButton").disabled = positives < 3;
+
+  $("clipList").innerHTML = state.clips.length
+    ? state.clips
+        .map(
+          (clip) => `<li>
+            <div><strong>${escapeHtml(clip.transcript || "audio")}</strong><span>${clip.prompt_group}</span></div>
+            <audio controls src="${escapeHtml(clip.playback_url)}"></audio>
+            <button type="button" data-delete-clip="${escapeHtml(clip.clip_id)}">Delete</button>
+          </li>`,
+        )
+        .join("")
+    : `<li class="empty-row">No accepted recordings yet.</li>`;
 }
 
 async function calibrate() {
@@ -481,35 +275,53 @@ async function startAssistant() {
     body: JSON.stringify({ profile_id: state.profileId }),
   });
   state.assistantSessionId = session.assistant_session_id;
+  state.assistantActive = true;
+  state.transcriptEvents = [];
   $("assistantState").textContent = "LISTENING";
   $("startAssistant").disabled = true;
   $("stopAssistant").disabled = false;
   $("resetAssistant").disabled = false;
-  await startAssistantRecorder();
+  $("debugPanel").textContent = "";
+  renderRollingTranscript("");
+  await startAssistantStream();
+  startAssistantSegment();
 }
 
-async function startAssistantRecorder() {
+async function startAssistantStream() {
   $("micState").textContent = "Starting microphone...";
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  state.assistantStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  $("micState").textContent = "Recording - speak now";
+}
+
+function startAssistantSegment() {
+  if (!state.assistantActive || !state.assistantStream) return;
+  const chunks = [];
   const mimeType = chooseMimeType();
-  const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
-  state.assistantStream = stream;
+  const recorder = mimeType ? new MediaRecorder(state.assistantStream, { mimeType }) : new MediaRecorder(state.assistantStream);
   state.assistantRecorder = recorder;
 
-  recorder.onstart = () => {
-    $("micState").textContent = "Recording - speak now";
-  };
   recorder.ondataavailable = (event) => {
-    if (event.data.size > 0) queueAssistantChunk(event.data);
-  };
-  recorder.onerror = () => {
-    $("micState").textContent = "Recording failed";
+    if (event.data.size > 0) chunks.push(event.data);
   };
   recorder.onstop = () => {
-    stream.getTracks().forEach((track) => track.stop());
-    state.assistantStream = null;
+    if (chunks.length > 0) {
+      const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+      if (blob.size > 0) queueAssistantChunk(blob);
+    }
+    if (state.assistantActive) {
+      window.setTimeout(startAssistantSegment, 50);
+    }
   };
-  recorder.start(2500);
+  recorder.onerror = () => {
+    $("micState").textContent = "Recording segment failed";
+    if (state.assistantActive) {
+      window.setTimeout(startAssistantSegment, 250);
+    }
+  };
+  recorder.start();
+  state.assistantSegmentTimer = window.setTimeout(() => {
+    if (recorder.state === "recording") recorder.stop();
+  }, ASSISTANT_SEGMENT_MS);
 }
 
 function queueAssistantChunk(blob) {
@@ -520,6 +332,15 @@ function queueAssistantChunk(blob) {
     });
 }
 
+function renderRollingTranscript(text) {
+  const escaped = escapeHtml(text || "");
+  const highlighted = escaped.replace(/\b(VIGIL|Vigil|vigil|Virgil|virgil)\b/g, '<span class="wake-word">$1</span>');
+  const events = state.transcriptEvents
+    .map((event) => `<div class="activation-line">${escapeHtml(event)}</div>`)
+    .join("");
+  $("transcriptPanel").innerHTML = [highlighted, events].filter(Boolean).join(events && highlighted ? "\n" : "");
+}
+
 async function sendAssistantChunk(blob) {
   if (!state.assistantSessionId) return;
   const form = new FormData();
@@ -527,7 +348,10 @@ async function sendAssistantChunk(blob) {
   form.append("assistant_session_id", state.assistantSessionId);
   form.append("file", blob, "assistant.webm");
   const result = await jsonFetch("/api/assistant/chunk", { method: "POST", body: form });
-  $("transcriptPanel").textContent = result.rolling_transcript || "";
+  if (result.trigger_detected) {
+    state.transcriptEvents.push("VIGIL Assistant activated");
+  }
+  renderRollingTranscript(result.rolling_transcript || "");
   $("stage1Score").textContent = Number(result.stage1_score || 0).toFixed(4);
   $("stage2Score").textContent = result.stage2_score == null ? "-" : Number(result.stage2_score).toFixed(4);
   $("thresholds").textContent = `${Number(result.theta_1).toFixed(3)} / ${Number(result.theta_2).toFixed(3)}`;
@@ -536,12 +360,15 @@ async function sendAssistantChunk(blob) {
   $("extraEncoder").textContent = result.debug?.qwen_extra_encoder_forward ? "yes" : "no";
   $("qwenWeights").textContent = result.debug?.qwen_weight_instances === 1 ? "one frozen instance" : "unknown";
   $("debugPanel").textContent = JSON.stringify(result.debug, null, 2);
-  $("detectedBanner").classList.toggle("hidden", !result.trigger_detected);
+  $("detectedBanner").classList.toggle("hidden", result.assistant_state !== "ASSISTANT_STATE");
 }
 
 async function stopAssistant() {
+  state.assistantActive = false;
+  if (state.assistantSegmentTimer) window.clearTimeout(state.assistantSegmentTimer);
   if (state.assistantRecorder?.state === "recording") state.assistantRecorder.stop();
   state.assistantStream?.getTracks().forEach((track) => track.stop());
+  state.assistantStream = null;
   await state.assistantUploadQueue;
   await jsonFetch("/api/assistant/stop", {
     method: "POST",
@@ -561,35 +388,29 @@ async function resetAssistant() {
     body: JSON.stringify({ profile_id: state.profileId, assistant_session_id: state.assistantSessionId }),
   });
   $("assistantState").textContent = "IDLE";
-  $("transcriptPanel").textContent = "";
+  state.transcriptEvents = [];
+  renderRollingTranscript("");
   $("detectedBanner").classList.add("hidden");
 }
 
 document.querySelectorAll(".step").forEach((button) => button.addEventListener("click", () => showScreen(button.dataset.screen)));
 document.querySelectorAll("[data-screen-target]").forEach((button) => button.addEventListener("click", () => showScreen(button.dataset.screenTarget)));
 $("createProfile").addEventListener("click", createProfile);
-$("promptCards").addEventListener("click", (event) => {
-  const button = event.target instanceof Element ? event.target.closest("button[data-action]") : null;
-  if (!button) return;
-  const groupId = button.dataset.group;
-  if (button.dataset.action === "choose-example") setGroupTranscript(groupId, button.dataset.value || "");
-  if (button.dataset.action === "record") startCardRecording(groupId);
-  if (button.dataset.action === "stop") stopCardRecording(groupId);
-  if (button.dataset.action === "accept") acceptCardRecording(groupId);
-  if (button.dataset.action === "redo") redoCardDraft(groupId);
-  if (button.dataset.action === "delete-clip") deleteAcceptedClip(groupId, button.dataset.clipId);
+$("promptChoices").addEventListener("click", (event) => {
+  const button = event.target instanceof Element ? event.target.closest("button[data-prompt-index]") : null;
+  if (button) selectPrompt(Number(button.dataset.promptIndex));
 });
-$("promptCards").addEventListener("input", (event) => {
-  const input = event.target instanceof HTMLInputElement ? event.target : null;
-  if (input?.dataset?.action === "transcript-input") {
-    const groupId = input.dataset.group;
-    state.cardState[groupId].transcript = input.value;
-    state.cardState[groupId].error = null;
-  }
+$("clipList").addEventListener("click", (event) => {
+  const button = event.target instanceof Element ? event.target.closest("button[data-delete-clip]") : null;
+  if (button) deleteAcceptedClip(button.dataset.deleteClip);
 });
+$("recordOnboarding").addEventListener("click", recordOnboarding);
+$("stopOnboarding").addEventListener("click", stopOnboarding);
+$("acceptOnboarding").addEventListener("click", acceptOnboarding);
+$("deleteDraft").addEventListener("click", deleteDraft);
 $("calibrateButton").addEventListener("click", calibrate);
 $("startAssistant").addEventListener("click", startAssistant);
 $("stopAssistant").addEventListener("click", stopAssistant);
 $("resetAssistant").addEventListener("click", resetAssistant);
-renderPromptCards();
+renderOnboarding();
 refreshHealth();

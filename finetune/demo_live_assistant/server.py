@@ -133,7 +133,22 @@ def create_app(
         data = await file.read()
         chunk_path = sessions.save_chunk(session, data, suffix=Path(file.filename or "chunk.webm").suffix)
         calibration = profiles.calibration(profile_id)
-        result = runtime.analyze_audio(chunk_path, calibration)
+        try:
+            result = runtime.analyze_audio(chunk_path, calibration)
+        except Exception as exc:
+            result = {
+                "rolling_transcript": "",
+                "stage1_score": 0.0,
+                "stage2_score": None,
+                "calibrated_stage2_score": None,
+                "theta_1": runtime.theta1,
+                "theta_2": runtime.theta2,
+                "candidate": False,
+                "trigger_detected": False,
+                "winning_window": None,
+                "latency_ms": 0.0,
+                "debug": {"route_error": f"{type(exc).__name__}: {exc}"},
+            }
         session.add_transcript(result.get("rolling_transcript") or "")
         trigger_update = session.trigger.update(candidate=bool(result["candidate"]), trigger_detected=bool(result["trigger_detected"]))
         return {

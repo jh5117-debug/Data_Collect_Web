@@ -133,6 +133,7 @@ input {
 }
 
 .prompt-grid,
+.prompt-choice-row,
 .prompt-group-grid,
 .record-row,
 .metric-grid,
@@ -145,6 +146,51 @@ input {
 .prompt-grid {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   margin: 14px 0;
+}
+
+.prompt-choice-row {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  margin: 14px 0;
+}
+
+.prompt-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.prompt-chip.active {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.onboarding-recorder {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 16px;
+  margin: 14px 0;
+}
+
+.selected-prompt {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.selected-prompt span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.selected-prompt strong {
+  font-size: 1.25rem;
 }
 
 .prompt-group-grid {
@@ -298,6 +344,20 @@ audio {
   font-weight: 800;
 }
 
+.compact-list {
+  max-height: 260px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: var(--paper);
+}
+
+.empty-row {
+  color: var(--muted);
+  display: block !important;
+}
+
 .metric-grid,
 .state-board,
 .onboarding-summary {
@@ -315,11 +375,17 @@ audio {
 }
 
 .state-board span,
+.metric-grid span,
 .onboarding-summary span {
   display: block;
   color: var(--muted);
   font-size: 0.82rem;
   font-weight: 700;
+}
+
+.metric-grid div {
+  display: grid;
+  gap: 4px;
 }
 
 .detected {
@@ -336,6 +402,7 @@ audio {
   display: none;
 }
 
+.transcript-panel,
 pre {
   min-height: 90px;
   white-space: pre-wrap;
@@ -344,6 +411,22 @@ pre {
   color: #edf7f3;
   border-radius: 8px;
   padding: 14px;
+}
+
+.transcript-panel {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  line-height: 1.6;
+}
+
+.wake-word {
+  color: #ff6b6b;
+  font-weight: 900;
+}
+
+.activation-line {
+  color: #ffb3b3;
+  font-weight: 900;
+  margin-top: 8px;
 }
 
 @media (max-width: 720px) {

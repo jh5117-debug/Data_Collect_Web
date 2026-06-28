@@ -152,7 +152,20 @@ class AssistantModelRuntime:
             transcript_started = time.perf_counter()
             transcript = self._transcribe_audio(audio_path)
             transcript_latency_ms = (time.perf_counter() - transcript_started) * 1000.0
-            result = self.inference.analyze(audio_path, run_transcript_after_trigger=False)
+            trigger_error = None
+            try:
+                result = self.inference.analyze(audio_path, run_transcript_after_trigger=False)
+            except Exception as exc:
+                trigger_error = f"{type(exc).__name__}: {exc}"
+                result = {
+                    "variant": self.selected_variant,
+                    "theta_1": self.theta1,
+                    "theta_2": self.theta2,
+                    "stage1_score": 0.0,
+                    "stage2_score": None,
+                    "window_table": [],
+                    "winning_window": None,
+                }
             stage2_score = result.get("stage2_score")
             if stage2_score is None:
                 stage2_values = [row.get("Stage 2") for row in result.get("window_table", []) if row.get("Stage 2") is not None]
@@ -182,6 +195,7 @@ class AssistantModelRuntime:
                     "qwen_transcript_result_type": transcript.get("result_type"),
                     "qwen_transcript_error": transcript.get("error"),
                     "qwen_transcript_latency_ms": transcript_latency_ms,
+                    "trigger_path_error": trigger_error,
                 },
             }
         data = audio_path.read_bytes() if audio_path.exists() else b""

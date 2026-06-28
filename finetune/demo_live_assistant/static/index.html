@@ -36,13 +36,28 @@
       <section id="onboarding" class="screen">
         <div class="panel">
           <h2>Onboarding recordings</h2>
-          <p>Please record clean voice samples. You can record as many examples as you like in each section.</p>
-          <div id="promptCards" class="prompt-group-grid"></div>
+          <p>Pick a common VIGIL phrase, record it, play it back, then accept the good takes.</p>
+          <div id="promptChoices" class="prompt-choice-row"></div>
+          <section class="onboarding-recorder">
+            <div class="selected-prompt">
+              <span id="selectedPromptGroup">P1 vigil only</span>
+              <strong id="selectedTranscript">VIGIL</strong>
+            </div>
+            <div class="record-row">
+              <button id="recordOnboarding">Record</button>
+              <button id="stopOnboarding" disabled>Stop</button>
+              <button id="acceptOnboarding" disabled>Accept</button>
+              <button id="deleteDraft" disabled>Delete</button>
+            </div>
+            <audio id="playback" controls></audio>
+            <p id="recordingStatus" class="status">No recording yet</p>
+            <p id="recordingError" class="error-text"></p>
+          </section>
           <div class="onboarding-summary">
             <div><span>Total recordings</span><strong id="totalClips">0</strong></div>
             <div><span>Positive recordings</span><strong id="positiveClips">0</strong></div>
-            <div><span>Negative recordings</span><strong id="negativeClips">0</strong></div>
           </div>
+          <ul id="clipList" class="clip-list compact-list"></ul>
           <button id="calibrateButton" disabled>Calibrate my VIGIL voice</button>
         </div>
       </section>
@@ -77,7 +92,7 @@
           <div id="detectedBanner" class="detected hidden">VIGIL DETECTED<br />Assistant / VQA state activated</div>
           <p class="placeholder">Downstream LLM / VQA response is not implemented in this demo.</p>
           <h3>Rolling transcript</h3>
-          <pre id="transcriptPanel"></pre>
+          <div id="transcriptPanel" class="transcript-panel"></div>
           <h3>Debug</h3>
           <pre id="debugPanel"></pre>
         </div>
