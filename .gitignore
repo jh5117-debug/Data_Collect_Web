@@ -57,6 +57,17 @@ finetune/benchmarks/asr/third_party/
 # VIGIL browser demo generated artifacts
 finetune/demo/logs/
 finetune/demo/reports/
+finetune/demo_live_assistant/local_data/
+finetune/demo_live_assistant/logs/
+finetune/demo_live_assistant/reports/*.jsonl
+finetune/demo_live_assistant/reports/*recordings*
+finetune/demo_live_assistant/**/*.webm
+finetune/demo_live_assistant/**/*.wav
+finetune/demo_live_assistant/**/*.m4a
+finetune/demo_live_assistant/**/*.pt
+finetune/demo_live_assistant/**/*.onnx
+finetune/demo_live_assistant/**/*.npy
+finetune/demo_live_assistant/**/*.npz
 
 # Participant CV / few-shot experiment generated artifacts
 finetune/experiments/participant_cv/runs/

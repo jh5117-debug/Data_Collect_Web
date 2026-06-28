@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VIGIL Local HAL Demo</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Local HAL demo</p>
+          <h1>VIGIL Voice Trigger Module</h1>
+        </div>
+        <div id="healthBadge" class="badge">checking</div>
+      </header>
+
+      <nav class="steps" aria-label="Demo steps">
+        <button class="step active" data-screen="profile">1 Profile</button>
+        <button class="step" data-screen="onboarding">2 Onboarding</button>
+        <button class="step" data-screen="calibration">3 Calibration</button>
+        <button class="step" data-screen="assistant">4 Assistant</button>
+      </nav>
+
+      <section id="profile" class="screen active">
+        <div class="panel">
+          <h2>Local profile</h2>
+          <p>This is a local HAL demo. Your audio is saved only on this server under an ignored local demo folder.</p>
+          <label>Name <input id="nameInput" autocomplete="name" /></label>
+          <button id="createProfile">Continue</button>
+          <p id="profileStatus" class="status"></p>
+        </div>
+      </section>
+
+      <section id="onboarding" class="screen">
+        <div class="panel">
+          <h2>Onboarding recordings</h2>
+          <p>Please record 3 to 5 VIGIL examples before starting the assistant.</p>
+          <div class="prompt-grid">
+            <button class="prompt active" data-group="P1_vigil_only" data-text="VIGIL">VIGIL</button>
+            <button class="prompt" data-group="P2_phrase_plus_vigil" data-text="Hi VIGIL">Hi VIGIL</button>
+            <button class="prompt" data-group="P2_phrase_plus_vigil" data-text="What is next, VIGIL">What is next, VIGIL</button>
+            <button class="prompt" data-group="P3_vigil_plus_phrase" data-text="VIGIL, next">VIGIL, next</button>
+            <button class="prompt negative" data-group="P4_negative" data-text="visual">visual</button>
+          </div>
+          <div class="record-row">
+            <button id="recordOnboarding">Record</button>
+            <button id="stopOnboarding" disabled>Stop</button>
+            <button id="acceptOnboarding" disabled>Accept</button>
+            <button id="deleteDraft" disabled>Delete</button>
+          </div>
+          <audio id="playback" controls></audio>
+          <p id="recordingStatus" class="status">Idle</p>
+          <ul id="clipList" class="clip-list"></ul>
+          <button id="calibrateButton" disabled>Calibrate my VIGIL voice</button>
+        </div>
+      </section>
+
+      <section id="calibration" class="screen">
+        <div class="panel">
+          <h2>Calibration result</h2>
+          <div id="calibrationResult" class="metric-grid"></div>
+          <p>Qwen and openWakeWord are not updated. This is a small calibration only.</p>
+          <button data-screen-target="assistant">Open assistant listening</button>
+        </div>
+      </section>
+
+      <section id="assistant" class="screen">
+        <div class="panel">
+          <h2>Assistant listening</h2>
+          <div class="record-row">
+            <button id="startAssistant">Start Assistant</button>
+            <button id="stopAssistant" disabled>Stop Assistant</button>
+            <button id="resetAssistant" disabled>Reset to IDLE</button>
+          </div>
+          <div class="state-board">
+            <div><span>Mic</span><strong id="micState">IDLE</strong></div>
+            <div><span>Assistant</span><strong id="assistantState">IDLE</strong></div>
+            <div><span>Stage 1</span><strong id="stage1Score">-</strong></div>
+            <div><span>Stage 2</span><strong id="stage2Score">-</strong></div>
+            <div><span>Thresholds</span><strong id="thresholds">-</strong></div>
+            <div><span>Calibration</span><strong id="calibrationActive">inactive</strong></div>
+            <div><span>Qwen extra encoder</span><strong id="extraEncoder">unknown</strong></div>
+          </div>
+          <div id="detectedBanner" class="detected hidden">VIGIL DETECTED<br />Assistant / VQA state activated</div>
+          <p class="placeholder">Downstream LLM / VQA response is not implemented in this demo.</p>
+          <h3>Rolling transcript</h3>
+          <pre id="transcriptPanel"></pre>
+          <h3>Debug</h3>
+          <pre id="debugPanel"></pre>
+        </div>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
