@@ -1,0 +1,522 @@
+{
+  "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+  "max_abs_score_diff": null,
+  "parity_status": "blocked",
+  "records": [
+    {
+      "abs_score_diff": null,
+      "audio_hash": "7a8509ebc120",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "20a5d8087c5a",
+      "prompt_group": "P1_vigil_only",
+      "reference": "VIGIL",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.38686990737915,
+      "separate_stage2_score": 0.9877132177352905,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "6775b28d974b",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "30ce38ce0795",
+      "prompt_group": "P1_vigil_only",
+      "reference": "VIGIL",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.40642786026001,
+      "separate_stage2_score": 0.9879482984542847,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "ab54caa1092d",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "c17262d36326",
+      "prompt_group": "P1_vigil_only",
+      "reference": "VIGIL",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.401381969451904,
+      "separate_stage2_score": 0.9878880381584167,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "7768d95f7616",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "776523b8e101",
+      "prompt_group": "P1_vigil_only",
+      "reference": "VIGIL",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.406722545623779,
+      "separate_stage2_score": 0.9879518151283264,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "4dc8195c454e",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "faacb405194d",
+      "prompt_group": "P1_vigil_only",
+      "reference": "VIGIL",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.425560474395752,
+      "separate_stage2_score": 0.9881739616394043,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "05eec4a851cc",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "485db9e6bb59",
+      "prompt_group": "P2_phrase_plus_vigil",
+      "reference": "Hi VIGIL.",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.429192543029785,
+      "separate_stage2_score": 0.9882163405418396,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "40f02ff7f389",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "2deb35dd7f46",
+      "prompt_group": "P2_phrase_plus_vigil",
+      "reference": "Hi VIGIL.",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.428770065307617,
+      "separate_stage2_score": 0.988211452960968,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "243248a05824",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "fbdc35a787d4",
+      "prompt_group": "P2_phrase_plus_vigil",
+      "reference": "Hey VIGIL.",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.406278133392334,
+      "separate_stage2_score": 0.9879465699195862,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "d3670df978d6",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "e4c4ab545d19",
+      "prompt_group": "P2_phrase_plus_vigil",
+      "reference": "Hey VIGIL.",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.433085918426514,
+      "separate_stage2_score": 0.9882616400718689,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "52166c329183",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "eb81384667fd",
+      "prompt_group": "P2_phrase_plus_vigil",
+      "reference": "Hello VIGIL.",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.421324253082275,
+      "separate_stage2_score": 0.988124430179596,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "d97b1574a23f",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "b8a7e7ba434b",
+      "prompt_group": "P3_vigil_plus_phrase",
+      "reference": "VIGIL, next.",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.401423931121826,
+      "separate_stage2_score": 0.9878886342048645,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "df917748437c",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "cb9e98436c68",
+      "prompt_group": "P3_vigil_plus_phrase",
+      "reference": "VIGIL, next.",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.4008355140686035,
+      "separate_stage2_score": 0.9878815412521362,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "151eceb56f35",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "ec67b9837e35",
+      "prompt_group": "P3_vigil_plus_phrase",
+      "reference": "VIGIL, go back.",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.420164585113525,
+      "separate_stage2_score": 0.9881107807159424,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "b59dfb74fadb",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "3084c814ebfd",
+      "prompt_group": "P3_vigil_plus_phrase",
+      "reference": "VIGIL, go back.",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.416018009185791,
+      "separate_stage2_score": 0.9880620241165161,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "4461802d290b",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 1,
+      "path_hash": "a2952e54b324",
+      "prompt_group": "P3_vigil_plus_phrase",
+      "reference": "VIGIL, am I doing it right?",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": 4.395166873931885,
+      "separate_stage2_score": 0.9878134727478027,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "8630ca48fbef",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "93f8678f818a",
+      "prompt_group": "P4_negative",
+      "reference": "visual",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -3.979567766189575,
+      "separate_stage2_score": 0.018350675702095032,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "075b1b79ab74",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "d4892459f4d3",
+      "prompt_group": "P4_negative",
+      "reference": "visual",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -4.211812496185303,
+      "separate_stage2_score": 0.01460307277739048,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "c764b1e170f9",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "4af43d9f8e17",
+      "prompt_group": "P4_negative",
+      "reference": "visible",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -4.418056011199951,
+      "separate_stage2_score": 0.011913994327187538,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "a0ac5cfbbee1",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "df1c95974703",
+      "prompt_group": "P4_negative",
+      "reference": "visuals",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -4.313971996307373,
+      "separate_stage2_score": 0.013203628361225128,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "e8416417393e",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "f01f7730ebae",
+      "prompt_group": "P4_negative",
+      "reference": "visuals",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -4.282439231872559,
+      "separate_stage2_score": 0.013620848767459393,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "44a6aab7a2ca",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "0a18dee2e58c",
+      "prompt_group": "P4_negative",
+      "reference": "visible",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -4.419989109039307,
+      "separate_stage2_score": 0.011891258880496025,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "8a2716fa30a6",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "43db0effd0c9",
+      "prompt_group": "P4_negative",
+      "reference": "digital",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -4.25970458984375,
+      "separate_stage2_score": 0.013929696753621101,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "c4db638d5be2",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "039d0ec0997f",
+      "prompt_group": "P4_negative",
+      "reference": "digital",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -4.333363056182861,
+      "separate_stage2_score": 0.012953346595168114,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "1431c5a73d23",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "0a8daaed7f70",
+      "prompt_group": "P4_negative",
+      "reference": "individual",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -4.3196306228637695,
+      "separate_stage2_score": 0.013130104169249535,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    },
+    {
+      "abs_score_diff": null,
+      "audio_hash": "74c575858497",
+      "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+      "label": 0,
+      "path_hash": "ed99b9a75931",
+      "prompt_group": "P4_negative",
+      "reference": "individual",
+      "separate_feature_dtype": "torch.bfloat16",
+      "separate_feature_path": "model.thinker.get_audio_features",
+      "separate_feature_shape": [
+        26,
+        2048
+      ],
+      "separate_stage2_logit": -4.248822212219238,
+      "separate_stage2_score": 0.014079968445003033,
+      "shared_stage2_score": null,
+      "source": "vigil",
+      "status": "blocked_by_runtime_interface"
+    }
+  ],
+  "separate_feature_latency_ms": {
+    "max": 21.30216546356678,
+    "median": 15.986877493560314
+  },
+  "stage2_info": {
+    "bundle": "finetune/model_bundles/vigil_latest_optimized_20260626_085405",
+    "checkpoint_exists": true,
+    "checkpoint_path_hash": "f57b4bf58509",
+    "input_dim": 2048,
+    "qwen_trainable_params": 0,
+    "stage2_threshold": 0.9877771735191345,
+    "stage2_variant": "stage2_bce_supcon"
+  },
+  "status": "blocked_by_runtime_interface",
+  "subset_size": 25
+}
