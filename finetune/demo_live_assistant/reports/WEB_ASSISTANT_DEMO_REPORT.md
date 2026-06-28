@@ -10,7 +10,8 @@
 ## Screens Implemented
 
 - Local profile screen.
-- Onboarding recording screen.
+- Onboarding recording screen aligned with the data-collection recorder flow:
+  prompt group cards, exact transcript examples/input, record, stop, playback, accept, delete, accepted rows, and positive/negative counts.
 - Calibration result screen.
 - Assistant listening screen.
 
@@ -35,7 +36,7 @@
 - `/health` mode: `real`
 - Loaded flags: openWakeWord `true`, Stage 1 head `true`, Qwen ASR `true`, Stage 2 head `true`.
 - Tmux session: `vigil_browser_assistant_demo`
-- Log: `finetune/demo_live_assistant/logs/demo_20260628_034213_gpu6.log`
+- Log: `finetune/demo_live_assistant/logs/demo_20260628_042559_gpu6.log`
 
 ## Onboarding And Calibration
 
@@ -47,11 +48,11 @@ The assistant chunk route updates a rolling transcript, Stage 1 score, Stage 2 s
 
 ## Transcript Branch
 
-Real mode uses the loaded frozen Qwen runtime. Mock/partial mode reports its mode through `/health` and uses deterministic local placeholder transcript behavior for route validation.
+Real mode uses one loaded frozen Qwen3-ASR-1.7B weight instance. The assistant chunk route now runs Qwen `transcribe(..., language=None)` on every microphone chunk and extracts the structured result at `$[0].text`, so rolling transcript is not dependent on VIGIL trigger acceptance. Mock/partial mode reports its mode through `/health` and uses deterministic local placeholder transcript behavior for route validation.
 
 ## Trigger Branch
 
-Real mode reuses the current two-stage runtime. Stage 2 may use one extra Qwen encoder forward for candidates. Shared-Qwen hidden-state reuse is not claimed.
+Real mode reuses the current two-stage runtime. Stage 2 may use one extra Qwen feature path for candidate windows. This is not a second Qwen weight copy; it is extra compute through the same frozen Qwen runtime. Shared-Qwen hidden-state reuse is not claimed.
 
 ## Validation Examples
 
@@ -63,7 +64,8 @@ Real mode reuses the current two-stage runtime. Stage 2 may use one extra Qwen e
 - Assistant session start: passed.
 - Positive VIGIL chunk: expected label `1`, trigger detected `true`, assistant state `ASSISTANT_STATE`, Stage 1 score `0.9995500445365906`, Stage 2 score `0.9879599809646606`, latency `1723.2751678675413` ms.
 - Negative chunk: expected label `0`, trigger detected `false`, assistant state `LISTENING`, Stage 1 score `0.005684383679181337`, Stage 2 score `null`, latency `127.6231212541461` ms.
-- Browser microphone capture was not human-tested.
+- Public LibriSpeech API smoke after transcript fix: trigger detected `false`, assistant state `LISTENING`, transcript preview `Introducing such a person to us.`, Qwen weight instances `1`, transcript extraction path `$[0].text`, transcript error `None`, Stage 2 Qwen feature path used `false`.
+- Browser microphone capture was opened by the user; the user reported VIGIL triggering worked. Rolling transcript was then fixed and validated through the local chunk API.
 
 ## Run Command
 

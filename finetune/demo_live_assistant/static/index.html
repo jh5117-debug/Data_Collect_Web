@@ -36,23 +36,13 @@
       <section id="onboarding" class="screen">
         <div class="panel">
           <h2>Onboarding recordings</h2>
-          <p>Please record 3 to 5 VIGIL examples before starting the assistant.</p>
-          <div class="prompt-grid">
-            <button class="prompt active" data-group="P1_vigil_only" data-text="VIGIL">VIGIL</button>
-            <button class="prompt" data-group="P2_phrase_plus_vigil" data-text="Hi VIGIL">Hi VIGIL</button>
-            <button class="prompt" data-group="P2_phrase_plus_vigil" data-text="What is next, VIGIL">What is next, VIGIL</button>
-            <button class="prompt" data-group="P3_vigil_plus_phrase" data-text="VIGIL, next">VIGIL, next</button>
-            <button class="prompt negative" data-group="P4_negative" data-text="visual">visual</button>
+          <p>Please record clean voice samples. You can record as many examples as you like in each section.</p>
+          <div id="promptCards" class="prompt-group-grid"></div>
+          <div class="onboarding-summary">
+            <div><span>Total recordings</span><strong id="totalClips">0</strong></div>
+            <div><span>Positive recordings</span><strong id="positiveClips">0</strong></div>
+            <div><span>Negative recordings</span><strong id="negativeClips">0</strong></div>
           </div>
-          <div class="record-row">
-            <button id="recordOnboarding">Record</button>
-            <button id="stopOnboarding" disabled>Stop</button>
-            <button id="acceptOnboarding" disabled>Accept</button>
-            <button id="deleteDraft" disabled>Delete</button>
-          </div>
-          <audio id="playback" controls></audio>
-          <p id="recordingStatus" class="status">Idle</p>
-          <ul id="clipList" class="clip-list"></ul>
           <button id="calibrateButton" disabled>Calibrate my VIGIL voice</button>
         </div>
       </section>
@@ -82,6 +72,7 @@
             <div><span>Thresholds</span><strong id="thresholds">-</strong></div>
             <div><span>Calibration</span><strong id="calibrationActive">inactive</strong></div>
             <div><span>Qwen extra encoder</span><strong id="extraEncoder">unknown</strong></div>
+            <div><span>Qwen weights</span><strong id="qwenWeights">one frozen instance</strong></div>
           </div>
           <div id="detectedBanner" class="detected hidden">VIGIL DETECTED<br />Assistant / VQA state activated</div>
           <p class="placeholder">Downstream LLM / VQA response is not implemented in this demo.</p>

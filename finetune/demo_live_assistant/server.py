@@ -151,7 +151,7 @@ def create_app(
             "debug": {
                 **result["debug"],
                 "runtime_mode": runtime.mode,
-                "qwen_extra_encoder_forward": runtime.mode == "real",
+                "qwen_extra_encoder_forward": bool(result["debug"].get("stage2_qwen_feature_path_used")),
                 "llm_response_implemented": False,
             },
         }

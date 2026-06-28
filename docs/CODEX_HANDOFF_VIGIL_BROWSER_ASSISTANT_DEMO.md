@@ -3,7 +3,7 @@
 ## Branch And Commit
 
 - Branch: `research/vigil-browser-assistant-demo-20260627`
-- Latest commit: `1dcbba1 Add local VIGIL browser assistant demo`
+- Latest commit: this handoff update is included in `Align browser demo recording and transcript flow`; run `git log -1 --oneline` for the exact hash.
 
 ## Demo URL
 
@@ -38,6 +38,8 @@
 ## Onboarding Status
 
 - Local profile and clip upload implemented.
+- Onboarding UI now mirrors the data-collection recorder flow:
+  four prompt groups, exact transcript examples/input, record, stop, playback, accept, delete, accepted rows, and positive/negative counts.
 - Calibration requires at least 3 accepted positive VIGIL clips.
 - Bounded positive-bias demo calibration implemented.
 
@@ -50,13 +52,15 @@
 
 ## Transcript Status
 
-- Real mode uses frozen Qwen through existing runtime.
+- Real mode uses one frozen Qwen3-ASR-1.7B weight instance through the existing runtime.
+- Assistant chunks now run Qwen `transcribe(..., language=None)` independently on every microphone chunk and extract `$[0].text`.
+- Rolling transcript no longer depends on VIGIL trigger acceptance.
 - Mock/partial mode clearly reports non-real status in `/health`.
 
 ## VIGIL Trigger Status
 
 - Real mode uses the current two-stage runtime when load succeeds.
-- Stage 2 may use an extra Qwen encoder forward for candidates.
+- Stage 2 may use an extra Qwen feature path for candidates. This is extra compute, not a second Qwen weight copy.
 
 ## Tests
 
@@ -69,7 +73,7 @@
 ## Validation
 
 - Tmux session: `vigil_browser_assistant_demo`.
-- Log: `finetune/demo_live_assistant/logs/demo_20260628_034213_gpu6.log`.
+- Log: `finetune/demo_live_assistant/logs/demo_20260628_042559_gpu6.log`.
 - `GET /health`: passed, real mode.
 - `GET /`: browser app HTML served.
 - Profile creation: passed.
@@ -77,7 +81,9 @@
 - Calibration: `ok`, support count `3`, method `bounded_positive_bias_demo`, bias `1.0`.
 - Positive VIGIL chunk: trigger detected `true`, assistant state `ASSISTANT_STATE`, Stage 1 score `0.9995500445365906`, Stage 2 score `0.9879599809646606`.
 - Negative chunk: trigger detected `false`, assistant state `LISTENING`, Stage 1 score `0.005684383679181337`, Stage 2 score `null`.
-- Browser microphone capture was not human-tested.
+- Public LibriSpeech API smoke after transcript fix:
+  trigger detected `false`, assistant state `LISTENING`, transcript preview `Introducing such a person to us.`, Qwen weight instances `1`, transcript extraction path `$[0].text`, transcript error `None`, Stage 2 Qwen feature path used `false`.
+- Browser microphone capture was opened by the user; the user reported VIGIL triggering worked. Rolling transcript fix was validated through the local chunk API.
 
 ## Exact Next Command
 

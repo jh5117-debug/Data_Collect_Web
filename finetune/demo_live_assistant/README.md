@@ -17,16 +17,18 @@ Downstream LLM / VQA response generation is intentionally not implemented.
 ## Screens
 
 1. Local profile: user enters a local name and gets a local profile ID.
-2. Onboarding recordings: user records 3 to 5 positive VIGIL examples and can optionally record negative checks.
+2. Onboarding recordings: four prompt-group cards mirror the data-collection recorder flow: choose/type transcript, record, stop, play back, accept, and delete accepted rows.
 3. Calibration result: bounded positive-bias demo calibration using only accepted positive clips.
 4. Assistant listening: rolling transcript, Stage 1 score, Stage 2 score, thresholds, calibration status, trigger state, and cooldown.
 
 ## Model Notes
 
 - Qwen ASR is frozen.
+- The browser assistant loads one Qwen3-ASR-1.7B weight instance.
 - openWakeWord is frozen.
 - Stage 2 uses frozen Qwen audio features and a small verifier head.
-- Current prototype may run an extra Qwen encoder forward for Stage 2 candidates.
+- Rolling transcript uses Qwen `transcribe` on each microphone chunk and extracts `$[0].text`.
+- Current prototype may run an extra Qwen feature path for Stage 2 candidates.
 - Shared-Qwen hidden-state reuse is not solved in this demo.
 
 If the real model cannot load, the app starts in partial/mock mode and `/health` reports that clearly.
@@ -54,6 +56,18 @@ Tmux:
 
 ```bash
 bash finetune/demo_live_assistant/scripts/run_demo_tmux.sh 6
+```
+
+Current tmux session:
+
+```text
+vigil_browser_assistant_demo
+```
+
+Current log:
+
+```text
+finetune/demo_live_assistant/logs/demo_20260628_042559_gpu6.log
 ```
 
 ## Clear Local Data
