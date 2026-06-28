@@ -13,7 +13,7 @@
 - Onboarding recording screen aligned with the familiar data-collection recorder rhythm but simplified:
   common VIGIL prompt chips, selected transcript, record, stop, playback, accept, delete, accepted rows, and positive count.
 - Calibration result screen.
-- Assistant listening screen with continuous chunked transcript, red VIGIL/Virgil highlighting, accepted-trigger activation line, scores, thresholds, and debug.
+- Assistant listening screen with low-latency chunked transcript, red VIGIL/Virgil highlighting, accepted-trigger activation line, scores, thresholds, and debug.
 
 ## Backend Routes
 
@@ -44,7 +44,7 @@ The demo stores accepted clips under ignored local data. Calibration requires at
 
 ## Assistant Listening
 
-The assistant chunk route updates a rolling transcript, Stage 1 score, Stage 2 score, calibrated Stage 2 score, thresholds, cooldown state, and assistant state. The browser records independently encoded 2.5s segments so each upload is ffmpeg-decodable. Bad chunks no longer surface as HTTP 500; errors are returned in debug while listening continues. The UI enters Assistant / VQA state on accepted VIGIL trigger.
+The assistant chunk route updates a rolling transcript, Stage 1 score, Stage 2 score, calibrated Stage 2 score, thresholds, cooldown state, and assistant state. The browser records independently encoded 1.2s segments so each upload is ffmpeg-decodable and feels closer to updating every few spoken words. Bad chunks no longer surface as HTTP 500; errors are returned in debug while listening continues. The UI enters Assistant / VQA state on accepted VIGIL trigger.
 
 ## Transcript Branch
 

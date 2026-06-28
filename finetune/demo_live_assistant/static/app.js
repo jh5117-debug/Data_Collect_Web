@@ -1,5 +1,5 @@
 const PREFERRED_MIME_TYPES = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
-const ASSISTANT_SEGMENT_MS = 2500;
+const ASSISTANT_SEGMENT_MS = 1200;
 
 const COMMON_PROMPTS = [
   { group: "P1_vigil_only", text: "VIGIL", positive: true },

@@ -46,7 +46,7 @@
 ## Assistant Listening Status
 
 - Start/stop/reset implemented.
-- HTTP chunk upload implemented with independently encoded 2.5s MediaRecorder segments.
+- HTTP chunk upload implemented with independently encoded 1.2s MediaRecorder segments.
 - Bad/unparseable audio chunks no longer produce HTTP 500; debug records transcript or trigger path errors.
 - Cooldown implemented.
 - LLM / VQA response intentionally not implemented.
@@ -56,6 +56,7 @@
 
 - Real mode uses one frozen Qwen3-ASR-1.7B weight instance through the existing runtime.
 - Assistant chunks now run Qwen `transcribe(..., language=None)` independently on every microphone segment and extract `$[0].text`.
+- The current segment duration is 1.2s to approximate updating every few spoken words. It is still chunked ASR, not true token streaming.
 - Rolling transcript no longer depends on VIGIL trigger acceptance.
 - Mock/partial mode clearly reports non-real status in `/health`.
 
