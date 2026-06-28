@@ -3,7 +3,7 @@
 ## Branch And Commit
 
 - Branch: `research/vigil-shared-qwen-runtime-20260627`
-- Commit: pending until git commit.
+- Latest commit: `6b48a06 Add shared Qwen runtime diagnostic and adapter`
 
 ## Qwen Runtime
 
@@ -59,4 +59,4 @@ cd /home/hj/Data_Collect_Web && PATH=/home/hj/miniconda/envs/vigil-two-stage/bin
 
 ## Push Status
 
-- Pending commit and push.
+- Commit `6b48a06` pushed to `origin/research/vigil-shared-qwen-runtime-20260627`.
