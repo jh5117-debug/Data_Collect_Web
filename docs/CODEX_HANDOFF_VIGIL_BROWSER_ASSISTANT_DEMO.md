@@ -3,7 +3,7 @@
 ## Branch And Commit
 
 - Branch: `research/vigil-browser-assistant-demo-20260627`
-- Commit: pending.
+- Latest commit: `1dcbba1 Add local VIGIL browser assistant demo`
 
 ## Demo URL
 
@@ -87,4 +87,4 @@ ssh -L 7861:127.0.0.1:7861 hal
 
 ## Push Status
 
-- Pending commit and push.
+- Commit `1dcbba1` pushed to `origin/research/vigil-browser-assistant-demo-20260627`.
