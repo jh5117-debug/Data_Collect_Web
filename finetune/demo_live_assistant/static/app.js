@@ -64,6 +64,19 @@ function showScreen(id) {
   document.querySelectorAll(".step").forEach((el) => el.classList.toggle("active", el.dataset.screen === id));
 }
 
+function setAssistantAvailable(available) {
+  const ready = Boolean(available);
+  $("openAssistantButton").disabled = !ready;
+  $("startAssistant").disabled = !ready || state.assistantActive;
+  $("calibrationActive").textContent = ready ? "active" : "inactive";
+}
+
+function invalidateCalibration() {
+  state.calibration = null;
+  setAssistantAvailable(false);
+  $("calibrationResult").innerHTML = `<div><span>status</span><strong>needs calibration</strong></div>`;
+}
+
 async function jsonFetch(url, options = {}) {
   const response = await fetch(url, options);
   if (!response.ok) {
@@ -92,7 +105,10 @@ async function createProfile() {
   });
   state.profileId = profile.profile_id;
   state.displayName = profile.display_name;
+  state.clips = [];
+  state.calibration = null;
   $("profileStatus").textContent = `Ready, ${profile.display_name}`;
+  setAssistantAvailable(false);
   renderOnboarding();
   showScreen("onboarding");
 }
@@ -205,6 +221,7 @@ async function acceptOnboarding() {
   form.append("file", state.onboardingDraftBlob, `${prompt.group}.webm`);
   const clip = await jsonFetch("/api/onboarding/clip", { method: "POST", body: form });
   state.clips.push(clip);
+  invalidateCalibration();
   clearOnboardingDraft("Accepted");
   renderOnboarding();
 }
@@ -217,6 +234,7 @@ async function deleteAcceptedClip(clipId) {
   if (!state.profileId || !clipId) return;
   await jsonFetch(`/api/onboarding/clip/${clipId}?profile_id=${encodeURIComponent(state.profileId)}`, { method: "DELETE" });
   state.clips = state.clips.filter((clip) => clip.clip_id !== clipId);
+  invalidateCalibration();
   renderOnboarding();
 }
 
@@ -251,24 +269,62 @@ function renderOnboarding() {
 }
 
 async function calibrate() {
-  const result = await jsonFetch("/api/onboarding/calibrate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profile_id: state.profileId }),
-  });
-  state.calibration = result;
+  showScreen("calibration");
+  setAssistantAvailable(false);
+  $("calibrateButton").disabled = true;
+  $("calibrateButton").textContent = "Calibrating...";
   $("calibrationResult").innerHTML = Object.entries({
-    support: result.support_count,
-    method: result.method || "none",
-    bias: Number(result.bias || 0).toFixed(4),
-    active: result.calibration_active ? "yes" : "no",
+    status: "extracting voice features",
+    support: state.clips.filter((clip) => clip.is_positive).length,
+    method: "few-shot prototype",
+    active: "loading",
   })
     .map(([key, value]) => `<div><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></div>`)
     .join("");
-  showScreen("calibration");
+  try {
+    const result = await jsonFetch("/api/onboarding/calibrate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ profile_id: state.profileId }),
+    });
+    state.calibration = result;
+    const cards = {
+      status: result.calibration_status || "unknown",
+      support: result.support_count,
+      method: result.method || "none",
+      prototype: result.prototype_embedding_dim ? `${result.prototype_embedding_dim}D` : "none",
+      similarity:
+        result.support_pairwise_mean_similarity == null ? "-" : Number(result.support_pairwise_mean_similarity).toFixed(3),
+      threshold: result.prototype_threshold == null ? "-" : Number(result.prototype_threshold).toFixed(3),
+      active: result.calibration_active ? "yes" : "no",
+    };
+    $("calibrationResult").innerHTML = Object.entries(cards)
+      .map(([key, value]) => `<div><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></div>`)
+      .join("");
+    setAssistantAvailable(Boolean(result.calibration_active));
+  } catch (error) {
+    state.calibration = null;
+    $("calibrationResult").innerHTML = Object.entries({
+      status: "failed",
+      error: error.message,
+      active: "no",
+    })
+      .map(([key, value]) => `<div><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></div>`)
+      .join("");
+    setAssistantAvailable(false);
+  } finally {
+    const positives = state.clips.filter((clip) => clip.is_positive).length;
+    $("calibrateButton").disabled = positives < 3;
+    $("calibrateButton").textContent = "Calibrate my VIGIL voice";
+  }
 }
 
 async function startAssistant() {
+  if (!state.calibration?.calibration_active) {
+    $("debugPanel").textContent = "Few-shot calibration is required before starting the assistant.";
+    setAssistantAvailable(false);
+    return;
+  }
   const session = await jsonFetch("/api/assistant/start", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -377,7 +433,7 @@ async function stopAssistant() {
   });
   $("micState").textContent = "IDLE";
   $("assistantState").textContent = "IDLE";
-  $("startAssistant").disabled = false;
+  $("startAssistant").disabled = !state.calibration?.calibration_active;
   $("stopAssistant").disabled = true;
 }
 

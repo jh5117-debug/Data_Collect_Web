@@ -8,9 +8,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from trigger import bounded_positive_bias
-
-
 def _safe_id(value: str) -> str:
     if not value or any(ch not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for ch in value):
         raise ValueError("invalid id")
@@ -112,29 +109,16 @@ class ProfileStore:
                 clips.append(meta)
         return clips
 
-    def calibrate(self, profile_id: str, support_scores: list[float], threshold: float) -> dict[str, Any]:
-        clips = self.accepted_positive_clips(profile_id)
-        if len(clips) < 3:
-            return {
-                "calibration_status": "need_more_positive_clips",
-                "support_count": len(clips),
-                "method": None,
-                "calibration_active": False,
-                "bias": 0.0,
-                "warnings": ["At least 3 accepted positive VIGIL clips are required."],
-            }
-        usable_scores = support_scores[: len(clips)] if support_scores else [0.75] * len(clips)
-        bias = bounded_positive_bias(usable_scores, threshold)
-        calibration = {
-            "calibration_status": "ok",
-            "support_count": len(clips),
-            "method": "bounded_positive_bias_demo",
-            "calibration_active": True,
-            "bias": bias,
-            "threshold": threshold,
-            "warnings": [],
-        }
+    def accepted_positive_clip_records(self, profile_id: str) -> list[dict[str, Any]]:
+        records = []
+        for meta in self.accepted_positive_clips(profile_id):
+            _, audio_path = self.clip_paths(profile_id, meta["clip_id"])
+            records.append({**meta, "audio_path": str(audio_path)})
+        return records
+
+    def save_calibration(self, profile_id: str, calibration: dict[str, Any]) -> dict[str, Any]:
         directory = self.require_profile(profile_id)
+        calibration = dict(calibration)
         (directory / "calibration.json").write_text(json.dumps(calibration, indent=2) + "\n", encoding="utf-8")
         return calibration
 

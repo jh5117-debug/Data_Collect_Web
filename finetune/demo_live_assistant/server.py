@@ -101,9 +101,9 @@ def create_app(
     @app.post("/api/onboarding/calibrate")
     def calibrate(payload: CalibrationRequest) -> dict[str, Any]:
         try:
-            clips = profiles.accepted_positive_clips(payload.profile_id)
-            scores = runtime.support_scores(len(clips))
-            return profiles.calibrate(payload.profile_id, scores, runtime.theta2)
+            clips = profiles.accepted_positive_clip_records(payload.profile_id)
+            calibration = runtime.build_support_calibration(clips)
+            return profiles.save_calibration(payload.profile_id, calibration)
         except FileNotFoundError as exc:
             raise HTTPException(status_code=404, detail="profile not found") from exc
 
@@ -113,6 +113,9 @@ def create_app(
             profiles.require_profile(payload.profile_id)
         except FileNotFoundError as exc:
             raise HTTPException(status_code=404, detail="profile not found") from exc
+        calibration = profiles.calibration(payload.profile_id)
+        if not calibration.get("calibration_active"):
+            raise HTTPException(status_code=400, detail="few-shot calibration is required before starting the assistant")
         session = sessions.start(payload.profile_id)
         session.trigger.state = "LISTENING"
         return session.as_dict()

@@ -3,14 +3,17 @@ from __future__ import annotations
 import sys
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
+import numpy as np
 import torch
 
-from trigger import apply_positive_bias
+from prototype import PrototypeCalibrationError, build_prototype, cosine_similarity
+from trigger import apply_positive_bias, bounded_positive_bias
 from vigil_two_stage.qwen_text_result import extract_qwen_text
 
 
@@ -118,10 +121,149 @@ class AssistantModelRuntime:
             },
         )
 
-    def support_scores(self, clip_count: int) -> list[float]:
-        if self.mode != "real":
-            return [0.75] * int(clip_count)
-        return [0.75] * int(clip_count)
+    def build_support_calibration(self, clip_records: list[dict[str, Any]]) -> dict[str, Any]:
+        support_count = len(clip_records)
+        if support_count < 3:
+            return {
+                "calibration_status": "need_more_positive_clips",
+                "support_count": support_count,
+                "method": None,
+                "calibration_active": False,
+                "bias": 0.0,
+                "warnings": ["At least 3 accepted positive VIGIL clips are required."],
+            }
+        if self.mode != "real" or self.inference is None:
+            if self.force_mock or self.mode == "mock":
+                return self._mock_support_calibration(clip_records)
+            return {
+                "calibration_status": "model_not_loaded",
+                "support_count": support_count,
+                "method": None,
+                "calibration_active": False,
+                "bias": 0.0,
+                "warnings": [f"Real VIGIL runtime is not loaded: {self.message}"],
+            }
+
+        started = time.perf_counter()
+        embeddings: list[np.ndarray] = []
+        support_scores: list[float] = []
+        support_rows: list[dict[str, Any]] = []
+        for clip in clip_records:
+            try:
+                support = self._stage2_embedding_and_score(Path(str(clip["audio_path"])))
+            except Exception as exc:
+                return {
+                    "calibration_status": "support_embedding_failed",
+                    "support_count": support_count,
+                    "method": "few_shot_qwen_stage2_prototype",
+                    "calibration_active": False,
+                    "bias": 0.0,
+                    "warnings": [f"{clip.get('clip_id', 'unknown')}: {type(exc).__name__}: {exc}"],
+                }
+            embeddings.append(np.asarray(support["embedding"], dtype=np.float32))
+            score = float(support["score"])
+            support_scores.append(score)
+            support_rows.append(
+                {
+                    "clip_id": clip.get("clip_id"),
+                    "prompt_group": clip.get("prompt_group"),
+                    "transcript": clip.get("transcript"),
+                    "stage2_score": score,
+                }
+            )
+
+        try:
+            prototype = build_prototype(embeddings)
+        except PrototypeCalibrationError as exc:
+            return {
+                "calibration_status": "prototype_failed",
+                "support_count": support_count,
+                "method": "few_shot_qwen_stage2_prototype",
+                "calibration_active": False,
+                "bias": 0.0,
+                "warnings": [str(exc)],
+            }
+
+        bias = bounded_positive_bias(support_scores, self.theta2)
+        prototype_embedding = [float(value) for value in prototype.embedding.tolist()]
+        return {
+            "calibration_status": "ok",
+            "support_count": support_count,
+            "method": "few_shot_qwen_stage2_prototype",
+            "calibration_active": True,
+            "bias": bias,
+            "threshold": self.theta2,
+            "prototype_threshold": 0.6,
+            "prototype_score_name": "cosine_similarity",
+            "prototype_embedding": prototype_embedding,
+            "prototype_embedding_dim": len(prototype_embedding),
+            "support_stage2_scores": support_scores,
+            "support_clips": support_rows,
+            "support_pairwise_mean_similarity": prototype.pairwise_mean_similarity,
+            "support_pairwise_min_similarity": prototype.pairwise_min_similarity,
+            "model_variant": self.selected_variant,
+            "calibration_latency_ms": (time.perf_counter() - started) * 1000.0,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "qwen_weights_updated": False,
+            "openwakeword_weights_updated": False,
+            "stage2_weights_updated": False,
+            "warnings": [],
+        }
+
+    def _mock_support_calibration(self, clip_records: list[dict[str, Any]]) -> dict[str, Any]:
+        support_scores = [0.75] * len(clip_records)
+        prototype_embedding = [1.0] + [0.0] * 127
+        return {
+            "calibration_status": "ok",
+            "support_count": len(clip_records),
+            "method": "mock_few_shot_qwen_stage2_prototype",
+            "calibration_active": True,
+            "bias": bounded_positive_bias(support_scores, self.theta2),
+            "threshold": self.theta2,
+            "prototype_threshold": 0.6,
+            "prototype_score_name": "cosine_similarity",
+            "prototype_embedding": prototype_embedding,
+            "prototype_embedding_dim": len(prototype_embedding),
+            "support_stage2_scores": support_scores,
+            "support_clips": [
+                {
+                    "clip_id": clip.get("clip_id"),
+                    "prompt_group": clip.get("prompt_group"),
+                    "transcript": clip.get("transcript"),
+                    "stage2_score": 0.75,
+                }
+                for clip in clip_records
+            ],
+            "support_pairwise_mean_similarity": 1.0,
+            "support_pairwise_min_similarity": 1.0,
+            "model_variant": self.selected_variant,
+            "calibration_latency_ms": 0.0,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "qwen_weights_updated": False,
+            "openwakeword_weights_updated": False,
+            "stage2_weights_updated": False,
+            "warnings": ["Mock mode uses a deterministic fake prototype."],
+        }
+
+    def _stage2_embedding_and_score(self, audio_path: Path) -> dict[str, Any]:
+        if self.inference is None:
+            raise RuntimeError("runtime not loaded")
+        demo_dir = Path("finetune/demo").resolve()
+        if str(demo_dir) not in sys.path:
+            sys.path.insert(0, str(demo_dir))
+        from audio_processing import convert_to_wav, temporary_audio_dir
+
+        with temporary_audio_dir() as work_dir:
+            wav_path = convert_to_wav(audio_path, work_dir)
+            stage2 = self.inference.runtime.stage2[self.selected_variant]
+            with torch.inference_mode():
+                features = self.inference.runtime.qwen.extract_audio_features(str(wav_path)).detach().float()
+                hidden = features.unsqueeze(0).to(self.inference.runtime.device)
+                mask = torch.ones(hidden.shape[:2], dtype=torch.bool, device=self.inference.runtime.device)
+                output = stage2.model(hidden, mask)
+                score = torch.sigmoid(output["logit"]).detach().float().cpu().item()
+                embedding = output["embedding"].detach().float().cpu().numpy()[0]
+        return {"score": float(score), "embedding": embedding}
 
     def _transcribe_audio(self, audio_path: Path) -> dict[str, str | None]:
         if self.inference is None:
@@ -172,7 +314,24 @@ class AssistantModelRuntime:
                 stage2_score = max(stage2_values) if stage2_values else None
             calibrated_score = apply_positive_bias(stage2_score, bias)
             candidate = bool(any(row.get("Candidate") for row in result.get("window_table", [])))
-            trigger_detected = bool(candidate and calibrated_score is not None and calibrated_score >= float(result["theta_2"]))
+            prototype_similarity = None
+            prototype_threshold = calibration.get("prototype_threshold")
+            prototype_detected = False
+            prototype_error = None
+            prototype_embedding = calibration.get("prototype_embedding") if calibration.get("calibration_active") else None
+            if candidate and prototype_embedding:
+                try:
+                    query_support = self._stage2_embedding_and_score(audio_path)
+                    prototype_similarity = cosine_similarity(query_support["embedding"], prototype_embedding)
+                    prototype_threshold = float(prototype_threshold or 0.6)
+                    prototype_detected = prototype_similarity >= prototype_threshold
+                    if stage2_score is None:
+                        stage2_score = float(query_support["score"])
+                        calibrated_score = apply_positive_bias(stage2_score, bias)
+                except Exception as exc:
+                    prototype_error = f"{type(exc).__name__}: {exc}"
+            base_trigger = bool(candidate and calibrated_score is not None and calibrated_score >= float(result["theta_2"]))
+            trigger_detected = bool(base_trigger or (candidate and prototype_detected))
             return {
                 "mode": self.mode,
                 "rolling_transcript": transcript.get("text") or "",
@@ -196,6 +355,12 @@ class AssistantModelRuntime:
                     "qwen_transcript_error": transcript.get("error"),
                     "qwen_transcript_latency_ms": transcript_latency_ms,
                     "trigger_path_error": trigger_error,
+                    "calibration_method": calibration.get("method"),
+                    "calibration_support_count": calibration.get("support_count"),
+                    "prototype_similarity": prototype_similarity,
+                    "prototype_threshold": prototype_threshold,
+                    "prototype_detected": prototype_detected,
+                    "prototype_error": prototype_error,
                 },
             }
         data = audio_path.read_bytes() if audio_path.exists() else b""

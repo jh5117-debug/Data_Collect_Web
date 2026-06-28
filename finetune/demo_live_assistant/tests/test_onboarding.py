@@ -58,4 +58,6 @@ def test_calibration_requires_three_positive_clips_and_ignores_negative(tmp_path
     ok = client.post("/api/onboarding/calibrate", json={"profile_id": profile_id}).json()
     assert ok["calibration_status"] == "ok"
     assert ok["support_count"] == 3
-    assert ok["method"] == "bounded_positive_bias_demo"
+    assert ok["method"] == "mock_few_shot_qwen_stage2_prototype"
+    assert ok["prototype_embedding_dim"] == 128
+    assert ok["qwen_weights_updated"] is False

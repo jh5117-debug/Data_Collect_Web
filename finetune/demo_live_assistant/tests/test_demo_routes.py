@@ -35,6 +35,13 @@ def test_assistant_chunk_route_does_not_500_on_runtime_error(tmp_path: Path) -> 
     app = create_app(data_root=tmp_path / "local_data", force_mock=True, load_models=True)
     client = TestClient(app)
     profile_id = client.post("/api/profile", json={"name": "Demo User"}).json()["profile_id"]
+    for _ in range(3):
+        client.post(
+            "/api/onboarding/clip",
+            data={"profile_id": profile_id, "is_positive": "true", "accepted": "true"},
+            files={"file": ("clip.webm", b"VIGIL", "audio/webm")},
+        )
+    client.post("/api/onboarding/calibrate", json={"profile_id": profile_id})
     session = client.post("/api/assistant/start", json={"profile_id": profile_id}).json()
 
     def fail_analyze(*args, **kwargs):
@@ -51,3 +58,11 @@ def test_assistant_chunk_route_does_not_500_on_runtime_error(tmp_path: Path) -> 
     data = chunk.json()
     assert data["trigger_detected"] is False
     assert "unexpected runtime failure" in data["debug"]["route_error"]
+
+
+def test_assistant_start_requires_calibration(tmp_path: Path) -> None:
+    client = TestClient(create_app(data_root=tmp_path / "local_data", force_mock=True, load_models=True))
+    profile_id = client.post("/api/profile", json={"name": "Demo User"}).json()["profile_id"]
+    response = client.post("/api/assistant/start", json={"profile_id": profile_id})
+    assert response.status_code == 400
+    assert "calibration" in response.json()["detail"]

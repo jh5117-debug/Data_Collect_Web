@@ -18,7 +18,7 @@ Downstream LLM / VQA response generation is intentionally not implemented.
 
 1. Local profile: user enters a local name and gets a local profile ID.
 2. Onboarding recordings: a light version of the data-collection recorder flow with common VIGIL prompts, Record, Stop, playback, Accept, Delete, and accepted rows.
-3. Calibration result: bounded positive-bias demo calibration using only accepted positive clips.
+3. Calibration result: real few-shot prototype calibration using accepted positive clips.
 4. Assistant listening: low-latency chunked rolling transcript, VIGIL/Virgil highlighting, Stage 1 score, Stage 2 score, thresholds, calibration status, trigger state, and cooldown.
 
 ## Model Notes
@@ -27,9 +27,11 @@ Downstream LLM / VQA response generation is intentionally not implemented.
 - The browser assistant loads one Qwen3-ASR-1.7B weight instance.
 - openWakeWord is frozen.
 - Stage 2 uses frozen Qwen audio features and a small verifier head.
+- Calibration extracts Stage 2 embeddings for the accepted positive onboarding clips, averages them into a normalized 128D prototype, and stores it under the local profile.
+- Assistant start is disabled until this few-shot prototype calibration succeeds.
 - Rolling transcript uses Qwen `transcribe` on each independently encoded microphone segment and extracts `$[0].text`.
 - Browser microphone segments are currently 1.2s, which is a practical approximation of updating every few spoken words. This is not true token-streaming ASR.
-- Current prototype may run an extra Qwen feature path for Stage 2 candidates.
+- Prototype matching may run an extra Qwen feature path for Stage 2 candidates. This is extra compute through the same frozen Qwen instance, not a second weight copy.
 - Shared-Qwen hidden-state reuse is not solved in this demo.
 
 If the real model cannot load, the app starts in partial/mock mode and `/health` reports that clearly.
@@ -76,7 +78,7 @@ vigil_browser_assistant_demo
 Current log:
 
 ```text
-finetune/demo_live_assistant/logs/demo_20260628_045447_gpu6.log
+finetune/demo_live_assistant/logs/demo_20260628_230627_gpu6.log
 ```
 
 ## Clear Local Data

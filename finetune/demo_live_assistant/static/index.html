@@ -66,8 +66,8 @@
         <div class="panel">
           <h2>Calibration result</h2>
           <div id="calibrationResult" class="metric-grid"></div>
-          <p>Qwen and openWakeWord are not updated. This is a small calibration only.</p>
-          <button data-screen-target="assistant">Open assistant listening</button>
+          <p>Qwen, openWakeWord, and Stage 2 weights remain frozen. This step builds a local few-shot prototype from your accepted VIGIL recordings.</p>
+          <button id="openAssistantButton" data-screen-target="assistant" disabled>Open assistant listening</button>
         </div>
       </section>
 
@@ -75,7 +75,7 @@
         <div class="panel">
           <h2>Assistant listening</h2>
           <div class="record-row">
-            <button id="startAssistant">Start Assistant</button>
+            <button id="startAssistant" disabled>Start Assistant</button>
             <button id="stopAssistant" disabled>Stop Assistant</button>
             <button id="resetAssistant" disabled>Reset to IDLE</button>
           </div>

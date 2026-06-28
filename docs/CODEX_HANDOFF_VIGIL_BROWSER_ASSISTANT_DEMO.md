@@ -3,7 +3,7 @@
 ## Branch And Commit
 
 - Branch: `research/vigil-browser-assistant-demo-20260627`
-- Latest commit: this handoff update is included in `Align browser demo recording and transcript flow`; run `git log -1 --oneline` for the exact hash.
+- Latest local commit before this update: `c419410 Tune assistant transcript segment cadence`; run `git log -1 --oneline` after committing for the final hash.
 
 ## Demo URL
 
@@ -41,7 +41,10 @@
 - Onboarding UI is now a lighter familiar version of the data-collection recorder:
   common VIGIL prompt chips, selected transcript display, record, stop, playback, accept, delete, accepted rows, and positive count.
 - Calibration requires at least 3 accepted positive VIGIL clips.
-- Bounded positive-bias demo calibration implemented.
+- Real few-shot prototype calibration implemented for the browser demo:
+  accepted positive onboarding clips are converted to Stage 2 embeddings, averaged into a normalized 128D prototype, and saved in local `calibration.json`.
+- Qwen, openWakeWord, and Stage 2 weights remain frozen.
+- Assistant start is disabled/rejected until calibration succeeds.
 
 ## Assistant Listening Status
 
@@ -63,11 +66,11 @@
 ## VIGIL Trigger Status
 
 - Real mode uses the current two-stage runtime when load succeeds.
-- Stage 2 may use an extra Qwen feature path for candidates. This is extra compute, not a second Qwen weight copy.
+- Stage 2 may use an extra Qwen feature path for candidates and prototype matching. This is extra compute, not a second Qwen weight copy.
 
 ## Tests
 
-- `PYTHONPATH=finetune/src:finetune/demo_live_assistant:. pytest -q finetune/demo_live_assistant/tests`: `14 passed`.
+- `PYTHONPATH=finetune/src:finetune/demo_live_assistant:. pytest -q finetune/demo_live_assistant/tests`: `19 passed`.
 - `PYTHONPATH=finetune/src:. pytest -q finetune/tests`: `56 passed`.
 - `PYTHONPATH=finetune/benchmarks/asr/src:finetune/src:. pytest -q finetune/benchmarks/asr/tests`: `17 passed`.
 - `python -m compileall -q finetune/src finetune/demo_live_assistant`: passed.
@@ -76,12 +79,14 @@
 ## Validation
 
 - Tmux session: `vigil_browser_assistant_demo`.
-- Log: `finetune/demo_live_assistant/logs/demo_20260628_045447_gpu6.log`.
+- Log: `finetune/demo_live_assistant/logs/demo_20260628_230627_gpu6.log`.
 - `GET /health`: passed, real mode.
 - `GET /`: browser app HTML served.
 - Profile creation: passed.
-- Onboarding upload: 3 accepted positive support clips uploaded.
-- Calibration: `ok`, support count `3`, method `bounded_positive_bias_demo`, bias `1.0`.
+- Onboarding upload: 3 temporary synthetic WAV support clips uploaded for smoke validation.
+- Calibration: `ok`, support count `3`, method `few_shot_qwen_stage2_prototype`, prototype dim `128`, support pairwise mean similarity `0.9938476085662842`, calibration latency `1608.5919998586178` ms, Qwen weights updated `false`, Stage 2 weights updated `false`.
+- Uncalibrated assistant start: HTTP `400`, calibration requirement enforced.
+- Calibrated assistant start: HTTP `200`, session created.
 - Positive VIGIL chunk: trigger detected `true`, assistant state `ASSISTANT_STATE`, Stage 1 score `0.9995500445365906`, Stage 2 score `0.9879599809646606`.
 - Negative chunk: trigger detected `false`, assistant state `LISTENING`, Stage 1 score `0.005684383679181337`, Stage 2 score `null`.
 - Public LibriSpeech API smoke after transcript fix:
@@ -100,9 +105,9 @@
 ## Exact Next Command
 
 ```bash
-ssh -L 7862:127.0.0.1:7861 hj@130.149.110.182
+ssh -N -L 7862:127.0.0.1:7861 hj@130.149.110.182
 ```
 
 ## Push Status
 
-- Previous commit `ebe298e` pushed to `origin/research/vigil-browser-assistant-demo-20260627`; latest local robustness update pending commit/push.
+- Previous commit `c419410` pushed to `origin/research/vigil-browser-assistant-demo-20260627`; few-shot prototype calibration update pending commit/push.
