@@ -28,6 +28,31 @@ backend/storage/*
 *.tar
 *.tgz
 
+# VIGIL research pipeline generated artifacts
+finetune/data/extracted/
+finetune/data/processed/
+finetune/cache/
+finetune/third_party/
+finetune/runs/
+finetune/**/*.npy
+finetune/**/*.npz
+finetune/**/*.pt
+finetune/**/*.pth
+finetune/**/*.onnx
+finetune/**/*.log
+finetune/**/events.out.tfevents*
+finetune/**/predictions*.jsonl
+finetune/**/predictions*.csv
+
+# LibriSpeech ASR benchmark generated/downloaded artifacts
+finetune/benchmarks/asr/downloads/
+finetune/benchmarks/asr/data/
+finetune/benchmarks/asr/runs/
+finetune/benchmarks/asr/logs/
+finetune/benchmarks/asr/manifests/*.jsonl
+finetune/benchmarks/asr/reports/generated/
+finetune/benchmarks/asr/third_party/
+
 # OS/editor
 .DS_Store
 .idea/
