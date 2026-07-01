@@ -16,6 +16,40 @@ The product name and wake word is Vigil. The word `visual` appears only as a har
 - [Product Requirements Document](docs/PRD.md)
 - [Production Handoff](docs/HANDOFF.md)
 - [Supabase raw collection deployment notes](docs/supabase_raw_collection_deploy.md)
+- [VIGIL trigger integration guide](docs/VIGIL_TRIGGER_INTEGRATION.md)
+- [VIGIL current status](docs/VIGIL_CURRENT_STATUS.md)
+- [VIGIL model architecture](docs/VIGIL_MODEL_ARCHITECTURE.md)
+- [VIGIL experiment results](docs/VIGIL_EXPERIMENT_RESULTS.md)
+- [VIGIL browser demo guide](docs/VIGIL_BROWSER_DEMO.md)
+- [VIGIL data collection protocol](docs/VIGIL_DATA_COLLECTION_PROTOCOL.md)
+
+## VIGIL Research And Demo
+
+The repository now contains the latest VIGIL two-stage trigger work in addition to the recorder app. The current system uses a continuous frozen Qwen3-ASR branch for transcript/report text and a parallel VIGIL branch with Stage 1 openWakeWord candidate detection plus Stage 2 frozen-Qwen-feature verification.
+
+Current headline results:
+
+- Optimized two-stage trigger: recall `0.9409`, FPR `0.0050`, precision `0.9957`, F1 `0.9675`.
+- Corrected frozen-Qwen LibriSpeech ASR: combined WER `2.7516%`.
+- Few-shot best method: 5-shot Stage 2 cosine prototype, F1 `0.97059`.
+
+Finetune smoke:
+
+```bash
+cd /home/hj/Data_Collect_Web
+PATH=/home/hj/miniconda/envs/vigil-two-stage/bin:$PATH bash finetune/scripts/run_official_smoke_local_3090.sh
+```
+
+Local HAL browser assistant demo:
+
+```bash
+cd /home/hj/Data_Collect_Web
+PATH=/home/hj/miniconda/envs/vigil-two-stage/bin:$PATH \
+bash finetune/demo_live_assistant/scripts/run_demo.sh 6 \
+  /home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full
+```
+
+Main reports live under `finetune/reports/`, `finetune/benchmarks/asr/reports/`, `finetune/experiments/latest_data_optimization/reports/`, `finetune/experiments/fewshot_ablation/reports/`, and `finetune/demo_live_assistant/reports/`.
 
 ## Requirements
 

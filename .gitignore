@@ -6,6 +6,8 @@ __pycache__/
 venv/
 
 # Node
+frontend/node_modules/
+frontend/dist/
 node_modules/
 dist/
 npm-debug.log*
@@ -14,6 +16,7 @@ vite.config.js
 vite.config.d.ts
 
 # Environment
+backend/.env
 .env
 .env.local
 
@@ -24,21 +27,29 @@ backend/storage/*
 *.db
 *.wav
 *.webm
+*.m4a
+*.flac
 *.zip
 *.tar
 *.tgz
 
 # VIGIL research pipeline generated artifacts
+finetune/data/
 finetune/data/extracted/
 finetune/data/processed/
 finetune/cache/
 finetune/third_party/
 finetune/runs/
+finetune/model_bundles/
 finetune/**/*.npy
 finetune/**/*.npz
 finetune/**/*.pt
 finetune/**/*.pth
 finetune/**/*.onnx
+finetune/**/*.wav
+finetune/**/*.webm
+finetune/**/*.m4a
+finetune/**/*.flac
 finetune/**/*.log
 finetune/**/events.out.tfevents*
 finetune/**/predictions*.jsonl
@@ -116,7 +127,6 @@ finetune/experiments/latest_data/reports/few_shot_*
 finetune/experiments/latest_data/reports/zero_shot_*
 finetune/experiments/latest_data/reports/rejected_or_inconsistent.jsonl
 finetune/experiments/latest_data/reports/plots/
-finetune/model_bundles/
 
 # Latest-data optimization generated/private artifacts
 finetune/experiments/latest_data_optimization/runs/
