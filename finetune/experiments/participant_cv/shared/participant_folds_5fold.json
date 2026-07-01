@@ -1,0 +1,123 @@
+{
+  "algorithm": "deterministic_multistart_greedy_v1",
+  "fold_count": 5,
+  "folds": [
+    {
+      "fold": 0,
+      "participant_aliases": [
+        "P008",
+        "P009",
+        "P012",
+        "P014",
+        "P019",
+        "P029"
+      ],
+      "stats": {
+        "P1_vigil_only": 37,
+        "P2_phrase_plus_vigil": 50,
+        "P3_vigil_plus_phrase": 32,
+        "P4_negative": 86,
+        "clips": 205,
+        "negative": 86,
+        "participants": 6,
+        "positive": 119
+      }
+    },
+    {
+      "fold": 1,
+      "participant_aliases": [
+        "P002",
+        "P006",
+        "P011",
+        "P013",
+        "P021",
+        "P027"
+      ],
+      "stats": {
+        "P1_vigil_only": 16,
+        "P2_phrase_plus_vigil": 62,
+        "P3_vigil_plus_phrase": 46,
+        "P4_negative": 84,
+        "clips": 208,
+        "negative": 84,
+        "participants": 6,
+        "positive": 124
+      }
+    },
+    {
+      "fold": 2,
+      "participant_aliases": [
+        "P018",
+        "P022",
+        "P023",
+        "P025",
+        "P026",
+        "P030"
+      ],
+      "stats": {
+        "P1_vigil_only": 19,
+        "P2_phrase_plus_vigil": 66,
+        "P3_vigil_plus_phrase": 40,
+        "P4_negative": 87,
+        "clips": 212,
+        "negative": 87,
+        "participants": 6,
+        "positive": 125
+      }
+    },
+    {
+      "fold": 3,
+      "participant_aliases": [
+        "P003",
+        "P004",
+        "P005",
+        "P016",
+        "P017",
+        "P024"
+      ],
+      "stats": {
+        "P1_vigil_only": 21,
+        "P2_phrase_plus_vigil": 58,
+        "P3_vigil_plus_phrase": 29,
+        "P4_negative": 98,
+        "clips": 206,
+        "negative": 98,
+        "participants": 6,
+        "positive": 108
+      }
+    },
+    {
+      "fold": 4,
+      "participant_aliases": [
+        "P001",
+        "P007",
+        "P010",
+        "P015",
+        "P020",
+        "P028"
+      ],
+      "stats": {
+        "P1_vigil_only": 24,
+        "P2_phrase_plus_vigil": 54,
+        "P3_vigil_plus_phrase": 31,
+        "P4_negative": 86,
+        "clips": 195,
+        "negative": 86,
+        "participants": 6,
+        "positive": 109
+      }
+    }
+  ],
+  "objective": 0.7915253122379603,
+  "objective_weights": {
+    "P1_vigil_only": 1.0,
+    "P2_phrase_plus_vigil": 1.0,
+    "P3_vigil_plus_phrase": 1.0,
+    "P4_negative": 1.0,
+    "clips": 3.0,
+    "negative": 2.0,
+    "participants": 5.0,
+    "positive": 2.0
+  },
+  "seed": 20260620
+}

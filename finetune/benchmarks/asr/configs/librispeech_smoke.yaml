@@ -1,0 +1,30 @@
+seed: 20260620
+
+dataset:
+  name: LibriSpeech
+  source: OpenSLR resource 12
+  subsets:
+    test-clean:
+      url: https://www.openslr.org/resources/12/test-clean.tar.gz
+      expected_utterances: 2620
+    test-other:
+      url: https://www.openslr.org/resources/12/test-other.tar.gz
+      expected_utterances: 2939
+  smoke_per_split: 32
+
+model:
+  name: Qwen/Qwen3-ASR-1.7B
+  backend: transformers
+  batch_size: 1
+  max_new_tokens: 1024
+  dtype: auto
+  language: auto
+  require_cuda: true
+  require_single_gpu: true
+  require_baseline_model: true
+
+runtime:
+  use_slurm: false
+  max_gpus: 1
+  resume: true
+  retry_failed: false

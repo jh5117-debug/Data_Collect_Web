@@ -1,0 +1,63 @@
+{
+  "components": [
+    {
+      "component": "stage1_head",
+      "cuda_available": true,
+      "current_allocated_gb": 0.012551307678222656,
+      "current_reserved_gb": 0.021484375,
+      "mean": 0.00556229220237583,
+      "median": 0.0009344830177724361,
+      "n": 40,
+      "p90": 0.0009520631283521652,
+      "p95": 0.0009559532627463341,
+      "peak_allocated_gb": 0.012787818908691406,
+      "peak_reserved_gb": 0.021484375,
+      "std": 0.02919887181200362
+    },
+    {
+      "component": "stage2_head",
+      "cuda_available": true,
+      "current_allocated_gb": 0.013727664947509766,
+      "current_reserved_gb": 0.0234375,
+      "mean": 0.004275649390183389,
+      "median": 0.0004961066879332066,
+      "n": 40,
+      "p90": 0.0005087554454803467,
+      "p95": 0.000510866753757,
+      "peak_allocated_gb": 0.013950824737548828,
+      "peak_reserved_gb": 0.0234375,
+      "std": 0.02387235321123031
+    },
+    {
+      "component": "timer_overhead",
+      "mean": 0.0012915775878354907,
+      "median": 0.00022383267059922218,
+      "n": 40,
+      "p90": 0.00436714943498373,
+      "p95": 0.0059235794469714165,
+      "std": 0.0019010710746605885
+    }
+  ],
+  "device": "cuda:0",
+  "qwen_call_accounting_current_system_c": {
+    "additional_stage2_audio_encoder_forward_per_candidate": 1,
+    "continuous_asr_forward": 1,
+    "counter_example": {
+      "audio_encoder_forward_calls": 1,
+      "lm_generation_calls": 1,
+      "loaded_weight_instances": 1,
+      "transcribe_calls": 1
+    },
+    "loaded_weight_instances": 1
+  },
+  "stage1_parameters": {
+    "frozen": 0,
+    "total": 56321,
+    "trainable": 56321
+  },
+  "stage2_parameters": {
+    "total": 561922,
+    "trainable": 561922
+  },
+  "status": "partial_head_benchmark"
+}

@@ -1,0 +1,14 @@
+{
+  "balanced_dataset_checksum": "44815508a013b9022a8efc99a3972b6847884ebbb3578e356f18a50b822f5a03",
+  "code_commit": "5912a09",
+  "fold_checksum": "e6759ee22e4358c2d7f4a3578b8568d6eb829ab7cfad69c4441cdc11b57d01cb",
+  "inference_stride": 0.25,
+  "locked_date": "2026-06-25",
+  "onboarding_recipe": {
+    "status": "pending_final_selection"
+  },
+  "selected_method": "pending_final_selection",
+  "stage1_threshold": 0.0,
+  "stage2_threshold": 0.0,
+  "top_k": 3
+}

@@ -1,0 +1,28 @@
+protocol_version: latest_data_v1
+seed: 20260620
+dataset_fingerprint: 2b78e211183d47fb
+latest_export_sha256: e2e38518d6725449653138e0ee484c4b5903467e418e8968d4b98ada5fd41701
+max_clips_per_participant: 100
+fold_count: 5
+production_backend_url: https://data-collect-web.onrender.com
+expected_counts:
+  total_clips: 1673
+  positive_clips: 946
+  negative_clips: 727
+  participants: 39
+prompt_group_counts:
+  P1_vigil_only: 173
+  P2_phrase_plus_vigil: 472
+  P3_vigil_plus_phrase: 301
+  P4_negative: 727
+  legacy: 0
+qwen_asr:
+  language: English
+  text_prefix: "language English<asr_text>"
+keyword_spotting:
+  positive_prompt_groups:
+    - P1_vigil_only
+    - P2_phrase_plus_vigil
+    - P3_vigil_plus_phrase
+  negative_prompt_groups:
+    - P4_negative

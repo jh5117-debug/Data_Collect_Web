@@ -1,0 +1,53 @@
+{
+  "blocker": "The installed qwen_asr public transcribe API accepts raw audio and returns ASRTranscription text, while the Stage 2 feature path calls model.thinker.get_audio_features. The public API does not expose reusable audio encoder hidden states and does not accept externally supplied hidden states for decoding. Signature inspected: (self, audio: Union[str, Tuple[numpy.ndarray, int], List[Union[str, Tuple[numpy.ndarray, int]]]], context: Union[str, List[str]] = '', language: Union[str, List[Optional[str]], NoneType] = None, return_time_stamps: bool = False) -> List[qwen_asr.inference.qwen3_asr.ASRTranscription]",
+  "minimum_upstream_interface_needed": "Expose a public one-forward call that returns ASR decoder-compatible audio hidden states and accepts those same states for decoding, or returns both transcript and reusable audio encoder states.",
+  "model_call_diagnostic": {
+    "audio_path_sha256_12": "20a5d8087c5a",
+    "call_counts_after_feature_extraction": {
+      "generate": 1,
+      "get_audio_features": 2,
+      "thinker_forward": 6,
+      "transcribe": 1
+    },
+    "call_counts_after_transcribe": {
+      "generate": 1,
+      "get_audio_features": 1,
+      "thinker_forward": 6,
+      "transcribe": 1
+    },
+    "dtype": "torch.bfloat16",
+    "feature_extraction_path": "model.thinker.get_audio_features",
+    "feature_latency_sec": 0.4892813665792346,
+    "hidden_shape": [
+      26,
+      2048
+    ],
+    "load_latency_sec": 3.379860231652856,
+    "model_load_count": 1,
+    "model_name": "Qwen/Qwen3-ASR-1.7B",
+    "status": "ok",
+    "transcribe_latency_sec": 3.445309248752892,
+    "transcript": "Virtual.",
+    "transcript_extraction_path": "$[0].text",
+    "transcript_result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription"
+  },
+  "source_diagnostic": {
+    "from_pretrained_signature": "(pretrained_model_name_or_path: str, forced_aligner: Optional[str] = None, forced_aligner_kwargs: Optional[Dict[str, Any]] = None, max_inference_batch_size: int = 32, max_new_tokens: Optional[int] = 512, **kwargs) -> 'Qwen3ASRModel'",
+    "package_version": "0.0.6",
+    "public_methods": [
+      "LLM",
+      "finish_streaming_transcribe",
+      "from_pretrained",
+      "get_supported_languages",
+      "init_streaming_state",
+      "streaming_transcribe",
+      "transcribe"
+    ],
+    "public_methods_with_hidden": [],
+    "source_file": "/home/hj/miniconda/envs/vigil-two-stage/lib/python3.12/site-packages/qwen_asr/inference/qwen3_asr.py",
+    "status": "ok",
+    "transcribe_signature": "(self, audio: Union[str, Tuple[numpy.ndarray, int], List[Union[str, Tuple[numpy.ndarray, int]]]], context: Union[str, List[str]] = '', language: Union[str, List[Optional[str]], NoneType] = None, return_time_stamps: bool = False) -> List[qwen_asr.inference.qwen3_asr.ASRTranscription]",
+    "transcribe_uses_model_generate": true
+  },
+  "status": "blocked_by_runtime_interface"
+}

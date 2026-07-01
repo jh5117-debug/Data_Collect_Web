@@ -1,0 +1,10 @@
+{
+  "clip_rows": 1346,
+  "fold_count": 5,
+  "max_clips_per_participant": 100,
+  "no_duplicate_audio_hash_crosses_folds": true,
+  "no_participant_crosses_outer_folds": true,
+  "participant_alias_count": 37,
+  "status": "ok",
+  "window_rows": 1364
+}

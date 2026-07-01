@@ -1,0 +1,9 @@
+{
+  "clip_id_max": "C001560",
+  "clip_id_min": "C001506",
+  "reason_counts": {
+    "audio_conversion_or_validation_failed": 55
+  },
+  "rejected_silent_count": 55,
+  "status": "ok"
+}

@@ -1,0 +1,12 @@
+{
+  "bundle_manifest_template": {
+    "dataset_fingerprint": null,
+    "fold_checksum": null,
+    "manifest_checksum": null,
+    "stage1_checkpoint": null,
+    "stage2_checkpoint": null,
+    "thresholds": null
+  },
+  "code_commit": "4b36f79",
+  "status": "not_trained_choices_not_frozen"
+}

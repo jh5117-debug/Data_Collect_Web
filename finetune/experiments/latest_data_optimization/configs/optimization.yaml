@@ -1,0 +1,11 @@
+latest_data_root: finetune/experiments/latest_data
+processed_dataset: finetune/data/processed/2b78e211183d47fb
+zip_path: finetune/data/vigil_dataset_export_latest_readonly_20260626_042151.zip
+zip_sha256: e2e38518d6725449653138e0ee484c4b5903467e418e8968d4b98ada5fd41701
+balanced_manifest_sha256: 549134e307f21470cb942acd44c2c27d2b29fcaa8527b9e7f8e2722e3232b58e
+fold_sha256: 7c1c65da28f87922f111ee1549b61c053323fc876d2cd26346544de0b37b2a5e
+recall_targets: [0.85, 0.90, 0.92, 0.95]
+support_seeds: [20260620, 20260621, 20260622, 20260623, 20260624]
+preferred_fpr: 0.01
+allowed_fpr: 0.02
+never_accept_fpr: 0.05

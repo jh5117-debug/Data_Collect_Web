@@ -1,0 +1,13 @@
+seed: 20260620
+shots: [0, 3, 5]
+safety:
+  max_absolute_fpr_increase: 0.02
+  max_fpr: 0.03
+recipes:
+  - zero_shot
+  - prototype_only
+  - base_plus_prototype
+  - prototype_calibration
+  - bias_only_gradient
+  - final_classifier_gradient
+  - stage1_bias_calibration

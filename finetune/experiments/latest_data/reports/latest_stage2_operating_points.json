@@ -1,0 +1,5 @@
+{
+  "completed_outer_folds": 5,
+  "note": "Operating points must be selected from development/OOF predictions only, never outer-test predictions.",
+  "status": "requires_inner_oof_predictions"
+}

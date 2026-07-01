@@ -1,0 +1,27 @@
+{
+  "utterance_id": "1188-133604-0004",
+  "split": "test-clean",
+  "audio_path": "/home/hj/Data_Collect_Web/finetune/benchmarks/asr/data/LibriSpeech/test-clean/1188/133604/1188-133604-0004.flac",
+  "reference": "SOME OF THE TOUCHES INDEED WHEN THE TINT HAS BEEN MIXED WITH MUCH WATER HAVE BEEN LAID IN LITTLE DROPS OR PONDS SO THAT THE PIGMENT MIGHT CRYSTALLIZE HARD AT THE EDGE",
+  "hypothesis": "Some of the touches, indeed, when the tint has been mixed with much water, have been laid in little drops or ponds, so that the pigment might crystallize hard at the edge.",
+  "normalized_reference": "some of the touches indeed when the tint has been mixed with much water have been laid in little drops or ponds so that the pigment might crystallize hard at the edge",
+  "normalized_hypothesis": "some of the touches indeed when the tint has been mixed with much water have been laid in little drops or ponds so that the pigment might crystallize hard at the edge",
+  "raw_result_class": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+  "text_extraction_path": "$[0].text",
+  "latency_sec": 2.6987866358831525,
+  "peak_gpu_memory_gb": 3.885563850402832,
+  "selected_physical_gpu": 6,
+  "model_info": {
+    "model_name": "Qwen/Qwen3-ASR-1.7B",
+    "model_revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+    "backend": "transformers",
+    "dtype": "torch.bfloat16",
+    "language": null,
+    "max_new_tokens": 1024,
+    "require_baseline_model": true,
+    "load_time_sec": 3.3341785855591297,
+    "total_parameters": 2038052480,
+    "trainable_parameters": 0
+  },
+  "malformed_patterns": []
+}

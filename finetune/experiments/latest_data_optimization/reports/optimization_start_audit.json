@@ -1,0 +1,71 @@
+{
+  "audio_qc_rejected": 55,
+  "balanced_clips": 1346,
+  "balanced_manifest_rows": 1364,
+  "balanced_manifest_sha256": "549134e307f21470cb942acd44c2c27d2b29fcaa8527b9e7f8e2722e3232b58e",
+  "balanced_participants": 37,
+  "balanced_windows": 1364,
+  "compute_status": "partial_head_benchmark",
+  "duplicate_audio_leakage_free": true,
+  "feature_coverage": {
+    "balanced_windows": 1364,
+    "missing_qwen_clip_ids": [],
+    "missing_stage1_clip_ids": [],
+    "qwen_covered": 1364,
+    "qwen_feature_backend": "frozen_qwen_audio_encoder",
+    "qwen_model_name": "Qwen/Qwen3-ASR-1.7B",
+    "qwen_sample": {
+      "finite": true,
+      "has_inf": false,
+      "has_nan": false,
+      "shape": [
+        26,
+        2048
+      ]
+    },
+    "stage1_covered": 1364,
+    "stage1_feature_backend": "official_openwakeword",
+    "stage1_sample": {
+      "finite": true,
+      "has_inf": false,
+      "has_nan": false,
+      "shape": [
+        16,
+        96
+      ]
+    },
+    "status": "ok"
+  },
+  "fewshot_status": "ok",
+  "fold_sha256": "7c1c65da28f87922f111ee1549b61c053323fc876d2cd26346544de0b37b2a5e",
+  "identity_scan": {
+    "email_like_values_found": false,
+    "hits": []
+  },
+  "manifest_windows_after_qc": 1636,
+  "nested_status": "ok",
+  "participant_leakage_free": true,
+  "qwen_feature_rows": 1636,
+  "qwen_transcript_cache_rows": 1346,
+  "qwen_transcript_summary": {
+    "cached": 1346,
+    "clips": 1346,
+    "model_name": "Qwen/Qwen3-ASR-1.7B",
+    "model_revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+    "output": "finetune/experiments/latest_data/shared/qwen_transcript_cache_balanced_max100_latest.jsonl",
+    "pending": 0,
+    "result_type": [
+      "qwen_asr.inference.qwen3_asr.ASRTranscription"
+    ],
+    "status": "ok",
+    "text_extraction_path": [
+      "$[0].text"
+    ]
+  },
+  "raw_canonical_clips": 1673,
+  "stage1_feature_rows": 1636,
+  "status": "ok",
+  "valid_unique_clips_after_qc": 1618,
+  "zip_present": true,
+  "zip_sha256": "e2e38518d6725449653138e0ee484c4b5903467e418e8968d4b98ada5fd41701"
+}

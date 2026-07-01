@@ -1,0 +1,9 @@
+systems:
+  A: qwen_asr_exact_keyword
+  B: stage1_openwakeword_only
+  C: continuous_qwen_plus_stage2_candidates
+  D: shared_qwen_hidden_state_candidate
+measure:
+  cuda_synchronize: true
+  warmup_iterations: 10
+  timed_iterations: 100

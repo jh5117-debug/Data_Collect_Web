@@ -1,0 +1,17 @@
+seed: 20260625
+targets:
+  - stage2_classifier_bias
+  - stage2_classifier
+  - stage2_embedding_and_classifier
+  - stage1_classifier
+  - both_final_classifiers
+learning_rates: [0.00001, 0.00003, 0.0001]
+steps: [5, 10, 25]
+l2_to_base: [0.0001, 0.001, 0.01]
+replay_ratio:
+  target_positive_support: 1
+  source_positive: 1
+  source_hard_negative: 1
+  source_general_negative: 1
+max_absolute_fpr: 0.02
+max_fpr_increase: 0.02

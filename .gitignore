@@ -6,6 +6,8 @@ __pycache__/
 venv/
 
 # Node
+frontend/node_modules/
+frontend/dist/
 node_modules/
 dist/
 npm-debug.log*
@@ -14,6 +16,7 @@ vite.config.js
 vite.config.d.ts
 
 # Environment
+backend/.env
 .env
 .env.local
 
@@ -24,9 +27,117 @@ backend/storage/*
 *.db
 *.wav
 *.webm
+*.m4a
+*.flac
 *.zip
 *.tar
 *.tgz
+
+# VIGIL research pipeline generated artifacts
+finetune/data/
+finetune/data/extracted/
+finetune/data/processed/
+finetune/cache/
+finetune/third_party/
+finetune/runs/
+finetune/model_bundles/
+finetune/**/*.npy
+finetune/**/*.npz
+finetune/**/*.pt
+finetune/**/*.pth
+finetune/**/*.onnx
+finetune/**/*.wav
+finetune/**/*.webm
+finetune/**/*.m4a
+finetune/**/*.flac
+finetune/**/*.log
+finetune/**/events.out.tfevents*
+finetune/**/predictions*.jsonl
+finetune/**/predictions*.csv
+
+# LibriSpeech ASR benchmark generated/downloaded artifacts
+finetune/benchmarks/asr/downloads/
+finetune/benchmarks/asr/data/
+finetune/benchmarks/asr/runs/
+finetune/benchmarks/asr/logs/
+finetune/benchmarks/asr/manifests/*.jsonl
+finetune/benchmarks/asr/reports/generated/
+finetune/benchmarks/asr/reports/dataset_download_report.*
+finetune/benchmarks/asr/third_party/
+
+# VIGIL browser demo generated artifacts
+finetune/demo/logs/
+finetune/demo/reports/
+finetune/demo_live_assistant/local_data/
+finetune/demo_live_assistant/logs/
+finetune/demo_live_assistant/reports/*.jsonl
+finetune/demo_live_assistant/reports/*recordings*
+finetune/demo_live_assistant/**/*.webm
+finetune/demo_live_assistant/**/*.wav
+finetune/demo_live_assistant/**/*.m4a
+finetune/demo_live_assistant/**/*.pt
+finetune/demo_live_assistant/**/*.onnx
+finetune/demo_live_assistant/**/*.npy
+finetune/demo_live_assistant/**/*.npz
+
+# Participant CV / few-shot experiment generated artifacts
+finetune/experiments/participant_cv/runs/
+finetune/experiments/participant_cv/logs/
+finetune/experiments/participant_cv/shared/private/
+finetune/experiments/participant_cv/shared/balanced_max100_manifest.jsonl
+finetune/experiments/participant_cv/shared/participant_distribution_before_cap.csv
+finetune/experiments/participant_cv/shared/*transcript_cache*.jsonl
+finetune/experiments/participant_cv/shared/*transcript_cache*.summary.json
+finetune/experiments/participant_cv/shared/*predictions*.jsonl
+finetune/experiments/participant_cv/shared/*support_sets*.json
+finetune/experiments/participant_cv/reports/*support_sets*.json
+finetune/experiments/participant_cv/reports/duplicate_audio_audit.json
+finetune/experiments/participant_cv/reports/stage_error_predictions.jsonl
+finetune/experiments/participant_cv/reports/plots/
+
+# Final VIGIL research experiment generated/private artifacts
+finetune/experiments/vigil_final/runs/
+finetune/experiments/vigil_final/logs/
+finetune/experiments/vigil_final/shared/private/
+finetune/experiments/vigil_final/shared/*embedding*.jsonl
+finetune/experiments/vigil_final/shared/*embedding*.npz
+finetune/experiments/vigil_final/shared/*hidden*.npz
+finetune/experiments/vigil_final/shared/*predictions*.jsonl
+finetune/experiments/vigil_final/shared/*support_sets*.json
+finetune/experiments/vigil_final/reports/*predictions*.jsonl
+finetune/experiments/vigil_final/reports/*support_sets*.json
+finetune/experiments/vigil_final/reports/plots/
+finetune/experiments/vigil_final/bundles/
+
+# Latest-data VIGIL research experiment generated/private artifacts
+finetune/experiments/latest_data/runs/
+finetune/experiments/latest_data/logs/
+finetune/experiments/latest_data/shared/private/
+finetune/experiments/latest_data/shared/*manifest*.jsonl
+finetune/experiments/latest_data/shared/*transcript_cache*.jsonl
+finetune/experiments/latest_data/shared/*transcript_cache*.summary.json
+finetune/experiments/latest_data/shared/*support_sets*.json
+finetune/experiments/latest_data/shared/*embedding*.jsonl
+finetune/experiments/latest_data/shared/*embedding*.npz
+finetune/experiments/latest_data/shared/*hidden*.npz
+finetune/experiments/latest_data/reports/*predictions*.jsonl
+finetune/experiments/latest_data/reports/*support_sets*.json
+finetune/experiments/latest_data/reports/*headers.txt
+finetune/experiments/latest_data/reports/few_shot_*
+finetune/experiments/latest_data/reports/zero_shot_*
+finetune/experiments/latest_data/reports/rejected_or_inconsistent.jsonl
+finetune/experiments/latest_data/reports/plots/
+
+# Latest-data optimization generated/private artifacts
+finetune/experiments/latest_data_optimization/runs/
+finetune/experiments/latest_data_optimization/logs/
+finetune/experiments/latest_data_optimization/shared/private/
+finetune/experiments/latest_data_optimization/shared/*manifest*.jsonl
+finetune/experiments/latest_data_optimization/shared/*transcript_cache*.jsonl
+finetune/experiments/latest_data_optimization/reports/*predictions*.jsonl
+finetune/experiments/latest_data_optimization/reports/*false_accepts*.jsonl
+finetune/experiments/latest_data_optimization/reports/*support_sets*.json
+finetune/model_bundles/*/*.pt
 
 # OS/editor
 .DS_Store

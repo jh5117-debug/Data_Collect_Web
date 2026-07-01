@@ -1,0 +1,45 @@
+{
+  "combined_normalized_wer": 0.02751646508258752,
+  "extraction_paths": [
+    "$[0].text"
+  ],
+  "failures": 0,
+  "malformed_hypotheses": 0,
+  "malformed_sample_ids": [],
+  "metrics_json_failed_predictions": 0,
+  "metrics_json_successful_predictions": 5559,
+  "normalized_cer": 0.009904616200632524,
+  "per_split": {
+    "test-clean": {
+      "cer": 0.005896352076155294,
+      "deletions": 129,
+      "exact_match_rate": 0.76793893129771,
+      "insertions": 66,
+      "reference_words": 52576,
+      "sentence_error_rate": 0.23206106870229007,
+      "sentence_errors": 608,
+      "substitutions": 773,
+      "total_sentences": 2620,
+      "wer": 0.018411442483262326
+    },
+    "test-other": {
+      "cer": 0.01404180277683066,
+      "deletions": 201,
+      "exact_match_rate": 0.6430758761483498,
+      "insertions": 154,
+      "reference_words": 52343,
+      "sentence_error_rate": 0.35692412385165023,
+      "sentence_errors": 1049,
+      "substitutions": 1564,
+      "total_sentences": 2939,
+      "wer": 0.03666201784383776
+    }
+  },
+  "raw_wer": 0.9862560642019081,
+  "result_types": [
+    "qwen_asr.inference.qwen3_asr.ASRTranscription"
+  ],
+  "run": "finetune/benchmarks/asr/runs/20260624_185419_qwen3_asr_1_7b_fixed_text_extraction_baseline_full",
+  "status": "verified",
+  "successes": 5559
+}

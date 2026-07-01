@@ -1,0 +1,25 @@
+{
+  "by_prompt_group_audio_files": 403,
+  "canonical_audio_raw_files": 403,
+  "canonical_members_resolved": 403,
+  "canonical_samples": 403,
+  "label_counts": {
+    "0": 185,
+    "1": 218
+  },
+  "metadata_accounts": 10,
+  "metadata_clip_rows": 403,
+  "metadata_sessions": 13,
+  "prompt_group_counts": {
+    "P1_vigil_only": 31,
+    "P2_phrase_plus_vigil": 111,
+    "P3_vigil_plus_phrase": 76,
+    "P4_negative": 185
+  },
+  "raw_audio_view_files": 806,
+  "rejected_or_inconsistent": 0,
+  "root": "vigil_dataset_export_20260620_020617",
+  "unique_clip_ids": 403,
+  "zip_path": "/home/hj/Data_Collect_Web/finetune/data/vigil_dataset_export_20260620_020617.zip",
+  "zip_sha256": "f0808053b27d2c5d0af834df5ecc3662af7dd47fbf3984691da27bfbd8b6628d"
+}

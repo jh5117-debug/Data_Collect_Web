@@ -1,0 +1,61 @@
+{
+  "balanced_manifest_rows": 1040,
+  "balanced_manifest_sha256": "44815508a013b9022a8efc99a3972b6847884ebbb3578e356f18a50b822f5a03",
+  "branch_expected": "research/vigil-fewshot-cost-nested-20260625",
+  "feature_coverage": {
+    "balanced_windows": 1040,
+    "missing_qwen_clip_ids": [],
+    "missing_stage1_clip_ids": [],
+    "qwen_covered": 1040,
+    "qwen_feature_backend": "frozen_qwen_audio_encoder",
+    "qwen_model_name": "Qwen/Qwen3-ASR-1.7B",
+    "qwen_sample": {
+      "finite": true,
+      "has_inf": false,
+      "has_nan": false,
+      "shape": [
+        26,
+        2048
+      ]
+    },
+    "stage1_covered": 1040,
+    "stage1_feature_backend": "official_openwakeword",
+    "stage1_sample": {
+      "finite": true,
+      "has_inf": false,
+      "has_nan": false,
+      "shape": [
+        16,
+        96
+      ]
+    },
+    "status": "ok"
+  },
+  "fold_sha256": "e6759ee22e4358c2d7f4a3578b8568d6eb829ab7cfad69c4441cdc11b57d01cb",
+  "old_few_shot_recipe": {
+    "candidate_grid_declared": {
+      "l2_to_base": [
+        0.0,
+        0.001
+      ],
+      "learning_rate": [
+        0.0001,
+        0.0003
+      ],
+      "steps": [
+        10,
+        25
+      ],
+      "targets": [
+        "stage1",
+        "stage2",
+        "both"
+      ]
+    },
+    "reason": "No head-adaptation recipe has yet been verified to satisfy the development FPR safety constraint; strict test-speaker onboarding therefore uses a conservative no-adaptation fallback and does not claim few-shot improvement.",
+    "selected_recipe": "no_adaptation_zero_shot_fallback",
+    "selection_source": "development_safety_gate",
+    "status": "ok"
+  },
+  "qwen_transcript_cache_rows": 1026
+}

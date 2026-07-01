@@ -1,0 +1,31 @@
+{
+  "accounts": 39,
+  "clips": 1673,
+  "method": "readonly_admin_api_fallback",
+  "participants": 38,
+  "sessions": 38,
+  "status": "ok",
+  "summary": {
+    "auto_accepted": 1673,
+    "batch_id": "vigil_batch_v0_1",
+    "flagged": 0,
+    "negative_clips": 727,
+    "participants": 39,
+    "positive_clips": 946,
+    "prompt_group_counts": {
+      "P1_vigil_only": 173,
+      "P2_phrase_plus_vigil": 472,
+      "P3_vigil_plus_phrase": 301,
+      "P4_negative": 727,
+      "legacy": 0
+    },
+    "rejected": 0,
+    "sessions": 38,
+    "submitted_sessions": 37,
+    "total_clips": 1673,
+    "total_segments": 0
+  },
+  "warnings": 0,
+  "zip_path": "/home/hj/Data_Collect_Web/finetune/data/vigil_dataset_export_latest_readonly_20260626_042151.zip",
+  "zip_sha256": "e2e38518d6725449653138e0ee484c4b5903467e418e8968d4b98ada5fd41701"
+}

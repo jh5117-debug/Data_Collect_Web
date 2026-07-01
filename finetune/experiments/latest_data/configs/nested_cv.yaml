@@ -1,0 +1,12 @@
+seed: 20260620
+fold_count: 5
+outer_folds: [0, 1, 2, 3, 4]
+methods:
+  - qwen_exact
+  - stage1_only
+  - stage2_bce
+  - stage2_bce_supcon
+  - validation_selected
+selection:
+  recall_target: 0.90
+  choose_on_development_only: true

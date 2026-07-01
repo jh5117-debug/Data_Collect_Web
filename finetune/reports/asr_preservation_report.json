@@ -1,0 +1,96 @@
+{
+  "status": "corrected_after_qwen_transcript_extraction_fix",
+  "qwen_model_name": "Qwen/Qwen3-ASR-1.7B",
+  "stage2_uses_frozen_qwen_audio_encoder": true,
+  "qwen_trainable_parameters": {
+    "feature_extraction": 0,
+    "stage2_bce": 0,
+    "stage2_bce_supcon": 0,
+    "corrected_vigil_baseline": 0
+  },
+  "qwen_total_parameters": 2038052480,
+  "representative_checksums": {
+    "feature_extraction": {
+      "unchanged": true,
+      "qwen_parameters_modified": false,
+      "before": {
+        "thinker.audio_tower.layers.0.self_attn.k_proj.bias": -59.839073181152344,
+        "thinker.audio_tower.layers.0.self_attn.k_proj.weight": -6.748814582824707,
+        "thinker.audio_tower.layers.0.self_attn.out_proj.bias": -0.5344572067260742,
+        "thinker.audio_tower.layers.0.self_attn.out_proj.weight": -2.1157467365264893,
+        "thinker.audio_tower.layers.0.self_attn.q_proj.bias": -57.97587585449219,
+        "thinker.audio_tower.layers.0.self_attn.q_proj.weight": -9.140356063842773,
+        "thinker.audio_tower.layers.0.self_attn.v_proj.bias": -1.118425726890564,
+        "thinker.audio_tower.layers.0.self_attn.v_proj.weight": 16.02427101135254
+      },
+      "after": {
+        "thinker.audio_tower.layers.0.self_attn.k_proj.bias": -59.839073181152344,
+        "thinker.audio_tower.layers.0.self_attn.k_proj.weight": -6.748814582824707,
+        "thinker.audio_tower.layers.0.self_attn.out_proj.bias": -0.5344572067260742,
+        "thinker.audio_tower.layers.0.self_attn.out_proj.weight": -2.1157467365264893,
+        "thinker.audio_tower.layers.0.self_attn.q_proj.bias": -57.97587585449219,
+        "thinker.audio_tower.layers.0.self_attn.q_proj.weight": -9.140356063842773,
+        "thinker.audio_tower.layers.0.self_attn.v_proj.bias": -1.118425726890564,
+        "thinker.audio_tower.layers.0.self_attn.v_proj.weight": 16.02427101135254
+      }
+    },
+    "stage2_bce": {
+      "unchanged": true,
+      "qwen_parameters_modified": false
+    },
+    "stage2_bce_supcon": {
+      "unchanged": true,
+      "qwen_parameters_modified": false
+    }
+  },
+  "corrected_librispeech": {
+    "run_dir": "/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_185419_qwen3_asr_1_7b_fixed_text_extraction_baseline_full",
+    "smoke_run_dir": "/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_185009_qwen3_asr_1_7b_fixed_text_extraction_smoke_smoke",
+    "successful_predictions": 5559,
+    "failed_predictions": 0,
+    "combined_normalized_wer": 0.02751646508258752,
+    "test_clean_normalized_wer": 0.018411442483262326,
+    "test_other_normalized_wer": 0.03666201784383776,
+    "raw_wer": 0.9862560642019081,
+    "normalized_cer": 0.009904616200632524,
+    "sentence_error_rate": 0.29807519338010435,
+    "exact_match_rate": 0.7019248066198956
+  },
+  "corrected_vigil_qwen_baseline": {
+    "run_dir": "/home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full/baseline_qwen_exact_clip_fixed_text_extraction",
+    "n": 93,
+    "precision": 1.0,
+    "recall": 0.6862745098039216,
+    "false_positive_rate": 0.0,
+    "f1": 0.813953488372093,
+    "p1_recall": 0.6666666666666666,
+    "p2_recall": 0.7272727272727273,
+    "p3_recall": 0.6470588235294118,
+    "p4_false_positive_rate": 0.0,
+    "text_extraction_paths": [
+      "$[0].text"
+    ],
+    "qwen_result_types": [
+      "qwen_asr.inference.qwen3_asr.ASRTranscription"
+    ],
+    "qwen_dtype": "torch.bfloat16",
+    "qwen_trainable_parameters": 0,
+    "peak_gpu_memory_gb": 3.8581886291503906
+  },
+  "old_invalid_results": {
+    "old_librispeech_run_dir": "/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full",
+    "old_librispeech_status": "invalid_for_scientific_reporting",
+    "old_librispeech_warning": "INVALID FOR SCIENTIFIC REPORTING \u2014 QWEN TRANSCRIPT EXTRACTION BUG UNDER AUDIT",
+    "old_librispeech_hypotheses_were_object_reprs": true,
+    "old_librispeech_normalized_wer_invalid": 0.40069005613854497,
+    "old_vigil_baseline_dir": "/home/hj/Data_Collect_Web/finetune/runs/20260624_075127_0fad4c7828149099_full/baseline_qwen_exact_clip",
+    "old_vigil_baseline_recall": 0.6862745098039216,
+    "old_vigil_baseline_note": "Same metrics as corrected GPU baseline, but old predictions may contain object repr text; use the fixed extractor output for transcript evidence.",
+    "correction_commit": "538f646"
+  },
+  "interpretation": {
+    "general_asr": "LibriSpeech WER measures the unchanged Qwen general ASR decoder baseline.",
+    "wake_word": "VIGIL recall/FPR measures wake-word detection behavior and is separate from general ASR preservation.",
+    "training": "The two-stage trigger method trains Stage 1 and Stage 2 heads/features but does not update Qwen ASR weights."
+  }
+}

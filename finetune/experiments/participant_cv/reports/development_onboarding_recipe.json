@@ -1,0 +1,25 @@
+{
+  "candidate_grid_declared": {
+    "l2_to_base": [
+      0.0,
+      0.001
+    ],
+    "learning_rate": [
+      0.0001,
+      0.0003
+    ],
+    "steps": [
+      10,
+      25
+    ],
+    "targets": [
+      "stage1",
+      "stage2",
+      "both"
+    ]
+  },
+  "reason": "No head-adaptation recipe has yet been verified to satisfy the development FPR safety constraint; strict test-speaker onboarding therefore uses a conservative no-adaptation fallback and does not claim few-shot improvement.",
+  "selected_recipe": "no_adaptation_zero_shot_fallback",
+  "selection_source": "development_safety_gate",
+  "status": "ok"
+}

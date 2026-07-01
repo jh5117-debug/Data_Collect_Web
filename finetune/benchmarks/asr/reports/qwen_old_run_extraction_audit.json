@@ -1,0 +1,1002 @@
+{
+  "old_run_path": "/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full",
+  "predictions_path": "/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full/predictions.jsonl",
+  "prediction_rows": 5559,
+  "status_counts": {
+    "success": 5559
+  },
+  "split_counts": {
+    "test-clean": 2620,
+    "test-other": 2939
+  },
+  "repr_pattern_counts": {
+    "ASRResult(": 0,
+    "TranscriptionResult(": 0,
+    "language_equals": 5559,
+    "text_equals": 5559,
+    "object_at": 0,
+    "class_repr_prefix": 5559
+  },
+  "flagged_row_count": 5559,
+  "classification": "structured_object_repr_containing_transcript",
+  "interpretation": "Stored hypotheses include structured result object reprs or embedded language/text fields; old WER is invalid for reporting.",
+  "first_middle_last_samples": [
+    {
+      "line_no": 1,
+      "id": "1089-134686-0000",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "HE HOPED THERE WOULD BE STEW FOR DINNER TURNIPS AND CARROTS AND BRUISED POTATOES AND FAT MUTTON PIECES TO BE LADLED OUT IN THICK PEPPERED FLOUR FATTENED SAUCE",
+      "hypothesis": "ASRTranscription(language='English', text='He hoped there would be stew for dinner, turnips and carrots, and bruised potatoes and fat mutton pieces to be ladled out in thick, peppered, flour-fattened sauce.', time_stamps=None)",
+      "normalized_reference": "he hoped there would be stew for dinner turnips and carrots and bruised potatoes and fat mutton pieces to be ladled out in thick peppered flour fattened sauce",
+      "normalized_hypothesis": "asrtranscription language english text he hoped there would be stew for dinner turnips and carrots and bruised potatoes and fat mutton pieces to be ladled out in thick peppered flour fattened sauce time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.25,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 2,
+      "id": "1089-134686-0001",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "STUFF IT INTO YOU HIS BELLY COUNSELLED HIM",
+      "hypothesis": "ASRTranscription(language='English', text='Stuff it into you,\" his belly counselled him.', time_stamps=None)",
+      "normalized_reference": "stuff it into you his belly counselled him",
+      "normalized_hypothesis": "asrtranscription language english text stuff it into you his belly counselled him time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.875,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 3,
+      "id": "1089-134686-0002",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS",
+      "hypothesis": "ASRTranscription(language='English', text='After early nightfall, the yellow lamps would light up here and there the squalid quarter of the brothels.', time_stamps=None)",
+      "normalized_reference": "after early nightfall the yellow lamps would light up here and there the squalid quarter of the brothels",
+      "normalized_hypothesis": "asrtranscription language english text after early nightfall the yellow lamps would light up here and there the squalid quarter of the brothels time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.3888888888888889,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 2779,
+      "id": "4852-28312-0027",
+      "split": "test-other",
+      "status": "success",
+      "reference": "A COURTYARD WAS SPARSELY LIT BY A FLARING TORCH OR TWO SHOWING A SWINGING SIGN HUNG ON A POST",
+      "hypothesis": "ASRTranscription(language='English', text='A courtyard was sparsely lit by a flaring torch or two, showing a swinging sign hung on a post.', time_stamps=None)",
+      "normalized_reference": "a courtyard was sparsely lit by a flaring torch or two showing a swinging sign hung on a post",
+      "normalized_hypothesis": "asrtranscription language english text a courtyard was sparsely lit by a flaring torch or two showing a swinging sign hung on a post time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.3684210526315789,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 2780,
+      "id": "4852-28312-0028",
+      "split": "test-other",
+      "status": "success",
+      "reference": "THE POST WAS PLANTED AT THE EDGE OF WHAT WAS NOW A BROAD AND MUDDY ROAD",
+      "hypothesis": "ASRTranscription(language='English', text='The post was planted at the edge of what was now a broad and muddy road.', time_stamps=None)",
+      "normalized_reference": "the post was planted at the edge of what was now a broad and muddy road",
+      "normalized_hypothesis": "asrtranscription language english text the post was planted at the edge of what was now a broad and muddy road time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.4375,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 2781,
+      "id": "4852-28312-0029",
+      "split": "test-other",
+      "status": "success",
+      "reference": "A COACH WITH ITS TOP PILED HIGH WITH LUGGAGE STAMPED TO A HALT BESIDE THE FLAGGED COURTYARD",
+      "hypothesis": "ASRTranscription(language='English', text='A coach with its top piled high with luggage stamped to a halt beside the flagged courtyard.', time_stamps=None)",
+      "normalized_reference": "a coach with its top piled high with luggage stamped to a halt beside the flagged courtyard",
+      "normalized_hypothesis": "asrtranscription language english text a coach with its top piled high with luggage stamped to a halt beside the flagged courtyard time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.4117647058823529,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 5557,
+      "id": "908-31957-0023",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "I LOVE THEE FREELY AS MEN STRIVE FOR RIGHT I LOVE THEE PURELY AS THEY TURN FROM PRAISE",
+      "hypothesis": "ASRTranscription(language='English', text='I love thee freely, as men strive for right. I love thee purely, as they turn from praise.', time_stamps=None)",
+      "normalized_reference": "i love thee freely as men strive for right i love thee purely as they turn from praise",
+      "normalized_hypothesis": "asrtranscription language english text i love thee freely as men strive for right i love thee purely as they turn from praise time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.3888888888888889,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 5558,
+      "id": "908-31957-0024",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "I LOVE THEE WITH THE PASSION PUT TO USE IN MY OLD GRIEFS AND WITH MY CHILDHOOD'S FAITH",
+      "hypothesis": "ASRTranscription(language='English', text=\"I love thee with the passion put to use, and my old griefs, and with my childhood's faith.\", time_stamps=None)",
+      "normalized_reference": "i love thee with the passion put to use in my old griefs and with my childhood's faith",
+      "normalized_hypothesis": "asrtranscription language english text i love thee with the passion put to use and my old griefs and with my childhood's faith time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.4444444444444444,
+      "substitutions": 1,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 5559,
+      "id": "908-31957-0025",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "I LOVE THEE WITH A LOVE I SEEMED TO LOSE WITH MY LOST SAINTS I LOVE THEE WITH THE BREATH SMILES TEARS OF ALL MY LIFE AND IF GOD CHOOSE I SHALL BUT LOVE THEE BETTER AFTER DEATH",
+      "hypothesis": "ASRTranscription(language='English', text='I loved thee with the love I seemed to lose with my lost saints. I loved thee with the breath, smiles, tears of all my life, and, if God choose, I shall but love thee better after death.', time_stamps=None)",
+      "normalized_reference": "i love thee with a love i seemed to lose with my lost saints i love thee with the breath smiles tears of all my life and if god choose i shall but love thee better after death",
+      "normalized_hypothesis": "asrtranscription language english text i loved thee with the love i seemed to lose with my lost saints i loved thee with the breath smiles tears of all my life and if god choose i shall but love thee better after death time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.2631578947368421,
+      "substitutions": 3,
+      "deletions": 0,
+      "insertions": 7
+    }
+  ],
+  "test_clean_samples": [
+    {
+      "line_no": 1,
+      "id": "1089-134686-0000",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "HE HOPED THERE WOULD BE STEW FOR DINNER TURNIPS AND CARROTS AND BRUISED POTATOES AND FAT MUTTON PIECES TO BE LADLED OUT IN THICK PEPPERED FLOUR FATTENED SAUCE",
+      "hypothesis": "ASRTranscription(language='English', text='He hoped there would be stew for dinner, turnips and carrots, and bruised potatoes and fat mutton pieces to be ladled out in thick, peppered, flour-fattened sauce.', time_stamps=None)",
+      "normalized_reference": "he hoped there would be stew for dinner turnips and carrots and bruised potatoes and fat mutton pieces to be ladled out in thick peppered flour fattened sauce",
+      "normalized_hypothesis": "asrtranscription language english text he hoped there would be stew for dinner turnips and carrots and bruised potatoes and fat mutton pieces to be ladled out in thick peppered flour fattened sauce time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.25,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 2,
+      "id": "1089-134686-0001",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "STUFF IT INTO YOU HIS BELLY COUNSELLED HIM",
+      "hypothesis": "ASRTranscription(language='English', text='Stuff it into you,\" his belly counselled him.', time_stamps=None)",
+      "normalized_reference": "stuff it into you his belly counselled him",
+      "normalized_hypothesis": "asrtranscription language english text stuff it into you his belly counselled him time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.875,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 3,
+      "id": "1089-134686-0002",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS",
+      "hypothesis": "ASRTranscription(language='English', text='After early nightfall, the yellow lamps would light up here and there the squalid quarter of the brothels.', time_stamps=None)",
+      "normalized_reference": "after early nightfall the yellow lamps would light up here and there the squalid quarter of the brothels",
+      "normalized_hypothesis": "asrtranscription language english text after early nightfall the yellow lamps would light up here and there the squalid quarter of the brothels time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.3888888888888889,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 2867,
+      "id": "4970-29095-0005",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "THY WAYS GREATLY TRY ME RUTH AND ALL THY RELATIONS",
+      "hypothesis": "ASRTranscription(language='English', text='Thy ways greatly try me, Ruth, and all thy relations.', time_stamps=None)",
+      "normalized_reference": "thy ways greatly try me ruth and all thy relations",
+      "normalized_hypothesis": "asrtranscription language english text thy ways greatly try me ruth and all thy relations time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.7,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 5559,
+      "id": "908-31957-0025",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "I LOVE THEE WITH A LOVE I SEEMED TO LOSE WITH MY LOST SAINTS I LOVE THEE WITH THE BREATH SMILES TEARS OF ALL MY LIFE AND IF GOD CHOOSE I SHALL BUT LOVE THEE BETTER AFTER DEATH",
+      "hypothesis": "ASRTranscription(language='English', text='I loved thee with the love I seemed to lose with my lost saints. I loved thee with the breath, smiles, tears of all my life, and, if God choose, I shall but love thee better after death.', time_stamps=None)",
+      "normalized_reference": "i love thee with a love i seemed to lose with my lost saints i love thee with the breath smiles tears of all my life and if god choose i shall but love thee better after death",
+      "normalized_hypothesis": "asrtranscription language english text i loved thee with the love i seemed to lose with my lost saints i loved thee with the breath smiles tears of all my life and if god choose i shall but love thee better after death time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.2631578947368421,
+      "substitutions": 3,
+      "deletions": 0,
+      "insertions": 7
+    }
+  ],
+  "test_other_samples": [
+    {
+      "line_no": 440,
+      "id": "1688-142285-0000",
+      "split": "test-other",
+      "status": "success",
+      "reference": "THERE'S IRON THEY SAY IN ALL OUR BLOOD AND A GRAIN OR TWO PERHAPS IS GOOD BUT HIS HE MAKES ME HARSHLY FEEL HAS GOT A LITTLE TOO MUCH OF STEEL ANON",
+      "hypothesis": "ASRTranscription(language='English', text=\"There's iron, they say, in all our blood, and a grain or two, perhaps, is good, but his—he makes me harshly feel—has got a little too much of steel. Anon.\", time_stamps=None)",
+      "normalized_reference": "there's iron they say in all our blood and a grain or two perhaps is good but his he makes me harshly feel has got a little too much of steel anon",
+      "normalized_hypothesis": "asrtranscription language english text there's iron they say in all our blood and a grain or two perhaps is good but his he makes me harshly feel has got a little too much of steel anon time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.21875,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 441,
+      "id": "1688-142285-0001",
+      "split": "test-other",
+      "status": "success",
+      "reference": "MARGARET SAID MISTER HALE AS HE RETURNED FROM SHOWING HIS GUEST DOWNSTAIRS I COULD NOT HELP WATCHING YOUR FACE WITH SOME ANXIETY WHEN MISTER THORNTON MADE HIS CONFESSION OF HAVING BEEN A SHOP BOY",
+      "hypothesis": "ASRTranscription(language='English', text='Margaret said, \"Mr. Hale, as he returned from showing his guests downstairs, I could not help watching your face with some anxiety, when Mr. Thornton made his confession of having been a shop boy.\"', time_stamps=None)",
+      "normalized_reference": "margaret said mister hale as he returned from showing his guest downstairs i could not help watching your face with some anxiety when mister thornton made his confession of having been a shop boy",
+      "normalized_hypothesis": "asrtranscription language english text margaret said mr hale as he returned from showing his guests downstairs i could not help watching your face with some anxiety when mr thornton made his confession of having been a shop boy time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.29411764705882354,
+      "substitutions": 3,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 442,
+      "id": "1688-142285-0002",
+      "split": "test-other",
+      "status": "success",
+      "reference": "YOU DON'T MEAN THAT YOU THOUGHT ME SO SILLY",
+      "hypothesis": "ASRTranscription(language='English', text=\"You don't mean that. You thought me so silly.\", time_stamps=None)",
+      "normalized_reference": "you don't mean that you thought me so silly",
+      "normalized_hypothesis": "asrtranscription language english text you don't mean that you thought me so silly time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.7777777777777778,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 2751,
+      "id": "4852-28311-0026",
+      "split": "test-other",
+      "status": "success",
+      "reference": "A SUDDEN CAR HORN WOKE HIM FROM HIS DREAM",
+      "hypothesis": "ASRTranscription(language='English', text='A sudden car horn woke him from his dream.', time_stamps=None)",
+      "normalized_reference": "a sudden car horn woke him from his dream",
+      "normalized_hypothesis": "asrtranscription language english text a sudden car horn woke him from his dream time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.7777777777777778,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 5366,
+      "id": "8461-281231-0038",
+      "split": "test-other",
+      "status": "success",
+      "reference": "THE PRECEPTORS OF WHOM THERE WERE FOUR PRESENT OCCUPIED SEATS BEHIND THEIR SUPERIORS AND BEHIND THEM STOOD THE ESQUIRES OF THE ORDER ROBED IN WHITE",
+      "hypothesis": "ASRTranscription(language='English', text='The preceptors, of whom there were four present, occupied seats behind the superiors, and behind them stood the esquires of the order, robed in white.', time_stamps=None)",
+      "normalized_reference": "the preceptors of whom there were four present occupied seats behind their superiors and behind them stood the esquires of the order robed in white",
+      "normalized_hypothesis": "asrtranscription language english text the preceptors of whom there were four present occupied seats behind the superiors and behind them stood the esquires of the order robed in white time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.32,
+      "substitutions": 1,
+      "deletions": 0,
+      "insertions": 7
+    }
+  ],
+  "largest_error_samples": [
+    {
+      "line_no": 1770,
+      "id": "3538-142836-0023",
+      "split": "test-other",
+      "status": "success",
+      "reference": "ICES",
+      "hypothesis": "ASRTranscription(language='English', text='Isis.', time_stamps=None)",
+      "normalized_reference": "ices",
+      "normalized_hypothesis": "asrtranscription language english text isis time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 8.0,
+      "substitutions": 1,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 816,
+      "id": "2094-142345-0041",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "DIRECTION",
+      "hypothesis": "ASRTranscription(language='English', text='Direction.', time_stamps=None)",
+      "normalized_reference": "direction",
+      "normalized_hypothesis": "asrtranscription language english text direction time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 7.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 986,
+      "id": "2414-128291-0020",
+      "split": "test-other",
+      "status": "success",
+      "reference": "WELL",
+      "hypothesis": "ASRTranscription(language='English', text='Well.', time_stamps=None)",
+      "normalized_reference": "well",
+      "normalized_hypothesis": "asrtranscription language english text well time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 7.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 4646,
+      "id": "7902-96592-0020",
+      "split": "test-other",
+      "status": "success",
+      "reference": "NONSENSE",
+      "hypothesis": "ASRTranscription(language='English', text='Nonsense.', time_stamps=None)",
+      "normalized_reference": "nonsense",
+      "normalized_hypothesis": "asrtranscription language english text nonsense time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 7.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 5489,
+      "id": "8555-292519-0002",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "VENICE",
+      "hypothesis": "ASRTranscription(language='English', text='Venice.', time_stamps=None)",
+      "normalized_reference": "venice",
+      "normalized_hypothesis": "asrtranscription language english text venice time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 7.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 3211,
+      "id": "533-131564-0022",
+      "split": "test-other",
+      "status": "success",
+      "reference": "WHERE'S MILICENT",
+      "hypothesis": "ASRTranscription(language='English', text='Where is Millicent?', time_stamps=None)",
+      "normalized_reference": "where's milicent",
+      "normalized_hypothesis": "asrtranscription language english text where is millicent time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 5.0,
+      "substitutions": 2,
+      "deletions": 0,
+      "insertions": 8
+    },
+    {
+      "line_no": 63,
+      "id": "1089-134691-0024",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "STEPHANOS DEDALOS",
+      "hypothesis": "ASRTranscription(language='English', text='Stefano Sterlos.', time_stamps=None)",
+      "normalized_reference": "stephanos dedalos",
+      "normalized_hypothesis": "asrtranscription language english text stefano sterlos time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 4.5,
+      "substitutions": 2,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 2738,
+      "id": "4852-28311-0013",
+      "split": "test-other",
+      "status": "success",
+      "reference": "AW SHUCKS",
+      "hypothesis": "ASRTranscription(language='English', text='Ah, sharks.', time_stamps=None)",
+      "normalized_reference": "aw shucks",
+      "normalized_hypothesis": "asrtranscription language english text ah sharks time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 4.5,
+      "substitutions": 2,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 126,
+      "id": "121-123852-0001",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "AY ME",
+      "hypothesis": "ASRTranscription(language='English', text='I me.', time_stamps=None)",
+      "normalized_reference": "ay me",
+      "normalized_hypothesis": "asrtranscription language english text i me time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 4.0,
+      "substitutions": 1,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 1907,
+      "id": "3575-170457-0016",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "FAREWELL MADAM",
+      "hypothesis": "ASRTranscription(language='English', text='Farewell, Madame.', time_stamps=None)",
+      "normalized_reference": "farewell madam",
+      "normalized_hypothesis": "asrtranscription language english text farewell madame time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 4.0,
+      "substitutions": 1,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 4836,
+      "id": "8131-117016-0000",
+      "split": "test-other",
+      "status": "success",
+      "reference": "CAPTAIN MURDOCH",
+      "hypothesis": "ASRTranscription(language='English', text='Captain Murdock.', time_stamps=None)",
+      "normalized_reference": "captain murdoch",
+      "normalized_hypothesis": "asrtranscription language english text captain murdock time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 4.0,
+      "substitutions": 1,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 42,
+      "id": "1089-134691-0003",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "THE UNIVERSITY",
+      "hypothesis": "ASRTranscription(language='English', text='The university.', time_stamps=None)",
+      "normalized_reference": "the university",
+      "normalized_hypothesis": "asrtranscription language english text the university time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 3.5,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    }
+  ],
+  "flagged_samples": [
+    {
+      "line_no": 1,
+      "id": "1089-134686-0000",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "HE HOPED THERE WOULD BE STEW FOR DINNER TURNIPS AND CARROTS AND BRUISED POTATOES AND FAT MUTTON PIECES TO BE LADLED OUT IN THICK PEPPERED FLOUR FATTENED SAUCE",
+      "hypothesis": "ASRTranscription(language='English', text='He hoped there would be stew for dinner, turnips and carrots, and bruised potatoes and fat mutton pieces to be ladled out in thick, peppered, flour-fattened sauce.', time_stamps=None)",
+      "normalized_reference": "he hoped there would be stew for dinner turnips and carrots and bruised potatoes and fat mutton pieces to be ladled out in thick peppered flour fattened sauce",
+      "normalized_hypothesis": "asrtranscription language english text he hoped there would be stew for dinner turnips and carrots and bruised potatoes and fat mutton pieces to be ladled out in thick peppered flour fattened sauce time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.25,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 2,
+      "id": "1089-134686-0001",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "STUFF IT INTO YOU HIS BELLY COUNSELLED HIM",
+      "hypothesis": "ASRTranscription(language='English', text='Stuff it into you,\" his belly counselled him.', time_stamps=None)",
+      "normalized_reference": "stuff it into you his belly counselled him",
+      "normalized_hypothesis": "asrtranscription language english text stuff it into you his belly counselled him time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.875,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 3,
+      "id": "1089-134686-0002",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS",
+      "hypothesis": "ASRTranscription(language='English', text='After early nightfall, the yellow lamps would light up here and there the squalid quarter of the brothels.', time_stamps=None)",
+      "normalized_reference": "after early nightfall the yellow lamps would light up here and there the squalid quarter of the brothels",
+      "normalized_hypothesis": "asrtranscription language english text after early nightfall the yellow lamps would light up here and there the squalid quarter of the brothels time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.3888888888888889,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 4,
+      "id": "1089-134686-0003",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "HELLO BERTIE ANY GOOD IN YOUR MIND",
+      "hypothesis": "ASRTranscription(language='English', text='Hello, Bertie. Any good in your mind?', time_stamps=None)",
+      "normalized_reference": "hello bertie any good in your mind",
+      "normalized_hypothesis": "asrtranscription language english text hello bertie any good in your mind time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 1.0,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 5,
+      "id": "1089-134686-0004",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "NUMBER TEN FRESH NELLY IS WAITING ON YOU GOOD NIGHT HUSBAND",
+      "hypothesis": "ASRTranscription(language='English', text='Number ten, fresh Nellie is waiting on you. Good night, husband.', time_stamps=None)",
+      "normalized_reference": "number ten fresh nelly is waiting on you good night husband",
+      "normalized_hypothesis": "asrtranscription language english text number ten fresh nellie is waiting on you good night husband time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.7272727272727273,
+      "substitutions": 1,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 6,
+      "id": "1089-134686-0005",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "THE MUSIC CAME NEARER AND HE RECALLED THE WORDS THE WORDS OF SHELLEY'S FRAGMENT UPON THE MOON WANDERING COMPANIONLESS PALE FOR WEARINESS",
+      "hypothesis": "ASRTranscription(language='English', text=\"The music came nearer, and he recalled the words, the words of Shelley's fragment upon the moon, wandering companionless, pale for weariness.\", time_stamps=None)",
+      "normalized_reference": "the music came nearer and he recalled the words the words of shelley's fragment upon the moon wandering companionless pale for weariness",
+      "normalized_hypothesis": "asrtranscription language english text the music came nearer and he recalled the words the words of shelley's fragment upon the moon wandering companionless pale for weariness time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.3181818181818182,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 7,
+      "id": "1089-134686-0006",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "THE DULL LIGHT FELL MORE FAINTLY UPON THE PAGE WHEREON ANOTHER EQUATION BEGAN TO UNFOLD ITSELF SLOWLY AND TO SPREAD ABROAD ITS WIDENING TAIL",
+      "hypothesis": "ASRTranscription(language='English', text='The dull light fell more faintly upon the page, whereon another equation began to unfold itself slowly, and to spread abroad its widening tail.', time_stamps=None)",
+      "normalized_reference": "the dull light fell more faintly upon the page whereon another equation began to unfold itself slowly and to spread abroad its widening tail",
+      "normalized_hypothesis": "asrtranscription language english text the dull light fell more faintly upon the page whereon another equation began to unfold itself slowly and to spread abroad its widening tail time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.2916666666666667,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 8,
+      "id": "1089-134686-0007",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "A COLD LUCID INDIFFERENCE REIGNED IN HIS SOUL",
+      "hypothesis": "ASRTranscription(language='English', text='A cold, lucid indifference reigned in his soul.', time_stamps=None)",
+      "normalized_reference": "a cold lucid indifference reigned in his soul",
+      "normalized_hypothesis": "asrtranscription language english text a cold lucid indifference reigned in his soul time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.875,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 9,
+      "id": "1089-134686-0008",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "THE CHAOS IN WHICH HIS ARDOUR EXTINGUISHED ITSELF WAS A COLD INDIFFERENT KNOWLEDGE OF HIMSELF",
+      "hypothesis": "ASRTranscription(language='English', text='The chaos in which his ardor extinguished itself was a cold, indifferent knowledge of himself.', time_stamps=None)",
+      "normalized_reference": "the chaos in which his ardour extinguished itself was a cold indifferent knowledge of himself",
+      "normalized_hypothesis": "asrtranscription language english text the chaos in which his ardor extinguished itself was a cold indifferent knowledge of himself time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.5333333333333333,
+      "substitutions": 1,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 10,
+      "id": "1089-134686-0009",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "AT MOST BY AN ALMS GIVEN TO A BEGGAR WHOSE BLESSING HE FLED FROM HE MIGHT HOPE WEARILY TO WIN FOR HIMSELF SOME MEASURE OF ACTUAL GRACE",
+      "hypothesis": "ASRTranscription(language='English', text='At most, by an alms given to a beggar whose blessing he fled from, he might hope wearily to win for himself some measure of actual grace.', time_stamps=None)",
+      "normalized_reference": "at most by an alms given to a beggar whose blessing he fled from he might hope wearily to win for himself some measure of actual grace",
+      "normalized_hypothesis": "asrtranscription language english text at most by an alms given to a beggar whose blessing he fled from he might hope wearily to win for himself some measure of actual grace time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.25925925925925924,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 11,
+      "id": "1089-134686-0010",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "WELL NOW ENNIS I DECLARE YOU HAVE A HEAD AND SO HAS MY STICK",
+      "hypothesis": "ASRTranscription(language='English', text='Well now, Ennis, I declare you have a head, and so has my stick.', time_stamps=None)",
+      "normalized_reference": "well now ennis i declare you have a head and so has my stick",
+      "normalized_hypothesis": "asrtranscription language english text well now ennis i declare you have a head and so has my stick time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.5,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 12,
+      "id": "1089-134686-0011",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "ON SATURDAY MORNINGS WHEN THE SODALITY MET IN THE CHAPEL TO RECITE THE LITTLE OFFICE HIS PLACE WAS A CUSHIONED KNEELING DESK AT THE RIGHT OF THE ALTAR FROM WHICH HE LED HIS WING OF BOYS THROUGH THE RESPONSES",
+      "hypothesis": "ASRTranscription(language='English', text='On Saturday mornings, when the sodality met in the chapel to recite the little office, his place was a cushioned kneeling desk at the right of the altar, from which he led his wing of boys through the responses.', time_stamps=None)",
+      "normalized_reference": "on saturday mornings when the sodality met in the chapel to recite the little office his place was a cushioned kneeling desk at the right of the altar from which he led his wing of boys through the responses",
+      "normalized_hypothesis": "asrtranscription language english text on saturday mornings when the sodality met in the chapel to recite the little office his place was a cushioned kneeling desk at the right of the altar from which he led his wing of boys through the responses time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.1794871794871795,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 13,
+      "id": "1089-134686-0012",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "HER EYES SEEMED TO REGARD HIM WITH MILD PITY HER HOLINESS A STRANGE LIGHT GLOWING FAINTLY UPON HER FRAIL FLESH DID NOT HUMILIATE THE SINNER WHO APPROACHED HER",
+      "hypothesis": "ASRTranscription(language='English', text='Her eyes seemed to regard him with mild pity. Her holiness, a strange light glowing faintly upon her frail flesh, did not humiliate the sinner who approached her.', time_stamps=None)",
+      "normalized_reference": "her eyes seemed to regard him with mild pity her holiness a strange light glowing faintly upon her frail flesh did not humiliate the sinner who approached her",
+      "normalized_hypothesis": "asrtranscription language english text her eyes seemed to regard him with mild pity her holiness a strange light glowing faintly upon her frail flesh did not humiliate the sinner who approached her time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.25,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 14,
+      "id": "1089-134686-0013",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "IF EVER HE WAS IMPELLED TO CAST SIN FROM HIM AND TO REPENT THE IMPULSE THAT MOVED HIM WAS THE WISH TO BE HER KNIGHT",
+      "hypothesis": "ASRTranscription(language='English', text='If ever he was impelled to cast sin from him and to repent, the impulse that moved him was the wish to be her knight.', time_stamps=None)",
+      "normalized_reference": "if ever he was impelled to cast sin from him and to repent the impulse that moved him was the wish to be her knight",
+      "normalized_hypothesis": "asrtranscription language english text if ever he was impelled to cast sin from him and to repent the impulse that moved him was the wish to be her knight time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.28,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 15,
+      "id": "1089-134686-0014",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "HE TRIED TO THINK HOW IT COULD BE",
+      "hypothesis": "ASRTranscription(language='English', text='He tried to think how it could be.', time_stamps=None)",
+      "normalized_reference": "he tried to think how it could be",
+      "normalized_hypothesis": "asrtranscription language english text he tried to think how it could be time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.875,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 16,
+      "id": "1089-134686-0015",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "BUT THE DUSK DEEPENING IN THE SCHOOLROOM COVERED OVER HIS THOUGHTS THE BELL RANG",
+      "hypothesis": "ASRTranscription(language='English', text='But the dusk deepening in the schoolroom covered over his thoughts. The bell rang.', time_stamps=None)",
+      "normalized_reference": "but the dusk deepening in the schoolroom covered over his thoughts the bell rang",
+      "normalized_hypothesis": "asrtranscription language english text but the dusk deepening in the schoolroom covered over his thoughts the bell rang time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.5,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 17,
+      "id": "1089-134686-0016",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "THEN YOU CAN ASK HIM QUESTIONS ON THE CATECHISM DEDALUS",
+      "hypothesis": "ASRTranscription(language='English', text='Then you can ask him questions on the catechism, Dedalus.', time_stamps=None)",
+      "normalized_reference": "then you can ask him questions on the catechism dedalus",
+      "normalized_hypothesis": "asrtranscription language english text then you can ask him questions on the catechism dedalus time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.7,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 18,
+      "id": "1089-134686-0017",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "STEPHEN LEANING BACK AND DRAWING IDLY ON HIS SCRIBBLER LISTENED TO THE TALK ABOUT HIM WHICH HERON CHECKED FROM TIME TO TIME BY SAYING",
+      "hypothesis": "ASRTranscription(language='English', text='Stephen, leaning back and drawing idly on his scribbler, listened to the talk about him, which Heron checked from time to time by saying.', time_stamps=None)",
+      "normalized_reference": "stephen leaning back and drawing idly on his scribbler listened to the talk about him which heron checked from time to time by saying",
+      "normalized_hypothesis": "asrtranscription language english text stephen leaning back and drawing idly on his scribbler listened to the talk about him which heron checked from time to time by saying time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.2916666666666667,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 19,
+      "id": "1089-134686-0018",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "IT WAS STRANGE TOO THAT HE FOUND AN ARID PLEASURE IN FOLLOWING UP TO THE END THE RIGID LINES OF THE DOCTRINES OF THE CHURCH AND PENETRATING INTO OBSCURE SILENCES ONLY TO HEAR AND FEEL THE MORE DEEPLY HIS OWN CONDEMNATION",
+      "hypothesis": "ASRTranscription(language='English', text='It was strange too that he found an arid pleasure in following up to the end the rigid lines of the doctrines of the church and penetrating into obscure silences, only to hear and feel the more deeply his own condemnation.', time_stamps=None)",
+      "normalized_reference": "it was strange too that he found an arid pleasure in following up to the end the rigid lines of the doctrines of the church and penetrating into obscure silences only to hear and feel the more deeply his own condemnation",
+      "normalized_hypothesis": "asrtranscription language english text it was strange too that he found an arid pleasure in following up to the end the rigid lines of the doctrines of the church and penetrating into obscure silences only to hear and feel the more deeply his own condemnation time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.17073170731707318,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    },
+    {
+      "line_no": 20,
+      "id": "1089-134686-0019",
+      "split": "test-clean",
+      "status": "success",
+      "reference": "THE SENTENCE OF SAINT JAMES WHICH SAYS THAT HE WHO OFFENDS AGAINST ONE COMMANDMENT BECOMES GUILTY OF ALL HAD SEEMED TO HIM FIRST A SWOLLEN PHRASE UNTIL HE HAD BEGUN TO GROPE IN THE DARKNESS OF HIS OWN STATE",
+      "hypothesis": "ASRTranscription(language='English', text='The sentence of Saint James, which says that he who offends against one commandment becomes guilty of all, had seemed to him first a swollen phrase until he had begun to grope in the darkness of his own state.', time_stamps=None)",
+      "normalized_reference": "the sentence of saint james which says that he who offends against one commandment becomes guilty of all had seemed to him first a swollen phrase until he had begun to grope in the darkness of his own state",
+      "normalized_hypothesis": "asrtranscription language english text the sentence of saint james which says that he who offends against one commandment becomes guilty of all had seemed to him first a swollen phrase until he had begun to grope in the darkness of his own state time stamps none",
+      "flags": [
+        "language_equals",
+        "text_equals",
+        "class_repr_prefix"
+      ],
+      "wer": 0.1794871794871795,
+      "substitutions": 0,
+      "deletions": 0,
+      "insertions": 7
+    }
+  ]
+}
