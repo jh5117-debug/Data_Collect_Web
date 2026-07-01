@@ -1,0 +1,130 @@
+{
+  "algorithm": "deterministic_multistart_greedy_v1",
+  "fold_count": 5,
+  "folds": [
+    {
+      "fold": 0,
+      "participant_aliases": [
+        "P012",
+        "P020",
+        "P021",
+        "P022",
+        "P030",
+        "P034",
+        "P035"
+      ],
+      "stats": {
+        "P1_vigil_only": 44,
+        "P2_phrase_plus_vigil": 68,
+        "P3_vigil_plus_phrase": 38,
+        "P4_negative": 112,
+        "clips": 262,
+        "negative": 112,
+        "participants": 7,
+        "positive": 150
+      }
+    },
+    {
+      "fold": 1,
+      "participant_aliases": [
+        "P002",
+        "P007",
+        "P011",
+        "P014",
+        "P016",
+        "P017",
+        "P027",
+        "P033"
+      ],
+      "stats": {
+        "P1_vigil_only": 21,
+        "P2_phrase_plus_vigil": 78,
+        "P3_vigil_plus_phrase": 55,
+        "P4_negative": 123,
+        "clips": 277,
+        "negative": 123,
+        "participants": 8,
+        "positive": 154
+      }
+    },
+    {
+      "fold": 2,
+      "participant_aliases": [
+        "P001",
+        "P003",
+        "P004",
+        "P006",
+        "P008",
+        "P026",
+        "P036"
+      ],
+      "stats": {
+        "P1_vigil_only": 27,
+        "P2_phrase_plus_vigil": 74,
+        "P3_vigil_plus_phrase": 50,
+        "P4_negative": 113,
+        "clips": 264,
+        "negative": 113,
+        "participants": 7,
+        "positive": 151
+      }
+    },
+    {
+      "fold": 3,
+      "participant_aliases": [
+        "P005",
+        "P010",
+        "P018",
+        "P028",
+        "P031",
+        "P032",
+        "P037"
+      ],
+      "stats": {
+        "P1_vigil_only": 27,
+        "P2_phrase_plus_vigil": 77,
+        "P3_vigil_plus_phrase": 42,
+        "P4_negative": 124,
+        "clips": 270,
+        "negative": 124,
+        "participants": 7,
+        "positive": 146
+      }
+    },
+    {
+      "fold": 4,
+      "participant_aliases": [
+        "P009",
+        "P013",
+        "P015",
+        "P019",
+        "P023",
+        "P024",
+        "P025",
+        "P029"
+      ],
+      "stats": {
+        "P1_vigil_only": 29,
+        "P2_phrase_plus_vigil": 68,
+        "P3_vigil_plus_phrase": 46,
+        "P4_negative": 130,
+        "clips": 273,
+        "negative": 130,
+        "participants": 8,
+        "positive": 143
+      }
+    }
+  ],
+  "objective": 0.6088435617582536,
+  "objective_weights": {
+    "P1_vigil_only": 1.0,
+    "P2_phrase_plus_vigil": 1.0,
+    "P3_vigil_plus_phrase": 1.0,
+    "P4_negative": 1.0,
+    "clips": 3.0,
+    "negative": 2.0,
+    "participants": 5.0,
+    "positive": 2.0
+  },
+  "seed": 20260620
+}

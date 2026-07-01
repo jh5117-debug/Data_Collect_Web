@@ -1,0 +1,184 @@
+{
+  "balanced_manifest_sha256": "549134e307f21470cb942acd44c2c27d2b29fcaa8527b9e7f8e2722e3232b58e",
+  "bundle_dir": "finetune/model_bundles/vigil_latest_optimized_20260626_085405",
+  "code_commit": "132ead0",
+  "dataset_fingerprint": "2b78e211183d47fb",
+  "dataset_zip_sha256": "e2e38518d6725449653138e0ee484c4b5903467e418e8968d4b98ada5fd41701",
+  "fold_sha256": "7c1c65da28f87922f111ee1549b61c053323fc876d2cd26346544de0b37b2a5e",
+  "include_qwen_weights": false,
+  "selected_config": {
+    "fewshot_recipe": "no_adaptation_zero_shot_fallback",
+    "top_k": 1,
+    "variant": "stage2_bce_supcon"
+  },
+  "stage1_checkpoint": {
+    "committed": false,
+    "exists": true,
+    "sha256": "5439a089c8aabf3eda0e02e6d44b1a3ab190c9e6b2252be4374231fd3f63a58a"
+  },
+  "stage1_metrics": {
+    "device": "cuda:0",
+    "feature_backend": "official_openwakeword",
+    "input_feature_dim": 96,
+    "official_openwakeword_used": true,
+    "parameters": {
+      "frozen": 0,
+      "total": 56321,
+      "trainable": 56321
+    },
+    "pos_weight": 0.8333333134651184,
+    "status": "ok",
+    "test_metrics": {
+      "defined": false,
+      "n": 0
+    },
+    "test_rows": 0,
+    "theta_1": 0.9973222613334656,
+    "threshold_selection": {
+      "metrics": {
+        "auprc": 0.9999981958576892,
+        "auroc": 0.9999978321193201,
+        "balanced_accuracy": 0.9751344086021505,
+        "f1": 0.9745003445899381,
+        "false_positive_rate": 0.0,
+        "false_reject_rate": 0.04973118279569892,
+        "fn": 37,
+        "fp": 0,
+        "n": 1364,
+        "negative": 620,
+        "positive": 744,
+        "precision": 1.0,
+        "recall": 0.9502688172043011,
+        "specificity": 1.0,
+        "threshold": 0.9973222613334656,
+        "tn": 620,
+        "tp": 707
+      },
+      "reason": "met_recall_target_0.95",
+      "threshold": 0.9973222613334656
+    },
+    "train_rows": 1364,
+    "val_rows": 1364
+  },
+  "stage1_threshold": {
+    "metrics": {
+      "auprc": 0.9999981958576892,
+      "auroc": 0.9999978321193201,
+      "balanced_accuracy": 0.9751344086021505,
+      "f1": 0.9745003445899381,
+      "false_positive_rate": 0.0,
+      "false_reject_rate": 0.04973118279569892,
+      "fn": 37,
+      "fp": 0,
+      "n": 1364,
+      "negative": 620,
+      "positive": 744,
+      "precision": 1.0,
+      "recall": 0.9502688172043011,
+      "specificity": 1.0,
+      "threshold": 0.9973222613334656,
+      "tn": 620,
+      "tp": 707
+    },
+    "reason": "met_recall_target_0.95",
+    "threshold": 0.9973222613334656
+  },
+  "stage2_checkpoint": {
+    "committed": false,
+    "exists": true,
+    "sha256": "c5850274a752db91b529119a65fcc19ff90d60a682c2c78f46d7b5b3d0062efb"
+  },
+  "stage2_metrics": {
+    "device": "cuda:0",
+    "input_feature_dim": 2048,
+    "lambda_supcon": 0.1,
+    "no_pair_batches": 156,
+    "qwen_integrity": {
+      "checksums_unchanged": true,
+      "qwen_parameters_modified": false,
+      "representative_checksums_after": {
+        "thinker.audio_tower.layers.0.self_attn.k_proj.bias": -59.839073181152344,
+        "thinker.audio_tower.layers.0.self_attn.k_proj.weight": -6.748814582824707,
+        "thinker.audio_tower.layers.0.self_attn.out_proj.bias": -0.5344572067260742,
+        "thinker.audio_tower.layers.0.self_attn.out_proj.weight": -2.1157467365264893,
+        "thinker.audio_tower.layers.0.self_attn.q_proj.bias": -57.97587585449219,
+        "thinker.audio_tower.layers.0.self_attn.q_proj.weight": -9.140356063842773,
+        "thinker.audio_tower.layers.0.self_attn.v_proj.bias": -1.118425726890564,
+        "thinker.audio_tower.layers.0.self_attn.v_proj.weight": 16.02427101135254
+      },
+      "representative_checksums_before": {
+        "thinker.audio_tower.layers.0.self_attn.k_proj.bias": -59.839073181152344,
+        "thinker.audio_tower.layers.0.self_attn.k_proj.weight": -6.748814582824707,
+        "thinker.audio_tower.layers.0.self_attn.out_proj.bias": -0.5344572067260742,
+        "thinker.audio_tower.layers.0.self_attn.out_proj.weight": -2.1157467365264893,
+        "thinker.audio_tower.layers.0.self_attn.q_proj.bias": -57.97587585449219,
+        "thinker.audio_tower.layers.0.self_attn.q_proj.weight": -9.140356063842773,
+        "thinker.audio_tower.layers.0.self_attn.v_proj.bias": -1.118425726890564,
+        "thinker.audio_tower.layers.0.self_attn.v_proj.weight": 16.02427101135254
+      },
+      "status": "ok",
+      "total_qwen_parameters": 2038052480,
+      "trainable_qwen_parameters": 0
+    },
+    "status": "ok",
+    "test_metrics": {
+      "defined": false,
+      "n": 0
+    },
+    "test_rows": 0,
+    "theta_2": 0.9877771735191345,
+    "threshold_selection": {
+      "metrics": {
+        "auprc": 1.0,
+        "auroc": 1.0,
+        "balanced_accuracy": 0.950268817204301,
+        "f1": 0.9476661951909477,
+        "false_positive_rate": 0.0,
+        "false_reject_rate": 0.09946236559139784,
+        "fn": 74,
+        "fp": 0,
+        "n": 1364,
+        "negative": 620,
+        "positive": 744,
+        "precision": 1.0,
+        "recall": 0.9005376344086021,
+        "specificity": 1.0,
+        "threshold": 0.9877771735191345,
+        "tn": 620,
+        "tp": 670
+      },
+      "reason": "met_recall_target_0.9",
+      "threshold": 0.9877771735191345
+    },
+    "train_rows": 1364,
+    "val_rows": 1364,
+    "variant": "bce_supcon",
+    "verifier_parameters": 561922,
+    "verifier_trainable_parameters": 561922
+  },
+  "stage2_threshold": {
+    "metrics": {
+      "auprc": 1.0,
+      "auroc": 1.0,
+      "balanced_accuracy": 0.950268817204301,
+      "f1": 0.9476661951909477,
+      "false_positive_rate": 0.0,
+      "false_reject_rate": 0.09946236559139784,
+      "fn": 74,
+      "fp": 0,
+      "n": 1364,
+      "negative": 620,
+      "positive": 744,
+      "precision": 1.0,
+      "recall": 0.9005376344086021,
+      "specificity": 1.0,
+      "threshold": 0.9877771735191345,
+      "tn": 620,
+      "tp": 670
+    },
+    "reason": "met_recall_target_0.9",
+    "threshold": 0.9877771735191345
+  },
+  "status": "trained_deployment_candidate_not_scientific_test",
+  "training_policy": "All balanced windows duplicated as train and val for deployment-only final fit/calibration; not a held-out scientific estimate."
+}

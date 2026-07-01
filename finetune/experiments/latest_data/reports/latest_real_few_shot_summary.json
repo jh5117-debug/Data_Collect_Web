@@ -1,0 +1,28 @@
+{
+  "adaptation_recipe": "no_adaptation_zero_shot_fallback",
+  "conditions": {
+    "0": {
+      "f1": 0.9225699943498468,
+      "false_positive_rate": 0.0046875,
+      "precision": 0.9913626309792444,
+      "recall": 0.8653316231711301
+    },
+    "3": {
+      "f1": 0.9175142316828513,
+      "false_positive_rate": 0.004545454545454545,
+      "precision": 0.9923076923076923,
+      "recall": 0.8505312779196801
+    },
+    "5": {
+      "f1": 0.9278570664199073,
+      "false_positive_rate": 0.004838709677419355,
+      "precision": 0.9903743315508021,
+      "recall": 0.8810868294065446
+    }
+  },
+  "eligible": {
+    "3": 33,
+    "5": 31
+  },
+  "status": "ok"
+}

@@ -1,0 +1,12 @@
+{
+  "status": "blocked_until_final_model_locked",
+  "stress_summary": {
+    "final_false_accepts": 0,
+    "final_false_accepts_per_hour": 0.0,
+    "stage1_candidates": 0,
+    "stage1_candidates_per_hour": 0.0,
+    "total_audio_hours": 0.0002777777777777778,
+    "total_windows": 0,
+    "utterances": 0
+  }
+}

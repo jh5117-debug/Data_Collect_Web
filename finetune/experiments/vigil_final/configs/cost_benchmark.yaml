@@ -1,0 +1,10 @@
+seed: 20260625
+warmup_runs: 10
+measured_runs: 100
+window_seconds: 2.0
+stride_seconds: 0.25
+systems:
+  - qwen_transcript_keyword
+  - qwen_plus_stage1
+  - qwen_plus_stage1_plus_stage2_separate_encoder
+  - qwen_plus_stage1_plus_stage2_shared_encoder

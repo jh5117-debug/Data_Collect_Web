@@ -1,0 +1,57 @@
+{
+  "device": "cuda:0",
+  "false_accepts_per_hour": 0.0,
+  "final_false_accepts": 0,
+  "metrics_if_treated_as_all_negative": {
+    "balanced_accuracy": null,
+    "f1": null,
+    "false_positive_rate": 0.0,
+    "false_reject_rate": null,
+    "fn": 0,
+    "fp": 0,
+    "n": 40,
+    "negative": 40,
+    "positive": 0,
+    "precision": null,
+    "recall": null,
+    "specificity": 1.0,
+    "tn": 40,
+    "tp": 0
+  },
+  "model_fold": 0,
+  "peak_allocated_gb": 3.8343043327331543,
+  "qwen_extraction_path": "model.thinker.get_audio_features",
+  "split_summary": {
+    "test-clean": {
+      "audio_hours": 0.04346390625,
+      "false_accepts": 0,
+      "false_accepts_per_hour": 0.0,
+      "stage1_candidates": 65,
+      "stage2_invocations": 15,
+      "utterances": 20,
+      "windows": 475
+    },
+    "test-other": {
+      "audio_hours": 0.037934722222222224,
+      "false_accepts": 0,
+      "false_accepts_per_hour": 0.0,
+      "stage1_candidates": 103,
+      "stage2_invocations": 15,
+      "utterances": 20,
+      "windows": 398
+    }
+  },
+  "stage1_candidates": 168,
+  "stage1_candidates_per_hour": 2063.9168393031464,
+  "stage2_invocations": 30,
+  "status": "subset",
+  "stride_seconds": 0.25,
+  "theta1": 0.7425956130027771,
+  "theta2": 0.8510254621505737,
+  "top_k": 1,
+  "total_audio_hours": 0.08139862847222222,
+  "total_windows": 873,
+  "utterances": 40,
+  "variant": "stage2_bce_supcon",
+  "window_seconds": 2.0
+}

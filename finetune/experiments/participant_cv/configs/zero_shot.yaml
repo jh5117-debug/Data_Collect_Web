@@ -1,0 +1,14 @@
+seed: 20260620
+top_k_candidates: 3
+stage1:
+  recall_target: 0.9
+  epochs: 13
+  median_epoch_policy: inner_best_epoch_median
+stage2:
+  recall_target: 0.9
+  variants:
+    - bce
+    - bce_supcon
+validation_selected_priority:
+  recall_target: 0.9
+  fpr_safety_first: true

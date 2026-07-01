@@ -1,0 +1,88 @@
+{
+  "qwen_asr_text_policy": "text is only language prefix plus transcript; labels/prompt metadata are excluded",
+  "rows": 1636,
+  "source_manifest": "/home/hj/Data_Collect_Web/finetune/data/processed/2b78e211183d47fb/manifest_all.jsonl",
+  "splits": {
+    "test": {
+      "kws_fields": [
+        "audio",
+        "transcript",
+        "label",
+        "prompt_group",
+        "phrase_id",
+        "participant_alias",
+        "split",
+        "clip_id"
+      ],
+      "label_counts": {
+        "0": 93,
+        "1": 96
+      },
+      "prompt_counts": {
+        "P1_vigil_only": 12,
+        "P2_phrase_plus_vigil": 49,
+        "P3_vigil_plus_phrase": 35,
+        "P4_negative": 93
+      },
+      "qwen_fields": [
+        "audio",
+        "text"
+      ],
+      "rows": 189
+    },
+    "train": {
+      "kws_fields": [
+        "audio",
+        "transcript",
+        "label",
+        "prompt_group",
+        "phrase_id",
+        "participant_alias",
+        "split",
+        "clip_id"
+      ],
+      "label_counts": {
+        "0": 504,
+        "1": 673
+      },
+      "prompt_counts": {
+        "P1_vigil_only": 113,
+        "P2_phrase_plus_vigil": 339,
+        "P3_vigil_plus_phrase": 221,
+        "P4_negative": 504
+      },
+      "qwen_fields": [
+        "audio",
+        "text"
+      ],
+      "rows": 1177
+    },
+    "val": {
+      "kws_fields": [
+        "audio",
+        "transcript",
+        "label",
+        "prompt_group",
+        "phrase_id",
+        "participant_alias",
+        "split",
+        "clip_id"
+      ],
+      "label_counts": {
+        "0": 115,
+        "1": 155
+      },
+      "prompt_counts": {
+        "P1_vigil_only": 46,
+        "P2_phrase_plus_vigil": 72,
+        "P3_vigil_plus_phrase": 37,
+        "P4_negative": 115
+      },
+      "qwen_fields": [
+        "audio",
+        "text"
+      ],
+      "rows": 270
+    }
+  }
+}

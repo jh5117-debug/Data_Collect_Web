@@ -1,0 +1,32 @@
+{
+  "components": [
+    {
+      "component": "stage1_head",
+      "mean_ms": 4.363952353596687,
+      "median_ms": 0.8454932831227779,
+      "n": 50,
+      "p95_ms": 1.0746415704488745,
+      "peak_allocated_gb": 0.012576580047607422
+    },
+    {
+      "component": "stage2_head",
+      "mean_ms": 3.273301348090172,
+      "median_ms": 0.45637600123882294,
+      "n": 50,
+      "p95_ms": 0.48366887494921684,
+      "peak_allocated_gb": 0.013738632202148438
+    }
+  ],
+  "device": "cuda:0",
+  "limitations": "Full Qwen ASR/audio-encoder forward latency and full cascade cost were not measured in this run.",
+  "stage1_parameters": {
+    "frozen": 0,
+    "total": 56321,
+    "trainable": 56321
+  },
+  "stage2_parameters": {
+    "total": 561922,
+    "trainable": 561922
+  },
+  "status": "partial_head_benchmark"
+}

@@ -1,0 +1,4 @@
+seed: 20260625
+bundle_root: finetune/experiments/vigil_final/bundles
+include_qwen_weights: false
+model_kind: final_deployment_candidate_not_scientific_test

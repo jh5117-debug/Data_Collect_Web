@@ -1,0 +1,121 @@
+{
+  "balanced_reference": {
+    "folds_completed": 5,
+    "methods": {
+      "qwen_exact": {
+        "balanced_accuracy": {
+          "mean": 0.8094544438898971,
+          "std": 0.08805952244376465
+        },
+        "f1": {
+          "mean": 0.7514269798385881,
+          "std": 0.15181692467328248
+        },
+        "false_positive_rate": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "precision": {
+          "mean": 1.0,
+          "std": 0.0
+        },
+        "recall": {
+          "mean": 0.618908887779794,
+          "std": 0.1761190448875293
+        }
+      },
+      "stage1_only": {
+        "balanced_accuracy": {
+          "mean": 0.951471797650155,
+          "std": 0.021015926722538835
+        },
+        "f1": {
+          "mean": 0.9563671267995225,
+          "std": 0.017066088053652083
+        },
+        "false_positive_rate": {
+          "mean": 0.052845756718743635,
+          "std": 0.036537261820575304
+        },
+        "precision": {
+          "mean": 0.9573360226352112,
+          "std": 0.02898866978403837
+        },
+        "recall": {
+          "mean": 0.9557893520190536,
+          "std": 0.014228801212760347
+        }
+      },
+      "stage2_bce": {
+        "balanced_accuracy": {
+          "mean": 0.9377467787209918,
+          "std": 0.027339528916231457
+        },
+        "f1": {
+          "mean": 0.9340384955935721,
+          "std": 0.030333158005776004
+        },
+        "false_positive_rate": {
+          "mean": 0.005357142857142857,
+          "std": 0.011978935593748873
+        },
+        "precision": {
+          "mean": 0.9954887218045113,
+          "std": 0.01008752471052539
+        },
+        "recall": {
+          "mean": 0.8808507002991264,
+          "std": 0.051539690834711306
+        }
+      },
+      "stage2_bce_supcon": {
+        "balanced_accuracy": {
+          "mean": 0.9423686755652645,
+          "std": 0.04810172564936382
+        },
+        "f1": {
+          "mean": 0.9364677067795163,
+          "std": 0.05820039316397974
+        },
+        "false_positive_rate": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "precision": {
+          "mean": 1.0,
+          "std": 0.0
+        },
+        "recall": {
+          "mean": 0.8847373511305291,
+          "std": 0.09620345129872765
+        }
+      },
+      "validation_selected": {
+        "balanced_accuracy": {
+          "mean": 0.9250920168162299,
+          "std": 0.04595107325201561
+        },
+        "f1": {
+          "mean": 0.9168298775352477,
+          "std": 0.055312457709305436
+        },
+        "false_positive_rate": {
+          "mean": 0.0,
+          "std": 0.0
+        },
+        "precision": {
+          "mean": 1.0,
+          "std": 0.0
+        },
+        "recall": {
+          "mean": 0.8501840336324596,
+          "std": 0.09190214650403122
+        }
+      }
+    },
+    "status": "ok"
+  },
+  "full_unbalanced": null,
+  "reason": "Full unbalanced latest-data ablation was not launched in this run.",
+  "status": "not_run"
+}

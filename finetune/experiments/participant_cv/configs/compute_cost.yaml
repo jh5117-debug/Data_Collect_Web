@@ -1,0 +1,9 @@
+warmup_runs: 3
+measurement_runs: 20
+subset_seed: 20260620
+subset_min_per_prompt: 5
+systems:
+  - qwen_transcript_keyword
+  - stage1_only_parallel_asr
+  - two_stage_extra_encoder
+  - shared_hidden_state_feasibility

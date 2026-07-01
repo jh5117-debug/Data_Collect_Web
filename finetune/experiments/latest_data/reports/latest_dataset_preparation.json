@@ -1,0 +1,327 @@
+{
+  "dataset_dir": "/home/hj/Data_Collect_Web/finetune/data/processed/2b78e211183d47fb",
+  "dataset_report": {
+    "canonical_metadata_rows": 1673,
+    "config": {
+      "audio": {
+        "channels": 1,
+        "sample_rate": 16000,
+        "sample_width_bits": 16,
+        "streaming_chunk_ms": 80,
+        "window_seconds": 2.0
+      },
+      "data": {
+        "duplicate_hash_grouping": true,
+        "hard_negative_phrases": [
+          "visual",
+          "visuals",
+          "visible",
+          "digital",
+          "individual",
+          "vigilant",
+          "video",
+          "vital",
+          "residual"
+        ],
+        "speaker_split": true,
+        "synthetic_enabled": false
+      },
+      "runtime": {
+        "max_gpus": 1,
+        "qwen_extraction_batch_size": 1,
+        "smoke_mode": false,
+        "use_bfloat16_when_supported": true,
+        "use_cloud_logging": false
+      },
+      "seed": 20260620,
+      "stage1": {
+        "allow_acoustic_fallback_when_openwakeword_missing": false,
+        "batch_size": 32,
+        "dropout": 0.1,
+        "early_stopping_patience": 5,
+        "epochs": 20,
+        "feature_backend": "openwakeword",
+        "gradient_clip_norm": 5.0,
+        "gru_hidden_size": 64,
+        "gru_layers": 2,
+        "learning_rate": 0.001,
+        "recall_target": 0.95,
+        "weight_decay": 0.0001
+      },
+      "stage2": {
+        "allow_skip_without_gpu": false,
+        "batch_size": 8,
+        "early_stopping_patience": 5,
+        "embedding_dim": 128,
+        "epochs": 20,
+        "gradient_clip_norm": 5.0,
+        "lambda_supcon": 0.1,
+        "learning_rate": 0.0003,
+        "model_name": "Qwen/Qwen3-ASR-1.7B",
+        "projection_dim": 256,
+        "recall_target": 0.9,
+        "temperature": 0.07,
+        "weight_decay": 0.0001
+      }
+    },
+    "dataset_fingerprint": "2b78e211183d47fb",
+    "duplicate_audio_leakage_free": true,
+    "duplicate_original_audio_hashes": {
+      "12735f466be7fa13c2498d0ca92a6e3ffa010bff9ddb2cab1dc733ae477f3ed0": [
+        "C001082",
+        "C001095"
+      ],
+      "1f6cf0a86de50aee0d85916c5250f8e2b4a9fb9cc91623ecd9496dc457b3b46e": [
+        "C001081",
+        "C001094"
+      ],
+      "20d088a2b7d0d06bd00d4a60717d930301e890571d2d56bad8e71963d2255015": [
+        "C001083",
+        "C001096"
+      ],
+      "28492a3a5a9eba813a0cdc18abbb3e29fd6938adefae0d7ac3168bf7713e8118": [
+        "C001078",
+        "C001091"
+      ],
+      "2ca889f273411323f5d398d2627dfb0e14695489e7708adc45ded96eece24fbd": [
+        "C000442",
+        "C000450"
+      ],
+      "3b3b86f9ceee209aee800fed68caec7f747d99bc6fbfdd67bffffa35b3eeb9a5": [
+        "C000444",
+        "C000452"
+      ],
+      "5492368ed70fe627cf3395b24cb573a2fafc1e7b901178d539710ad35c665f6f": [
+        "C001076",
+        "C001089"
+      ],
+      "6f004e89c50389902ba17fc391e553c82f9d0625284a7bc920a76ddf0497c22e": [
+        "C000438",
+        "C000446"
+      ],
+      "7b4785d3465da4e76f865cc2f8362ecbb8c182d1da83eeb2d5b6f63fb600676a": [
+        "C001084",
+        "C001097"
+      ],
+      "820b0d5335c7f4917d79b85a173b65789755729a574f99ef0f864d6318f40d24": [
+        "C000440",
+        "C000448"
+      ],
+      "8f5b651cfcdd346a26abb4484cf14549605204417c202e4f523b740a3d488715": [
+        "C000439",
+        "C000447"
+      ],
+      "93811cfc281981ef74d375ea9eda5b89a93bdb82298d4a6219f5dd397827877e": [
+        "C000441",
+        "C000449"
+      ],
+      "9e7e0ed87de4cf20844b630092849eb07f3ee412a4a478026ca8a7e9f2078622": [
+        "C000445",
+        "C000453"
+      ],
+      "b4832d28ec1b0d5653cd56148e27640d1916327b0ba8e73476fc662f4d835495": [
+        "C001086",
+        "C001099"
+      ],
+      "bf8e70999b6525da0c913988d365d026faf946ff4b15757df1c30d58c1afd98c": [
+        "C001079",
+        "C001092"
+      ],
+      "c5ffe4f8de202217d13fc6f8eca89cf59dc75fa31ae31c723b9f8c2ae9c49eda": [
+        "C001077",
+        "C001090"
+      ],
+      "d18247df5b7d4e7ed4cc7a13e7849185d668bb004485cb18b99f14e746ecb729": [
+        "C001085",
+        "C001098"
+      ],
+      "ddadd2a89d0ff078edf13ae12dd0ee777a8d54486e16e5f727a6898b0652ce3d": [
+        "C001080",
+        "C001093"
+      ],
+      "f5c1b9d4af0bb91a4921c750489b573963f67b48802abf4e6f1df3d2df4c1def": [
+        "C000443",
+        "C000451"
+      ],
+      "fa0aa7f54e2b611a9289c4e6bfd51630b3b82ff9a8f7e9762115b9036cf54342": [
+        "C001088",
+        "C001101"
+      ],
+      "ffdf0406794bbd68d2dff62204e6832aa4f7728b97bfb6bdc08c2ba41a3f47d0": [
+        "C001087",
+        "C001100"
+      ]
+    },
+    "label_counts": {
+      "0": 712,
+      "1": 924
+    },
+    "manifest_windows": 1636,
+    "prompt_group_counts": {
+      "P1_vigil_only": 171,
+      "P2_phrase_plus_vigil": 460,
+      "P3_vigil_plus_phrase": 293,
+      "P4_negative": 712
+    },
+    "rejected_or_inconsistent": 55,
+    "source_zip": "finetune/data/vigil_dataset_export_latest_readonly_20260626_042151.zip",
+    "speaker_leakage_free": true,
+    "split_report": {
+      "clips_by_split": {
+        "test": 189,
+        "train": 1177,
+        "val": 270
+      },
+      "labels_by_split": {
+        "test": {
+          "0": 93,
+          "1": 96
+        },
+        "train": {
+          "0": 504,
+          "1": 673
+        },
+        "val": {
+          "0": 115,
+          "1": 155
+        }
+      },
+      "speaker_count": 37,
+      "speakers_by_split": {
+        "test": [
+          "spk_396dca7c0462",
+          "spk_75b46ea24cd7",
+          "spk_90308cec11df",
+          "spk_9aa0646a4545",
+          "spk_d0293b0cd6db"
+        ],
+        "train": [
+          "spk_11c47747d69a",
+          "spk_1e69b87fa11b",
+          "spk_25398f74e678",
+          "spk_2836a3f169c4",
+          "spk_2eee72e862bb",
+          "spk_30ef9078d826",
+          "spk_34dcb9c8b49c",
+          "spk_36b4d3e231ce",
+          "spk_3deb871230ba",
+          "spk_3f298991ad66",
+          "spk_3f800201dce5",
+          "spk_4f7a734462e0",
+          "spk_6535d266c677",
+          "spk_70487a61dfc0",
+          "spk_734155410093",
+          "spk_7dc9e8eccb35",
+          "spk_8f8b88a67ea1",
+          "spk_a6a789cc4128",
+          "spk_e01d327bb5ce",
+          "spk_e8265595f37f",
+          "spk_e99905cdf494",
+          "spk_f0e9f0d3fc3f",
+          "spk_f158f01c168c",
+          "spk_f9b6c8b7f391",
+          "spk_fe95483a3e5d",
+          "spk_ffb71aefe54e"
+        ],
+        "val": [
+          "spk_0c5ed6d4f618",
+          "spk_36e324922225",
+          "spk_82b1f89ded45",
+          "spk_8efb922a4040",
+          "spk_b910d750c22b",
+          "spk_e98c4f8468e2"
+        ]
+      },
+      "split_mode": "speaker_disjoint"
+    },
+    "zip_sha256": "e2e38518d6725449653138e0ee484c4b5903467e418e8968d4b98ada5fd41701"
+  },
+  "qwen_kws_manifest_summary": {
+    "qwen_asr_text_policy": "text is only language prefix plus transcript; labels/prompt metadata are excluded",
+    "rows": 1636,
+    "source_manifest": "/home/hj/Data_Collect_Web/finetune/data/processed/2b78e211183d47fb/manifest_all.jsonl",
+    "splits": {
+      "test": {
+        "kws_fields": [
+          "audio",
+          "transcript",
+          "label",
+          "prompt_group",
+          "phrase_id",
+          "participant_alias",
+          "split",
+          "clip_id"
+        ],
+        "label_counts": {
+          "0": 93,
+          "1": 96
+        },
+        "prompt_counts": {
+          "P1_vigil_only": 12,
+          "P2_phrase_plus_vigil": 49,
+          "P3_vigil_plus_phrase": 35,
+          "P4_negative": 93
+        },
+        "qwen_fields": [
+          "audio",
+          "text"
+        ],
+        "rows": 189
+      },
+      "train": {
+        "kws_fields": [
+          "audio",
+          "transcript",
+          "label",
+          "prompt_group",
+          "phrase_id",
+          "participant_alias",
+          "split",
+          "clip_id"
+        ],
+        "label_counts": {
+          "0": 504,
+          "1": 673
+        },
+        "prompt_counts": {
+          "P1_vigil_only": 113,
+          "P2_phrase_plus_vigil": 339,
+          "P3_vigil_plus_phrase": 221,
+          "P4_negative": 504
+        },
+        "qwen_fields": [
+          "audio",
+          "text"
+        ],
+        "rows": 1177
+      },
+      "val": {
+        "kws_fields": [
+          "audio",
+          "transcript",
+          "label",
+          "prompt_group",
+          "phrase_id",
+          "participant_alias",
+          "split",
+          "clip_id"
+        ],
+        "label_counts": {
+          "0": 115,
+          "1": 155
+        },
+        "prompt_counts": {
+          "P1_vigil_only": 46,
+          "P2_phrase_plus_vigil": 72,
+          "P3_vigil_plus_phrase": 37,
+          "P4_negative": 115
+        },
+        "qwen_fields": [
+          "audio",
+          "text"
+        ],
+        "rows": 270
+      }
+    }
+  }
+}

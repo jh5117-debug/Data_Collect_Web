@@ -1,0 +1,31 @@
+protocol_version: participant_cv_fewshot_v1
+dataset_fingerprint: 0fad4c7828149099
+seed: 20260620
+max_clips_per_participant: 100
+fold_count: 5
+fold_objective_weights:
+  participants: 5.0
+  clips: 3.0
+  positive: 2.0
+  negative: 2.0
+  P1_vigil_only: 1.0
+  P2_phrase_plus_vigil: 1.0
+  P3_vigil_plus_phrase: 1.0
+  P4_negative: 1.0
+outer_protocol:
+  test_fold_count: 1
+  development_fold_count: 4
+  nested_inner_validation_folds: 4
+  no_outer_test_for_threshold_selection: true
+selection_priority:
+  - satisfy_development_recall_target
+  - minimize_development_p4_false_positive_rate
+  - maximize_development_precision
+  - maximize_development_f1
+  - lower_latency
+privacy:
+  alias_rule: sorted_unique_speaker_id_to_P001
+  public_artifacts_use_aliases_only: true
+duplicate_policy:
+  exclude_cross_participant_exact_duplicates: true
+  keep_one_canonical_within_participant_duplicate: true

@@ -1,0 +1,6 @@
+{
+  "reason": "Prototype/gradient adaptation was not selected; paired support-set report uses no-adaptation fallback, so 3-shot/5-shot changes reflect query composition only and are not an adaptation improvement claim.",
+  "safe_improvement_found": false,
+  "selected_recipe": "no_adaptation_zero_shot_fallback",
+  "status": "ok"
+}

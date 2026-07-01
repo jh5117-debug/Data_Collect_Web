@@ -1,0 +1,5 @@
+{
+  "include_qwen_weights": false,
+  "model_kind": "final_deployment_candidate_not_scientific_test",
+  "status": "blocked_until_research_choices_frozen"
+}

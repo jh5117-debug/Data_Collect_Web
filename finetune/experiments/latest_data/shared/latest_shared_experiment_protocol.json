@@ -1,0 +1,127 @@
+{
+  "balanced_manifest_sha256": "549134e307f21470cb942acd44c2c27d2b29fcaa8527b9e7f8e2722e3232b58e",
+  "cap_rule": {
+    "max_clips_per_participant": 100,
+    "unit": "clip_id"
+  },
+  "code_git_commit": "4b36f798c8c1fe819abb2579b165685fe3347ae7",
+  "dataset_fingerprint": "2b78e211183d47fb",
+  "fold_definition_sha256": "7c1c65da28f87922f111ee1549b61c053323fc876d2cd26346544de0b37b2a5e",
+  "fold_generation_algorithm": "deterministic_multistart_greedy_v1",
+  "fold_seed": 20260620,
+  "folds": [
+    {
+      "clips": 262,
+      "fold": 0,
+      "negative": 112,
+      "participant_aliases": [
+        "P012",
+        "P020",
+        "P021",
+        "P022",
+        "P030",
+        "P034",
+        "P035"
+      ],
+      "participants": 7,
+      "positive": 150,
+      "prompt_counts": {
+        "P1_vigil_only": 44,
+        "P2_phrase_plus_vigil": 68,
+        "P3_vigil_plus_phrase": 38,
+        "P4_negative": 112
+      }
+    },
+    {
+      "clips": 277,
+      "fold": 1,
+      "negative": 123,
+      "participant_aliases": [
+        "P002",
+        "P007",
+        "P011",
+        "P014",
+        "P016",
+        "P017",
+        "P027",
+        "P033"
+      ],
+      "participants": 8,
+      "positive": 154,
+      "prompt_counts": {
+        "P1_vigil_only": 21,
+        "P2_phrase_plus_vigil": 78,
+        "P3_vigil_plus_phrase": 55,
+        "P4_negative": 123
+      }
+    },
+    {
+      "clips": 264,
+      "fold": 2,
+      "negative": 113,
+      "participant_aliases": [
+        "P001",
+        "P003",
+        "P004",
+        "P006",
+        "P008",
+        "P026",
+        "P036"
+      ],
+      "participants": 7,
+      "positive": 151,
+      "prompt_counts": {
+        "P1_vigil_only": 27,
+        "P2_phrase_plus_vigil": 74,
+        "P3_vigil_plus_phrase": 50,
+        "P4_negative": 113
+      }
+    },
+    {
+      "clips": 270,
+      "fold": 3,
+      "negative": 124,
+      "participant_aliases": [
+        "P005",
+        "P010",
+        "P018",
+        "P028",
+        "P031",
+        "P032",
+        "P037"
+      ],
+      "participants": 7,
+      "positive": 146,
+      "prompt_counts": {
+        "P1_vigil_only": 27,
+        "P2_phrase_plus_vigil": 77,
+        "P3_vigil_plus_phrase": 42,
+        "P4_negative": 124
+      }
+    },
+    {
+      "clips": 273,
+      "fold": 4,
+      "negative": 130,
+      "participant_aliases": [
+        "P009",
+        "P013",
+        "P015",
+        "P019",
+        "P023",
+        "P024",
+        "P025",
+        "P029"
+      ],
+      "participants": 8,
+      "positive": 143,
+      "prompt_counts": {
+        "P1_vigil_only": 29,
+        "P2_phrase_plus_vigil": 68,
+        "P3_vigil_plus_phrase": 46,
+        "P4_negative": 130
+      }
+    }
+  ],
+  "protocol_version": "latest_data_v1"
+}
