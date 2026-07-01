@@ -39,3 +39,13 @@ On the latest dataset, we have 1618 valid clips from 37 balanced participants. W
 - Long-speech report committed here is a subset, not the full LibriSpeech test-clean/test-other stress test.
 - Full-unbalanced ablation is heads-only because full-unbalanced Qwen transcript cache was not generated.
 - Final model bundle is for deployment/future blind test only, not a new held-out scientific score.
+
+## Current Frozen-Qwen LibriSpeech Benchmark
+
+LibriSpeech has been completed for the frozen base Qwen branch. It is not a new fine-tuned Qwen benchmark because Qwen is not fine-tuned in the current method.
+
+- test-clean WER: 1.8411%
+- test-other WER: 3.6662%
+- combined normalized WER: 2.7516%
+- successes/failures: `5559` / `0`
+- text extraction path: `['$[0].text']`
