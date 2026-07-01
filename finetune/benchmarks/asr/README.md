@@ -98,14 +98,14 @@ cd /home/hj/Data_Collect_Web
 bash finetune/benchmarks/asr/scripts/run_librispeech_full.sh \
   6 \
   Qwen/Qwen3-ASR-1.7B \
-  qwen3_asr_1_7b_baseline
+  qwen3_asr_1_7b_fixed_text_extraction_baseline
 ```
 
 tmux:
 
 ```bash
-tmux new -d -s librispeech_qwen_full \
-  'cd /home/hj/Data_Collect_Web && bash finetune/benchmarks/asr/scripts/run_librispeech_full.sh 6 Qwen/Qwen3-ASR-1.7B qwen3_asr_1_7b_baseline'
+tmux new -d -s librispeech_qwen_fixed_full \
+  'cd /home/hj/Data_Collect_Web && bash finetune/benchmarks/asr/scripts/run_librispeech_full.sh 6 Qwen/Qwen3-ASR-1.7B qwen3_asr_1_7b_fixed_text_extraction_baseline'
 ```
 
 ## Strict Runtime Rules
@@ -119,6 +119,70 @@ The launchers fail instead of silently falling back when:
 - the runner would need CPU execution
 
 The runner uses `model.eval()` and `torch.inference_mode()`. Qwen weights are not updated.
+
+## Qwen Transcript Result Extraction
+
+The installed `qwen_asr` runtime returns:
+
+```text
+list[qwen_asr.inference.qwen3_asr.ASRTranscription]
+```
+
+For the public `transcribe(path, language=None)` call, the observed transcript path is:
+
+```text
+$[0].text
+```
+
+`ASRTranscription` also contains metadata such as `language` and `time_stamps`. The benchmark must extract the explicit `.text` field and must never use `str(result)` as a successful transcript. A previous extractor did use `str(result)`, which stored strings like `ASRTranscription(language=..., text=..., time_stamps=None)` and invalidated the resulting WER.
+
+The shared extractor is:
+
+```text
+finetune/src/vigil_two_stage/qwen_text_result.py
+```
+
+It records `text_extraction_path` and `result_type` per prediction and rejects clear Python object repr patterns.
+
+## Current Corrected Results
+
+Corrected smoke:
+
+```text
+run: /home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_185009_qwen3_asr_1_7b_fixed_text_extraction_smoke_smoke
+successes: 64
+failures: 0
+normalized WER: 0.037165082108902334
+test-clean normalized WER: 0.015455950540958269
+test-other normalized WER: 0.06470588235294118
+malformed hypotheses: 0
+```
+
+Corrected full LibriSpeech:
+
+```text
+run: /home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_185419_qwen3_asr_1_7b_fixed_text_extraction_baseline_full
+successes: 5559
+failures: 0
+combined normalized WER: 0.02751646508258752
+test-clean normalized WER: 0.018411442483262326
+test-other normalized WER: 0.03666201784383776
+normalized CER: 0.009904616200632524
+raw WER: 0.9862560642019081
+malformed hypotheses: 0
+```
+
+Do not compare the raw WER directly to normalized WER; raw scoring includes case and punctuation differences.
+
+## Invalid Historical Run
+
+This historical run is preserved for provenance only:
+
+```text
+/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_090118_qwen3_asr_1_7b_baseline_full
+```
+
+Its stored hypotheses were structured `ASRTranscription(...)` repr strings, not clean transcripts. Its old normalized WER `0.40069005613854497` is invalid for scientific reporting.
 
 ## Outputs
 

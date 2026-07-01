@@ -81,20 +81,20 @@ def character_error_rate(
     hypotheses: Iterable[str],
     normalizer: Callable[[str], str] | None = None,
 ) -> float | None:
-    ref_chars = []
-    hyp_chars = []
+    total_errors = 0
+    total_reference_chars = 0
     for ref, hyp in zip(references, hypotheses, strict=True):
         if normalizer is not None:
             ref = normalizer(ref)
             hyp = normalizer(hyp)
-        ref_chars.append(" ".join(ref.split()))
-        hyp_chars.append(" ".join(hyp.split()))
-    joined_ref = "\n".join(ref_chars)
-    joined_hyp = "\n".join(hyp_chars)
-    if not joined_ref:
+        ref_text = " ".join(ref.split())
+        hyp_text = " ".join(hyp.split())
+        s, d, i = _levenshtein_counts(list(ref_text), list(hyp_text))
+        total_errors += s + d + i
+        total_reference_chars += len(ref_text)
+    if not total_reference_chars:
         return None
-    s, d, i = _levenshtein_counts(list(joined_ref), list(joined_hyp))
-    return (s + d + i) / len(joined_ref)
+    return total_errors / total_reference_chars
 
 
 def score_pairs(

@@ -1,0 +1,545 @@
+{
+  "run_dir": "/home/hj/Data_Collect_Web/finetune/benchmarks/asr/runs/20260624_185419_qwen3_asr_1_7b_fixed_text_extraction_baseline_full",
+  "log_path": "/home/hj/Data_Collect_Web/finetune/benchmarks/asr/logs/librispeech_full_20260624_185419_gpu6.log",
+  "prediction_rows": 5559,
+  "status_counts": {
+    "success": 5559
+  },
+  "failure_lines": 0,
+  "duplicate_ids": 0,
+  "manifest_id_set_equal": true,
+  "manifest_sorted_order_equal": false,
+  "split_counts": {
+    "test-clean": 2620,
+    "test-other": 2939
+  },
+  "malformed_hypotheses": 0,
+  "empty_hypotheses": 0,
+  "text_extraction_paths": [
+    "$[0].text"
+  ],
+  "result_types": [
+    "qwen_asr.inference.qwen3_asr.ASRTranscription"
+  ],
+  "metrics": {
+    "normalized": {
+      "cer": 0.009904616200632524,
+      "deletions": 330,
+      "exact_match_rate": 0.7019248066198956,
+      "insertions": 220,
+      "reference_words": 104919,
+      "sentence_error_rate": 0.29807519338010435,
+      "sentence_errors": 1657,
+      "substitutions": 2337,
+      "total_sentences": 5559,
+      "wer": 0.02751646508258752
+    },
+    "raw": {
+      "cer": 0.8298736396963311,
+      "deletions": 552,
+      "exact_match_rate": 0.0,
+      "insertions": 190,
+      "reference_words": 104919,
+      "sentence_error_rate": 1.0,
+      "sentence_errors": 5559,
+      "substitutions": 102735,
+      "total_sentences": 5559,
+      "wer": 0.9862560642019081
+    },
+    "per_split": {
+      "test-clean": {
+        "cer": 0.005896352076155294,
+        "deletions": 129,
+        "exact_match_rate": 0.76793893129771,
+        "insertions": 66,
+        "reference_words": 52576,
+        "sentence_error_rate": 0.23206106870229007,
+        "sentence_errors": 608,
+        "substitutions": 773,
+        "total_sentences": 2620,
+        "wer": 0.018411442483262326
+      },
+      "test-other": {
+        "cer": 0.01404180277683066,
+        "deletions": 201,
+        "exact_match_rate": 0.6430758761483498,
+        "insertions": 154,
+        "reference_words": 52343,
+        "sentence_error_rate": 0.35692412385165023,
+        "sentence_errors": 1049,
+        "substitutions": 1564,
+        "total_sentences": 2939,
+        "wer": 0.03666201784383776
+      }
+    },
+    "latency": {
+      "count": 5559,
+      "max_latency_sec": 4.118972009979188,
+      "max_peak_gpu_memory_gb": 4.068508625030518,
+      "mean_latency_sec": 0.8252335609613517,
+      "mean_real_time_factor": 0.12895818722681018,
+      "median_latency_sec": 0.694949496537447
+    }
+  },
+  "total_audio_duration_sec": 38682.05075,
+  "total_inference_time_sec": 4587.473365384154,
+  "random_test_clean_examples": [
+    {
+      "id": "7176-88083-0023",
+      "split": "test-clean",
+      "reference": "HE HAD A LOT OF LINE OUT AND THE PLACE WAS NONE TOO FREE FOR A LONG CAST BUT HE WAS IMPATIENT TO DROP HIS FLIES AGAIN ON THE SPOT WHERE THE BIG FISH WAS FEEDING",
+      "hypothesis": "He had a lot of line out, and the place was none too free for a long cast. But he was impatient to drop his flies again on the spot where the big fish was feeding.",
+      "normalized_reference": "he had a lot of line out and the place was none too free for a long cast but he was impatient to drop his flies again on the spot where the big fish was feeding",
+      "normalized_hypothesis": "he had a lot of line out and the place was none too free for a long cast but he was impatient to drop his flies again on the spot where the big fish was feeding",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "5142-36377-0025",
+      "split": "test-clean",
+      "reference": "SILAS SLUNK AWAY WITHOUT A WORD OF PROTEST AMBROSE STOOD HIS GROUND EVIDENTLY BENT ON MAKING HIS PEACE WITH NAOMI BEFORE HE LEFT HER SEEING THAT I WAS IN THE WAY I WALKED ASIDE TOWARD A GLASS DOOR AT THE LOWER END OF THE ROOM",
+      "hypothesis": "Silas slunk away without a word of protest. Ambrose stood his ground, evidently bent on making his peace with Naomi before he left her. Seeing that I was in the way, I walked aside toward a glass door at the lower end of the room.",
+      "normalized_reference": "silas slunk away without a word of protest ambrose stood his ground evidently bent on making his peace with naomi before he left her seeing that i was in the way i walked aside toward a glass door at the lower end of the room",
+      "normalized_hypothesis": "silas slunk away without a word of protest ambrose stood his ground evidently bent on making his peace with naomi before he left her seeing that i was in the way i walked aside toward a glass door at the lower end of the room",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "4507-16021-0003",
+      "split": "test-clean",
+      "reference": "SHE HAS A SON THEFT AND A DAUGHTER HUNGER",
+      "hypothesis": "She has a son, theft, and a daughter, hunger.",
+      "normalized_reference": "she has a son theft and a daughter hunger",
+      "normalized_hypothesis": "she has a son theft and a daughter hunger",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "2094-142345-0054",
+      "split": "test-clean",
+      "reference": "OH SIR SAID MISSUS POYSER RATHER ALARMED YOU WOULDN'T LIKE IT AT ALL",
+      "hypothesis": "Oh, sir,\" said Mrs. Poyser, rather alarmed. \"You wouldn't like it at all.\"",
+      "normalized_reference": "oh sir said missus poyser rather alarmed you wouldn't like it at all",
+      "normalized_hypothesis": "oh sir said mrs poyser rather alarmed you wouldn't like it at all",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.07692307692307693
+    },
+    {
+      "id": "121-127105-0010",
+      "split": "test-clean",
+      "reference": "SHE SENT ME THE PAGES IN QUESTION BEFORE SHE DIED",
+      "hypothesis": "She sent me the pages in question before she died.",
+      "normalized_reference": "she sent me the pages in question before she died",
+      "normalized_hypothesis": "she sent me the pages in question before she died",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "2094-142345-0021",
+      "split": "test-clean",
+      "reference": "THAT'S THE WAY WITH YOU THAT'S THE ROAD YOU'D ALL LIKE TO GO HEADLONGS TO RUIN",
+      "hypothesis": "That's the way with you. That's the road you'd all like to go headlongs to ruin.",
+      "normalized_reference": "that's the way with you that's the road you'd all like to go headlongs to ruin",
+      "normalized_hypothesis": "that's the way with you that's the road you'd all like to go headlongs to ruin",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "8455-210777-0012",
+      "split": "test-clean",
+      "reference": "MISSUS NEVERBEND YOU MUST INDEED BE PROUD OF YOUR SON",
+      "hypothesis": "Missus never been. You must indeed be proud of your son.",
+      "normalized_reference": "missus neverbend you must indeed be proud of your son",
+      "normalized_hypothesis": "missus never been you must indeed be proud of your son",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.2
+    },
+    {
+      "id": "1320-122612-0008",
+      "split": "test-clean",
+      "reference": "THE EYES OF THE WHOLE PARTY FOLLOWED THE UNEXPECTED MOVEMENT AND READ THEIR SUCCESS IN THE AIR OF TRIUMPH THAT THE YOUTH ASSUMED",
+      "hypothesis": "The eyes of the whole party followed the unexpected movement and read their success in the air of triumph that the youth assumed.",
+      "normalized_reference": "the eyes of the whole party followed the unexpected movement and read their success in the air of triumph that the youth assumed",
+      "normalized_hypothesis": "the eyes of the whole party followed the unexpected movement and read their success in the air of triumph that the youth assumed",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "6930-76324-0024",
+      "split": "test-clean",
+      "reference": "THEY SAY ILLUMINATION BY CANDLE LIGHT IS THE PRETTIEST IN THE WORLD",
+      "hypothesis": "They say illumination by candlelight is the prettiest in the world.",
+      "normalized_reference": "they say illumination by candle light is the prettiest in the world",
+      "normalized_hypothesis": "they say illumination by candlelight is the prettiest in the world",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.16666666666666666
+    },
+    {
+      "id": "4992-23283-0018",
+      "split": "test-clean",
+      "reference": "TO RELIEVE HER FROM BOTH HE LAID HIS HAND WITH FORCE UPON HIS HEART AND SAID DO YOU BELIEVE ME",
+      "hypothesis": "To relieve her from both, he laid his hand with force upon his heart and said, \"Do you believe me?\"",
+      "normalized_reference": "to relieve her from both he laid his hand with force upon his heart and said do you believe me",
+      "normalized_hypothesis": "to relieve her from both he laid his hand with force upon his heart and said do you believe me",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    }
+  ],
+  "random_test_other_examples": [
+    {
+      "id": "4852-28311-0014",
+      "split": "test-other",
+      "reference": "CHRIS STARTED OFF ONCE MORE PASSING THE BLEAK LITTLE VICTORIAN CHURCH PERCHED ON THE HILL ABOVE MISTER WICKER'S HOUSE",
+      "hypothesis": "Chris started off once more, passing a bleak little Victorian church perched on the hill above Mr. Wicker's house.",
+      "normalized_reference": "chris started off once more passing the bleak little victorian church perched on the hill above mister wicker's house",
+      "normalized_hypothesis": "chris started off once more passing a bleak little victorian church perched on the hill above mr wicker's house",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.10526315789473684
+    },
+    {
+      "id": "5442-32873-0005",
+      "split": "test-other",
+      "reference": "STANLEY STANLEY IT WOULD BE MERCY TO KILL ME SHE BROKE OUT AGAIN",
+      "hypothesis": "Stanley, Stanley, it would be mercy to kill me. She broke her again.",
+      "normalized_reference": "stanley stanley it would be mercy to kill me she broke out again",
+      "normalized_hypothesis": "stanley stanley it would be mercy to kill me she broke her again",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.07692307692307693
+    },
+    {
+      "id": "4852-28312-0012",
+      "split": "test-other",
+      "reference": "JAKEY HARRIS HIS NAME IS AND HE REALLY NEEDS THE JOB",
+      "hypothesis": "Jakey Harris's name is, and he really needs the job.",
+      "normalized_reference": "jakey harris his name is and he really needs the job",
+      "normalized_hypothesis": "jakey harris's name is and he really needs the job",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.18181818181818182
+    },
+    {
+      "id": "3528-168669-0031",
+      "split": "test-other",
+      "reference": "THE MOTHERS HAVE TAKEN HER TO THE DEAD ROOM WHICH OPENS ON THE CHURCH I KNOW",
+      "hypothesis": "The mothers have taken her to the dead room, which opens on the church. I know.",
+      "normalized_reference": "the mothers have taken her to the dead room which opens on the church i know",
+      "normalized_hypothesis": "the mothers have taken her to the dead room which opens on the church i know",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "3331-159609-0008",
+      "split": "test-other",
+      "reference": "THANK HEAVEN FOR THAT",
+      "hypothesis": "Thank heaven for that.",
+      "normalized_reference": "thank heaven for that",
+      "normalized_hypothesis": "thank heaven for that",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "5442-32873-0004",
+      "split": "test-other",
+      "reference": "OH FRIGHTFUL FRIGHTFUL",
+      "hypothesis": "Oh, frightful! Frightful!",
+      "normalized_reference": "oh frightful frightful",
+      "normalized_hypothesis": "oh frightful frightful",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "3538-142836-0015",
+      "split": "test-other",
+      "reference": "MARMALADES AND JAMS DIFFER LITTLE FROM EACH OTHER THEY ARE PRESERVES OF A HALF LIQUID CONSISTENCY MADE BY BOILING THE PULP OF FRUITS AND SOMETIMES PART OF THE RINDS WITH SUGAR",
+      "hypothesis": "Marmalades and jams differ little from each other. They are preserves of half liquid consistency made by boiling the pulp of fruits, and sometimes part of the rinds, with sugar.",
+      "normalized_reference": "marmalades and jams differ little from each other they are preserves of a half liquid consistency made by boiling the pulp of fruits and sometimes part of the rinds with sugar",
+      "normalized_hypothesis": "marmalades and jams differ little from each other they are preserves of half liquid consistency made by boiling the pulp of fruits and sometimes part of the rinds with sugar",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.03225806451612903
+    },
+    {
+      "id": "3764-168671-0016",
+      "split": "test-other",
+      "reference": "JEAN VALJEAN'S COMPOSURE WAS ONE OF THOSE POWERFUL TRANQUILLITIES WHICH ARE CONTAGIOUS",
+      "hypothesis": "Jean Valjean's composure was one of those powerful tranquillities which are contagious.",
+      "normalized_reference": "jean valjean's composure was one of those powerful tranquillities which are contagious",
+      "normalized_hypothesis": "jean valjean's composure was one of those powerful tranquillities which are contagious",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "2414-128292-0024",
+      "split": "test-other",
+      "reference": "THOU ART MY SHADOW",
+      "hypothesis": "Thou art my shadow.",
+      "normalized_reference": "thou art my shadow",
+      "normalized_hypothesis": "thou art my shadow",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "3997-180294-0027",
+      "split": "test-other",
+      "reference": "DID SHE LOVE ME ENOUGH TO BELIEVE THAT THE MORE BEAUTIFUL SHE LOOKED THE HAPPIER I SHOULD BE",
+      "hypothesis": "Does she love me enough to believe that the more beautiful she looked, the happier I should be?",
+      "normalized_reference": "did she love me enough to believe that the more beautiful she looked the happier i should be",
+      "normalized_hypothesis": "does she love me enough to believe that the more beautiful she looked the happier i should be",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.05555555555555555
+    }
+  ],
+  "largest_error_examples": [
+    {
+      "id": "533-131564-0022",
+      "split": "test-other",
+      "reference": "WHERE'S MILICENT",
+      "hypothesis": "Where is Millicent?",
+      "normalized_reference": "where's milicent",
+      "normalized_hypothesis": "where is millicent",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 1.5,
+      "errors": 3
+    },
+    {
+      "id": "2609-156975-0016",
+      "split": "test-other",
+      "reference": "WAS MOSES JUSTIFIED IN RESISTING THE EGYPTIAN TASKMASTER",
+      "hypothesis": "Which moves its just fine and resists in the gypsum tacks, master.",
+      "normalized_reference": "was moses justified in resisting the egyptian taskmaster",
+      "normalized_hypothesis": "which moves its just fine and resists in the gypsum tacks master",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 1.375,
+      "errors": 11
+    },
+    {
+      "id": "1089-134691-0024",
+      "split": "test-clean",
+      "reference": "STEPHANOS DEDALOS",
+      "hypothesis": "Stefano Sterlos.",
+      "normalized_reference": "stephanos dedalos",
+      "normalized_hypothesis": "stefano sterlos",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 1.0,
+      "errors": 2
+    },
+    {
+      "id": "4852-28311-0013",
+      "split": "test-other",
+      "reference": "AW SHUCKS",
+      "hypothesis": "Ah, sharks.",
+      "normalized_reference": "aw shucks",
+      "normalized_hypothesis": "ah sharks",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 1.0,
+      "errors": 2
+    },
+    {
+      "id": "3538-142836-0023",
+      "split": "test-other",
+      "reference": "ICES",
+      "hypothesis": "Isis.",
+      "normalized_reference": "ices",
+      "normalized_hypothesis": "isis",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 1.0,
+      "errors": 1
+    },
+    {
+      "id": "1998-29455-0029",
+      "split": "test-other",
+      "reference": "CLEVER AS A TRAINDAWG E IS AN ALL OUTER IS OWN EAD",
+      "hypothesis": "Clever as a train dog, he is, and all out as ownad.",
+      "normalized_reference": "clever as a traindawg e is an all outer is own ead",
+      "normalized_hypothesis": "clever as a train dog he is and all out as ownad",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.6666666666666666,
+      "errors": 8
+    },
+    {
+      "id": "3005-163399-0010",
+      "split": "test-other",
+      "reference": "WHY CHILD IT LL BE STOLE",
+      "hypothesis": "Watch out! It'll be stole.",
+      "normalized_reference": "why child it ll be stole",
+      "normalized_hypothesis": "watch out it'll be stole",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.6666666666666666,
+      "errors": 4
+    },
+    {
+      "id": "4198-12259-0030",
+      "split": "test-other",
+      "reference": "HO THIS WILL BANG IT SOUNDLY",
+      "hypothesis": "Oh, this was banged soundly.",
+      "normalized_reference": "ho this will bang it soundly",
+      "normalized_hypothesis": "oh this was banged soundly",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.6666666666666666,
+      "errors": 4
+    },
+    {
+      "id": "533-131562-0006",
+      "split": "test-other",
+      "reference": "MISTER HUNTINGDON THEN WENT UP STAIRS",
+      "hypothesis": "Mr. Huntington then went upstairs.",
+      "normalized_reference": "mister huntingdon then went up stairs",
+      "normalized_hypothesis": "mr huntington then went upstairs",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.6666666666666666,
+      "errors": 4
+    },
+    {
+      "id": "2094-142345-0022",
+      "split": "test-clean",
+      "reference": "MISTER OTTLEY'S INDEED",
+      "hypothesis": "Mr. Oatley's, indeed.",
+      "normalized_reference": "mister ottley's indeed",
+      "normalized_hypothesis": "mr oatley's indeed",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.6666666666666666,
+      "errors": 2
+    }
+  ],
+  "exact_match_examples": [
+    {
+      "id": "6432-63723-0000",
+      "split": "test-other",
+      "reference": "CHUCKLED THE COLONEL AS HE SKILFULLY PLAYED THE LUCKLESS TROUT NOW STRUGGLING TO GET LOOSE FROM THE HOOK",
+      "hypothesis": "Chuckled the colonel, as he skilfully played the luckless trout, now struggling to get loose from the hook.",
+      "normalized_reference": "chuckled the colonel as he skilfully played the luckless trout now struggling to get loose from the hook",
+      "normalized_hypothesis": "chuckled the colonel as he skilfully played the luckless trout now struggling to get loose from the hook",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "7975-280076-0017",
+      "split": "test-other",
+      "reference": "OUR BUSINESS THERE WAS TO SEE E P WEST HE WAS NOT AT HOME BUT THE FAMILY WILL REMEMBER THAT WE WERE THERE",
+      "hypothesis": "Our business there was to see E. P. West. He was not at home, but the family will remember that we were there.",
+      "normalized_reference": "our business there was to see e p west he was not at home but the family will remember that we were there",
+      "normalized_hypothesis": "our business there was to see e p west he was not at home but the family will remember that we were there",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "8131-117029-0009",
+      "split": "test-other",
+      "reference": "THOUGHT YOU'D BE IN THE CHIPS",
+      "hypothesis": "Thought you'd be in the chips.",
+      "normalized_reference": "thought you'd be in the chips",
+      "normalized_hypothesis": "thought you'd be in the chips",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "4350-9170-0049",
+      "split": "test-other",
+      "reference": "EXCEPT FOR THE STATE THEY TELL US WE SHOULD NOT HAVE ANY RELIGION EDUCATION CULTURE MEANS OF COMMUNICATION AND SO ON",
+      "hypothesis": "Except for the state, they tell us we should not have any religion, education, culture, means of communication, and so on.",
+      "normalized_reference": "except for the state they tell us we should not have any religion education culture means of communication and so on",
+      "normalized_hypothesis": "except for the state they tell us we should not have any religion education culture means of communication and so on",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "367-130732-0028",
+      "split": "test-other",
+      "reference": "PUT THESE INGREDIENTS INTO A STEWPAN AND FRY THEM TEN MINUTES THEN THROW IN THE CRAWFISH AND POUR ON THEM HALF A BOTTLE OF FRENCH WHITE WINE",
+      "hypothesis": "Put these ingredients into a stewpan and fry them ten minutes. Then throw in the crawfish and pour on them half a bottle of French white wine.",
+      "normalized_reference": "put these ingredients into a stewpan and fry them ten minutes then throw in the crawfish and pour on them half a bottle of french white wine",
+      "normalized_hypothesis": "put these ingredients into a stewpan and fry them ten minutes then throw in the crawfish and pour on them half a bottle of french white wine",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "1995-1826-0021",
+      "split": "test-clean",
+      "reference": "DON'T KNOW WELL OF ALL THINGS INWARDLY COMMENTED MISS TAYLOR LITERALLY BORN IN COTTON AND OH WELL AS MUCH AS TO ASK WHAT'S THE USE SHE TURNED AGAIN TO GO",
+      "hypothesis": "Don't know. Well, of all things, inwardly commented Miss Taylor, literally born in cotton, and oh well, as much as to ask what's the use. She turned again to go.",
+      "normalized_reference": "don't know well of all things inwardly commented miss taylor literally born in cotton and oh well as much as to ask what's the use she turned again to go",
+      "normalized_hypothesis": "don't know well of all things inwardly commented miss taylor literally born in cotton and oh well as much as to ask what's the use she turned again to go",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "61-70968-0048",
+      "split": "test-clean",
+      "reference": "AND HENRY MIGHT RETURN TO ENGLAND AT ANY MOMENT",
+      "hypothesis": "And Henry might return to England at any moment.",
+      "normalized_reference": "and henry might return to england at any moment",
+      "normalized_hypothesis": "and henry might return to england at any moment",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "6829-68771-0004",
+      "split": "test-clean",
+      "reference": "UNDER ORDINARY CONDITIONS REYNOLDS WAS SURE TO BE ELECTED BUT THE COMMITTEE PROPOSED TO SACRIFICE HIM IN ORDER TO ELECT HOPKINS",
+      "hypothesis": "Under ordinary conditions, Reynolds was sure to be elected, but the committee proposed to sacrifice him in order to elect Hopkins.",
+      "normalized_reference": "under ordinary conditions reynolds was sure to be elected but the committee proposed to sacrifice him in order to elect hopkins",
+      "normalized_hypothesis": "under ordinary conditions reynolds was sure to be elected but the committee proposed to sacrifice him in order to elect hopkins",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "1221-135766-0008",
+      "split": "test-clean",
+      "reference": "MINDFUL HOWEVER OF HER OWN ERRORS AND MISFORTUNES SHE EARLY SOUGHT TO IMPOSE A TENDER BUT STRICT CONTROL OVER THE INFANT IMMORTALITY THAT WAS COMMITTED TO HER CHARGE",
+      "hypothesis": "Mindful, however, of her own errors and misfortunes, she early sought to impose a tender but strict control over the infant immortality that was committed to her charge.",
+      "normalized_reference": "mindful however of her own errors and misfortunes she early sought to impose a tender but strict control over the infant immortality that was committed to her charge",
+      "normalized_hypothesis": "mindful however of her own errors and misfortunes she early sought to impose a tender but strict control over the infant immortality that was committed to her charge",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    },
+    {
+      "id": "8188-274364-0001",
+      "split": "test-other",
+      "reference": "IN THE GOVERNMENT OF IRELAND HIS ADMINISTRATION HAD BEEN EQUALLY PROMOTIVE OF HIS MASTER'S INTEREST AND THAT OF THE SUBJECTS COMMITTED TO HIS CARE",
+      "hypothesis": "In the government of Ireland, his administration had been equally promotive of his master's interest, and that of the subjects committed to his care.",
+      "normalized_reference": "in the government of ireland his administration had been equally promotive of his master's interest and that of the subjects committed to his care",
+      "normalized_hypothesis": "in the government of ireland his administration had been equally promotive of his master's interest and that of the subjects committed to his care",
+      "text_extraction_path": "$[0].text",
+      "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+      "wer": 0.0
+    }
+  ],
+  "aggregate_rtf_from_sums": 0.1185943680967885
+}

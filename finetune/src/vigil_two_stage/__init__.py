@@ -7,6 +7,7 @@ __all__ = [
     "losses",
     "manifests",
     "metrics",
+    "qwen_text_result",
     "splits",
     "stage1_model",
     "stage2_model",
