@@ -1,0 +1,21 @@
+{
+  "asr_smoke_status": "not_run_because_shared_path_blocked",
+  "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+  "current_frozen_qwen_librispeech": {
+    "combined_wer": 0.02751646508258752,
+    "failures": 0,
+    "successes": 5559,
+    "test_clean_wer": 0.018411442483262326,
+    "test_other_wer": 0.03666201784383776
+  },
+  "current_vigil_trigger_metrics": {
+    "f1": 0.9675190048,
+    "fpr": 0.0049833887,
+    "precision": 0.9957325747,
+    "recall": 0.9408602151
+  },
+  "shared_stage2_score_parity_status": "blocked",
+  "shared_transcript_parity_status": "blocked",
+  "status": "blocked_by_runtime_interface",
+  "vigil_metric_status": "not_run_because_shared_path_blocked"
+}

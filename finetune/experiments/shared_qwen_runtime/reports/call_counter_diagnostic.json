@@ -1,0 +1,95 @@
+{
+  "attempted_shared_path": {
+    "audio_features_available": false,
+    "blocker": "The current public qwen_asr wrapper does not expose decoder-compatible audio hidden states and does not accept externally supplied audio hidden states for decoding.",
+    "decoder_call_count": 1,
+    "encoder_call_count": 7,
+    "feature_dtype": null,
+    "feature_path": null,
+    "feature_shape": null,
+    "latency_ms": 227.18281392008066,
+    "raw_transcribe_result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+    "status": "blocked_by_runtime_interface",
+    "transcript": "Virtual.",
+    "transcript_path": "$[0].text"
+  },
+  "public_transcribe_only": {
+    "counts": {
+      "decoder_call_count": 0,
+      "encoder_call_count": 7,
+      "generate_call_count": 1,
+      "get_audio_features_call_count": 1,
+      "model_load_count": 1,
+      "patched_methods": [
+        "generate",
+        "get_audio_features",
+        "thinker_forward",
+        "transcribe"
+      ],
+      "thinker_forward_call_count": 6,
+      "transcribe_call_count": 1
+    },
+    "extraction_path": "$[0].text",
+    "latency_ms": 3684.4718977808952,
+    "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+    "status": "ok",
+    "transcript": "Virtual."
+  },
+  "public_transcribe_plus_separate_stage2": {
+    "counts": {
+      "decoder_call_count": 0,
+      "encoder_call_count": 8,
+      "generate_call_count": 1,
+      "get_audio_features_call_count": 2,
+      "model_load_count": 1,
+      "patched_methods": [
+        "generate",
+        "get_audio_features",
+        "thinker_forward",
+        "transcribe"
+      ],
+      "thinker_forward_call_count": 6,
+      "transcribe_call_count": 1
+    },
+    "extraction_path": "$[0].text",
+    "feature_dtype": "torch.bfloat16",
+    "feature_path": "model.thinker.get_audio_features",
+    "feature_shape": [
+      26,
+      2048
+    ],
+    "latency_ms": 449.9305132776499,
+    "result_type": "qwen_asr.inference.qwen3_asr.ASRTranscription",
+    "status": "ok",
+    "transcript": "Virtual."
+  },
+  "sample": {
+    "audio_hash": "7a8509ebc120",
+    "path_hash": "20a5d8087c5a"
+  },
+  "separate_stage2_get_audio_features_only": {
+    "counts": {
+      "decoder_call_count": 0,
+      "encoder_call_count": 1,
+      "generate_call_count": 0,
+      "get_audio_features_call_count": 1,
+      "model_load_count": 1,
+      "patched_methods": [
+        "generate",
+        "get_audio_features",
+        "thinker_forward",
+        "transcribe"
+      ],
+      "thinker_forward_call_count": 0,
+      "transcribe_call_count": 0
+    },
+    "feature_dtype": "torch.bfloat16",
+    "feature_path": "model.thinker.get_audio_features",
+    "feature_shape": [
+      26,
+      2048
+    ],
+    "latency_ms": 525.8230697363615,
+    "status": "ok"
+  }
+}
