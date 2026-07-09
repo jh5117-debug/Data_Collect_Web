@@ -1,0 +1,23 @@
+{
+  "manifest_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/rosbag_cases.jsonl",
+  "reason": "Generated local spectrogram PNGs under ignored runs directory.",
+  "spectrograms": [
+    {
+      "case_id": "false_positive_001_go",
+      "path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/spectrograms/false_positive_001_go.png"
+    },
+    {
+      "case_id": "false_positive_002_joe",
+      "path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/spectrograms/false_positive_002_joe.png"
+    },
+    {
+      "case_id": "false_positive_003_joke",
+      "path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/spectrograms/false_positive_003_joke.png"
+    },
+    {
+      "case_id": "true_positive_001_vigil",
+      "path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/spectrograms/true_positive_001_vigil.png"
+    }
+  ],
+  "status": "ok"
+}

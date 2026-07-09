@@ -75,6 +75,26 @@ Suggested topics:
 - `/vigil/transcript`
 - `/vigil/debug_scores`
 
+## False-Trigger Regression Checks
+
+Shaw's ROS integration surfaced held-out false-trigger examples for `go`, `joe`, and `joke`; Andy previously observed `yo`. These should be treated as regression cases, not training or threshold-tuning data.
+
+Before retraining, verify the integration path:
+
+- `final_trigger` must equal `stage1_accept AND stage2_accept`.
+- Stage 2 should run on the intended candidate audio window, not stale cached audio.
+- Feature hashes and Stage 2 embedding hashes should differ for unrelated words such as `go`, `joe`, `joke`, and true `VIGIL`.
+- If Stage 2 scores stay nearly constant around `0.988`, inspect feature/embedding hashes before diagnosing model bias.
+- Keep Qwen ASR transcript text separate from the KWS label; `go`, `joe`, `joke`, and `yo` are transcript text but KWS label `0`.
+
+Current audit artifacts:
+
+- `finetune/experiments/false_trigger_regression/reports/ROSBAG_INSPECTION_REPORT.md`
+- `finetune/experiments/false_trigger_regression/reports/FALSE_TRIGGER_SCORE_AUDIT.md`
+- `finetune/experiments/false_trigger_regression/reports/HARD_NEGATIVE_RETRAINING_PLAN.md`
+
+Current result: `Joe.` is a held-out final false accept; `Go.` and `Joke.` are rejected by Stage 1; true `VIGIL.` is accepted. Feature and embedding hashes differ across all four decoded windows, so the current evidence points away from stale cached features or repeated audio windows. Do not tune thresholds on these four cases.
+
 ## Current Limitations
 
 - Qwen hidden-state sharing is not solved through the public runtime.

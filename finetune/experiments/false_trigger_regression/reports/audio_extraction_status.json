@@ -1,0 +1,111 @@
+{
+  "bag_results": [
+    {
+      "audio_messages": 54,
+      "cases": [
+        {
+          "audio_messages": 54,
+          "case_id": "false_positive_001_go",
+          "duration_sec": 2.0,
+          "expected_label": 0,
+          "full_wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/false_positive_full.wav",
+          "sample_rate": 16000,
+          "source_bag": "false_positive",
+          "transcript_hint": "Go.",
+          "transcript_message_timestamp_ns": 1783542777945532711,
+          "wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/false_positive_001_go.wav",
+          "window_end_sec": 4.951125,
+          "window_start_sec": 2.951125
+        },
+        {
+          "audio_messages": 54,
+          "case_id": "false_positive_002_joe",
+          "duration_sec": 2.0,
+          "expected_label": 0,
+          "full_wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/false_positive_full.wav",
+          "sample_rate": 16000,
+          "source_bag": "false_positive",
+          "transcript_hint": "Joe.",
+          "transcript_message_timestamp_ns": 1783542781449122648,
+          "wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/false_positive_002_joe.wav",
+          "window_end_sec": 8.454688,
+          "window_start_sec": 6.454688
+        },
+        {
+          "audio_messages": 54,
+          "case_id": "false_positive_003_joke",
+          "duration_sec": 2.0,
+          "expected_label": 0,
+          "full_wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/false_positive_full.wav",
+          "sample_rate": 16000,
+          "source_bag": "false_positive",
+          "transcript_hint": "Joke.",
+          "transcript_message_timestamp_ns": 1783542784952852760,
+          "wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/false_positive_003_joke.wav",
+          "window_end_sec": 11.958438,
+          "window_start_sec": 9.958438
+        }
+      ],
+      "db_path": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted/false_positive/false_positive_0.db3",
+      "duration_sec": 13.824,
+      "full_wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/false_positive_full.wav",
+      "sample_rate": 16000,
+      "source_bag": "false_positive",
+      "transcript_messages": 3
+    },
+    {
+      "audio_messages": 22,
+      "cases": [
+        {
+          "audio_messages": 22,
+          "case_id": "true_positive_001_vigil",
+          "duration_sec": 2.0,
+          "expected_label": 1,
+          "full_wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/true_positive_full.wav",
+          "sample_rate": 16000,
+          "source_bag": "true_positive",
+          "transcript_hint": "VIGIL.",
+          "transcript_message_timestamp_ns": 1783542912091266363,
+          "wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/true_positive_001_vigil.wav",
+          "window_end_sec": 2.783375,
+          "window_start_sec": 0.783375
+        }
+      ],
+      "db_path": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted/true_positive/true_positive_0.db3",
+      "duration_sec": 5.632,
+      "full_wav_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/extracted_audio/true_positive_full.wav",
+      "sample_rate": 16000,
+      "source_bag": "true_positive",
+      "transcript_messages": 1
+    }
+  ],
+  "case_count": 4,
+  "exact_resume_command": "cd /home/hj/Data_Collect_Web && PYTHONPATH=finetune/src:finetune/experiments/false_trigger_regression/src:. python finetune/experiments/false_trigger_regression/scripts/run_false_trigger_score_audit.py --manifest finetune/experiments/false_trigger_regression/runs/20260709_022138/rosbag_cases.jsonl",
+  "extracted_root": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted",
+  "manifest_created": true,
+  "manifest_path": "finetune/experiments/false_trigger_regression/runs/20260709_022138/rosbag_cases.jsonl",
+  "reason": "Decoded known VIGIL rosbag CDR layout into local WAV windows without ROS 2 message imports.",
+  "ros2_decode_status": {
+    "available": false,
+    "missing": [
+      {
+        "error": "ModuleNotFoundError: No module named 'rosbag2_py'",
+        "module": "rosbag2_py"
+      },
+      {
+        "error": "ModuleNotFoundError: No module named 'rosidl_runtime_py'",
+        "module": "rosidl_runtime_py"
+      },
+      {
+        "error": "ModuleNotFoundError: No module named 'rclpy'",
+        "module": "rclpy"
+      },
+      {
+        "error": "ModuleNotFoundError: No module named 'vigil_msgs'",
+        "module": "vigil_msgs"
+      }
+    ]
+  },
+  "run_dir": "finetune/experiments/false_trigger_regression/runs/20260709_022138",
+  "status": "ok"
+}

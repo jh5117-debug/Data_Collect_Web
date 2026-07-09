@@ -39,10 +39,20 @@ Label: positive.
 The participant says confusing non-trigger words or phrases such as:
 
 ```text
+go
+go go
+joe
+joke
+yo
+yo yo
+hey yo
+hello
+no
 visual
 visible
 digital
 individual
+vigilant
 residual
 ```
 
@@ -56,6 +66,11 @@ Positive/negative is the KWS trigger label. It is not the same thing as the ASR 
 - Do not put `positive` or `negative` into the ASR transcript.
 - KWS manifests use the trigger label separately from transcript text.
 - Prompt 4 negatives may sound similar to VIGIL but should not activate the trigger.
+- Newly observed false-trigger words from Shaw/Andy integration testing include `go`, `joe`, `joke`, and `yo`; keep them as KWS negatives with their exact spoken transcript text.
+
+## Held-Out Regression Cases
+
+Shaw's false-trigger rosbag examples should stay held out for regression testing. Do not use those specific bag recordings to tune thresholds or train the model. If the score audit confirms model bias rather than an integration/windowing bug, collect additional speakers saying the hard-negative phrases above before retraining or recalibrating Stage 2.
 
 ## Supabase Export Workflow
 

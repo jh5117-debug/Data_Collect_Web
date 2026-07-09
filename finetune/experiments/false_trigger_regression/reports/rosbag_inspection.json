@@ -1,0 +1,154 @@
+{
+  "bag_count": 2,
+  "bags": [
+    {
+      "bag_dir": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted/false_positive",
+      "db3_files": [
+        {
+          "file_name": "false_positive_0.db3",
+          "messages_by_topic_id": {
+            "1": 54,
+            "2": 3
+          },
+          "messages_table_rows": 57,
+          "path": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted/false_positive/false_positive_0.db3",
+          "size_bytes": 495616,
+          "topics_table": [
+            {
+              "id": 1,
+              "name": "/microphone/audio",
+              "serialization_format": "cdr",
+              "type": "vigil_msgs/msg/AudioMessage"
+            },
+            {
+              "id": 2,
+              "name": "/microphone/audio/transcription",
+              "serialization_format": "cdr",
+              "type": "vigil_msgs/msg/ProcessedAudio"
+            }
+          ]
+        }
+      ],
+      "expected_label": 0,
+      "metadata": {
+        "duration_nanoseconds": 13341037988,
+        "duration_sec": 13.341037988,
+        "files": [
+          {
+            "duration": {
+              "nanoseconds": 13341037988
+            },
+            "message_count": 57,
+            "path": "false_positive_0.db3",
+            "starting_time": {
+              "nanoseconds_since_epoch": 1783542772994407339
+            }
+          }
+        ],
+        "message_count": 57,
+        "metadata_path": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted/false_positive/metadata.yaml",
+        "relative_file_paths": [
+          "false_positive_0.db3"
+        ],
+        "starting_time_nanoseconds_since_epoch": 1783542772994407339,
+        "storage_identifier": "sqlite3",
+        "topics": [
+          {
+            "message_count": 3,
+            "name": "/microphone/audio/transcription",
+            "serialization_format": "cdr",
+            "type": "vigil_msgs/msg/ProcessedAudio"
+          },
+          {
+            "message_count": 54,
+            "name": "/microphone/audio",
+            "serialization_format": "cdr",
+            "type": "vigil_msgs/msg/AudioMessage"
+          }
+        ],
+        "version": 5
+      },
+      "source_bag": "false_positive"
+    },
+    {
+      "bag_dir": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted/true_positive",
+      "db3_files": [
+        {
+          "file_name": "true_positive_0.db3",
+          "messages_by_topic_id": {
+            "1": 22,
+            "2": 1
+          },
+          "messages_table_rows": 23,
+          "path": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted/true_positive/true_positive_0.db3",
+          "size_bytes": 217088,
+          "topics_table": [
+            {
+              "id": 1,
+              "name": "/microphone/audio",
+              "serialization_format": "cdr",
+              "type": "vigil_msgs/msg/AudioMessage"
+            },
+            {
+              "id": 2,
+              "name": "/microphone/audio/transcription",
+              "serialization_format": "cdr",
+              "type": "vigil_msgs/msg/ProcessedAudio"
+            }
+          ]
+        }
+      ],
+      "expected_label": 1,
+      "metadata": {
+        "duration_nanoseconds": 5274977775,
+        "duration_sec": 5.274977775,
+        "files": [
+          {
+            "duration": {
+              "nanoseconds": 5274977775
+            },
+            "message_count": 23,
+            "path": "true_positive_0.db3",
+            "starting_time": {
+              "nanoseconds_since_epoch": 1783542909307885070
+            }
+          }
+        ],
+        "message_count": 23,
+        "metadata_path": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted/true_positive/metadata.yaml",
+        "relative_file_paths": [
+          "true_positive_0.db3"
+        ],
+        "starting_time_nanoseconds_since_epoch": 1783542909307885070,
+        "storage_identifier": "sqlite3",
+        "topics": [
+          {
+            "message_count": 1,
+            "name": "/microphone/audio/transcription",
+            "serialization_format": "cdr",
+            "type": "vigil_msgs/msg/ProcessedAudio"
+          },
+          {
+            "message_count": 22,
+            "name": "/microphone/audio",
+            "serialization_format": "cdr",
+            "type": "vigil_msgs/msg/AudioMessage"
+          }
+        ],
+        "version": 5
+      },
+      "source_bag": "true_positive"
+    }
+  ],
+  "extracted_members": [
+    "true_positive/",
+    "true_positive/true_positive_0.db3",
+    "true_positive/metadata.yaml",
+    "false_positive/",
+    "false_positive/false_positive_0.db3",
+    "false_positive/metadata.yaml"
+  ],
+  "root": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word_extracted",
+  "zip_path": "finetune/experiments/false_trigger_regression/private/rosbag-trigger-word.zip",
+  "zip_size_bytes": 331051
+}

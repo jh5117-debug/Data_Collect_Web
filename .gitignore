@@ -21,10 +21,14 @@ backend/.env
 .env.local
 
 # Local data and generated audio
+/rosbag-trigger-word.zip
 backend/storage/*
 !backend/storage/.gitkeep
 *.sqlite3
 *.db
+*.db3
+*.bag
+*.mcap
 *.wav
 *.webm
 *.m4a
@@ -138,6 +142,11 @@ finetune/experiments/latest_data_optimization/reports/*predictions*.jsonl
 finetune/experiments/latest_data_optimization/reports/*false_accepts*.jsonl
 finetune/experiments/latest_data_optimization/reports/*support_sets*.json
 finetune/model_bundles/*/*.pt
+
+# False-trigger ROS bag regression private/generated artifacts
+finetune/experiments/false_trigger_regression/private/
+finetune/experiments/false_trigger_regression/extracted_audio/
+finetune/experiments/false_trigger_regression/runs/
 
 # OS/editor
 .DS_Store
