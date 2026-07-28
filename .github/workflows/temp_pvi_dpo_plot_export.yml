@@ -1,0 +1,35 @@
+name: Temporary PVI-DPO plot export
+
+on:
+  push:
+    branches:
+      - temp/pvi-dpo-plot-export-20260728
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: temp/pvi-dpo-plot-export-20260728
+
+      - name: Download vector PDF exported from Figma
+        run: |
+          mkdir -p artifacts
+          curl --fail --location --retry 3 --output artifacts/PVI_DPO_normalized_gap.pdf \
+            'https://www.figma.com/api/mcp/asset/44962aed-0f66-4d00-9b37-cfc45486a6bb'
+          test -s artifacts/PVI_DPO_normalized_gap.pdf
+          file artifacts/PVI_DPO_normalized_gap.pdf
+
+      - name: Commit exported PDF
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add artifacts/PVI_DPO_normalized_gap.pdf
+          git commit -m 'Add temporary PVI-DPO vector plot PDF'
+          git push origin HEAD:temp/pvi-dpo-plot-export-20260728
